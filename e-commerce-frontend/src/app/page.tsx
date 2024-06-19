@@ -114,7 +114,7 @@ export default function Home() {
             <p>{`${cartbar}`}</p>
 
             </DialogTrigger>
-            <DialogContent className={`p-0 bg-transparent top-20`}>
+            <DialogContent className={`p-0 bg-transparent`}>
 
               <Card>
                 <CardHeader>
