@@ -6,6 +6,8 @@ import Link from 'next/link';
 
 import { FaRProject, FaShoppingCart } from "react-icons/fa";
 
+import { BiShoppingBag } from "react-icons/bi";
+
 import {
   Menubar,
   MenubarContent,
@@ -50,22 +52,11 @@ import {
 import { Input } from '@/components/ui/input';
 
 export default function Home() {
-  const [cartbar, setCartbar] = useState<boolean>(false);
-
   return (
     <main className="min-h-screen w-full">
-      <div className={`flex`} onClick={()=>{setCartbar(false)}}>
-        <div className={`h-screen bg-red-800 absolute right-0 transition-all
-          ${cartbar?`w-24`:`w-0`}
-        `}>
+      <div className="">
 
-          <button onClick={()=>{setCartbar(false)}}>Fechar</button>
-          
-        </div>
-      </div>
-      <div className="p-4">
-
-        <div className={`w-full flex`}>
+        <div className={`w-full flex fixed p-2 gap-1`}>
           <Menubar className={`flex-auto`}>
             <MenubarMenu>
               <MenubarTrigger>Aba 1</MenubarTrigger>
@@ -97,21 +88,51 @@ export default function Home() {
 
           </Menubar>
 
-          <Button onClick={()=>{setCartbar(true)}}>
-            <FaShoppingCart/>
-          </Button>
+          <Drawer>
+            
+            <DrawerTrigger className={`w-16 flex justify-center items-center \ bg-background rounded-[5px] border`}>
+              <FaShoppingCart className={``} />
+            </DrawerTrigger>
+
+            <DrawerContent className={`min-w-[300px]`}>
+              <DrawerHeader>
+                <DrawerTitle>Carrinho</DrawerTitle>
+                <DrawerDescription>Nome do usuário.</DrawerDescription>
+              </DrawerHeader>
+
+              <div className={`w-full h-full`}>
+                <div className={`w-full h-full flex justify-center items-center`}>
+                  <div className={`flex-column`}>
+
+                    <p className={`text-slate-600`}>Carrinho vazio</p>
+
+                    <div className={`p-4 w-full flex justify-center items-center`}>
+                      <BiShoppingBag size={26} className={`text-slate-600`} />
+                    </div>
+          
+                  </div>
+                </div>
+              </div>
+
+
+              <DrawerFooter>
+                <Button>Fazer pedido</Button>
+                <DrawerClose>
+                  <Button variant="outline" className={`w-full`}>Voltar</Button>
+                </DrawerClose>
+              </DrawerFooter>
+            </DrawerContent>
+          </Drawer>
 
         </div>
 
-        <div className={`w-full bg-slate-100 h-screen flex justify-center items-center`}>
+        <div className={`w-full bg-slate-100 h-[120vh] flex justify-center items-center`}>
           
 
           <Dialog>
             <DialogTrigger>
 
             <p>{`->`}</p>
-
-            <p>{`${cartbar}`}</p>
 
             </DialogTrigger>
             <DialogContent className={`p-0 bg-transparent`}>
