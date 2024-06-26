@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 
 import Link from 'next/link';
 
-import { FaRProject, FaShoppingCart } from "react-icons/fa";
+import { FaRProject, FaShoppingCart, FaUser } from "react-icons/fa";
+
 
 import { BiShoppingBag } from "react-icons/bi";
 
@@ -51,12 +52,128 @@ import {
 
 import { Input } from '@/components/ui/input';
 
+import { signIn, signOut, useSession } from "next-auth/react";
+
+import { fetchMe } from '@/lib/api';
+
+import axios from "@/lib/axios";
+import useAxiosAuth from '@/lib/hooks/useAxiosAuth';
+
+
+interface AuthMe {
+  sub?: string;
+  id?: string;
+  name?: string;
+  email?: string;
+  refreshToken?: string;
+  recoveryPasswordToken?: string | null;
+  deletedAt?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+  status?: string;
+  mediaId?: number;
+  role?: string;
+  Media?: {
+    id?: number;
+    url?: string;
+  };
+}
+
 export default function Home() {
+  let { data: session } = useSession();
+
+  const [objTest, setObjTest] = useState<object>({});
+
+  console.log(session);
+
+  const axiosAuth = useAxiosAuth();
+
+  const handleFunc = async () => {
+      // fetchMe(
+      //   session?.user?.accessToken? session.user.accessToken : ""
+      //   ,
+      //   setObjTest
+      // )
+
+      const res = await axiosAuth.get("/api/auth/me");
+
+      setObjTest(res);
+
+  }
+
+
+  //console.log(session);
+
+  const [email, setEmail] = useState<string>("admin@gmail.com");
+  const [password, setPassword] = useState<string>("admin");
+
+
+  const [userData, setUserData] = useState<AuthMe>({});
+
+  useEffect(() => {
+    if (session && session.user){
+      const getInfo = async () => {
+        const info = await axiosAuth.get("/api/auth/me")
+        setUserData(info.data);
+      }
+      
+      getInfo();
+    }
+  }, [session])
+
+
+  const handleSignIn = async () => {
+    const result = await signIn('credentials', {
+      redirect: false,
+      email,
+      password,
+    });
+  };
+
   return (
-    <main className="min-h-screen w-full">
+    <main className="min-h-screen w-full hide-scrollbar">
       <div className="">
 
         <div className={`w-full flex fixed p-2 gap-1`}>
+
+
+        <Dialog>
+            <DialogTrigger className={`w-12 p-1 flex justify-center items-center \ bg-background rounded-full border`}>
+              <FaUser size={16} className={``} />
+            </DialogTrigger>
+            <DialogContent className={`p-0 bg-transparent`}>
+
+              {
+                !session?.user?
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Login</CardTitle>
+                    <CardDescription>Só clicar ai por enqnt</CardDescription>
+                  </CardHeader>
+                  <CardContent className={`flex gap-3`}>
+                    <Input />
+
+                    <Input />
+                    
+                    {/* <Link href="/carrinho"> */}
+                      <Button onClick={()=>{handleSignIn()}}>Entrar</Button>
+                    {/* </Link> */}
+
+                  </CardContent>
+                </Card>
+                :
+                <Card>
+                  <CardContent className={`flex gap-3`}>
+                    <p>{`${JSON.stringify(userData.name)}`}</p>
+                    <p>{`${JSON.stringify(userData.email)}`}</p>
+
+                  </CardContent>
+                </Card>
+              }
+
+            </DialogContent>
+          </Dialog>
+
           <Menubar className={`flex-auto`}>
             <MenubarMenu>
               <MenubarTrigger>Aba 1</MenubarTrigger>
@@ -73,6 +190,7 @@ export default function Home() {
             </MenubarMenu>
 
             <MenubarMenu>
+
               <MenubarTrigger>Aba 2</MenubarTrigger>
                 <MenubarContent>
                   <MenubarItem>
@@ -84,6 +202,7 @@ export default function Home() {
                   <MenubarSeparator />
                   <MenubarItem>Print</MenubarItem>
                 </MenubarContent>
+
             </MenubarMenu>
 
           </Menubar>
@@ -118,7 +237,7 @@ export default function Home() {
               <DrawerFooter>
                 <Button>Fazer pedido</Button>
                 <DrawerClose>
-                  <Button variant="outline" className={`w-full`}>Voltar</Button>
+                  <p className={`w-full border rounded-md p-[6px] text-sm`}>Voltar</p>
                 </DrawerClose>
               </DrawerFooter>
             </DrawerContent>
@@ -129,33 +248,21 @@ export default function Home() {
         <div className={`w-full bg-slate-100 h-[120vh] flex justify-center items-center`}>
           
 
-          <Dialog>
-            <DialogTrigger>
+          <button onClick={()=>{signOut()}}>
+            DESLOGAR
+          </button>
 
-            <p>{`->`}</p>
 
-            </DialogTrigger>
-            <DialogContent className={`p-0 bg-transparent`}>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Login</CardTitle>
-                  <CardDescription>Só clicar ai por enqnt</CardDescription>
-                </CardHeader>
-                <CardContent className={`flex gap-3`}>
-                  <Input />
+          <button onClick={()=>{
+            console.log(handleFunc())
+          }}>
 
-                  <Input />
-
-                  <Link href="/carrinho">
-                    <Button>Entrar</Button>
-                  </Link>
-
-                </CardContent>
-              </Card>
-
-            </DialogContent>
-          </Dialog>
+            {
+              `${JSON.stringify(objTest)}`
+            }
+         
+          </button>
 
 
         </div>
