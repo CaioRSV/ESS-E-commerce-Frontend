@@ -2,12 +2,16 @@
 
 import { useState, useEffect } from 'react'; 
 
+import Carrinho from './carrinho/page';
+
 import Link from 'next/link';
 
 import { FaRProject, FaShoppingCart, FaUser } from "react-icons/fa";
 
 
 import { BiShoppingBag } from "react-icons/bi";
+import { IoIosLogIn } from "react-icons/io";
+
 
 import {
   Menubar,
@@ -89,26 +93,44 @@ export default function Home() {
   const axiosAuth = useAxiosAuth();
 
   const handleFunc = async () => {
-      // fetchMe(
-      //   session?.user?.accessToken? session.user.accessToken : ""
-      //   ,
-      //   setObjTest
-      // )
-
       const res = await axiosAuth.get("/api/auth/me");
-
       setObjTest(res);
-
   }
-
-
-  //console.log(session);
 
   const [email, setEmail] = useState<string>("admin@gmail.com");
   const [password, setPassword] = useState<string>("admin");
-
-
   const [userData, setUserData] = useState<AuthMe>({});
+
+  const LogInCardComponent = (
+      <Card>
+        <CardHeader>
+          <CardTitle>Login</CardTitle>
+          <CardDescription>Só clicar ai por enqnt</CardDescription>
+        </CardHeader>
+        <CardContent className={`flex gap-3`}>
+          <Input />
+
+          <Input />
+          
+          {/* <Link href="/carrinho"> */}
+            <Button onClick={()=>{handleSignIn()}}>Entrar</Button>
+          {/* </Link> */}
+
+        </CardContent>
+      </Card>
+  );
+
+  const LoggedInCardComponent = (
+    <Card>
+      <CardContent className={`flex gap-3`}>
+        <p>{`${JSON.stringify(userData.name)}`}</p>
+        <p>{`${JSON.stringify(userData.email)}`}</p>
+
+      </CardContent>
+    </Card>    
+  )
+
+  const LogInComponent = !session?.user? LogInCardComponent : LoggedInCardComponent;
 
   useEffect(() => {
     if (session && session.user){
@@ -137,39 +159,13 @@ export default function Home() {
         <div className={`w-full flex fixed p-2 gap-1`}>
 
 
-        <Dialog>
+          <Dialog>
             <DialogTrigger className={`w-12 p-1 flex justify-center items-center \ bg-background rounded-full border`}>
               <FaUser size={16} className={``} />
             </DialogTrigger>
             <DialogContent className={`p-0 bg-transparent`}>
 
-              {
-                !session?.user?
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Login</CardTitle>
-                    <CardDescription>Só clicar ai por enqnt</CardDescription>
-                  </CardHeader>
-                  <CardContent className={`flex gap-3`}>
-                    <Input />
-
-                    <Input />
-                    
-                    {/* <Link href="/carrinho"> */}
-                      <Button onClick={()=>{handleSignIn()}}>Entrar</Button>
-                    {/* </Link> */}
-
-                  </CardContent>
-                </Card>
-                :
-                <Card>
-                  <CardContent className={`flex gap-3`}>
-                    <p>{`${JSON.stringify(userData.name)}`}</p>
-                    <p>{`${JSON.stringify(userData.email)}`}</p>
-
-                  </CardContent>
-                </Card>
-              }
+              {LogInComponent}
 
             </DialogContent>
           </Dialog>
@@ -216,26 +212,65 @@ export default function Home() {
             <DrawerContent className={`min-w-[300px]`}>
               <DrawerHeader>
                 <DrawerTitle>Carrinho</DrawerTitle>
-                <DrawerDescription>Nome do usuário.</DrawerDescription>
+                <DrawerDescription>{userData.name?userData.name:""}</DrawerDescription>
               </DrawerHeader>
 
               <div className={`w-full h-full`}>
                 <div className={`w-full h-full flex justify-center items-center`}>
-                  <div className={`flex-column`}>
 
-                    <p className={`text-slate-600`}>Carrinho vazio</p>
+                  {
+                    userData.email
+                      ?
+                      <div className={`flex-column`}>
 
-                    <div className={`p-4 w-full flex justify-center items-center`}>
-                      <BiShoppingBag size={26} className={`text-slate-600`} />
-                    </div>
-          
-                  </div>
+                        <p className={`text-slate-600`}>Carrinho vazio</p>
+
+                        <div className={`p-4 w-full flex justify-center items-center`}>
+                          <BiShoppingBag size={26} className={`text-slate-600`} />
+                        </div>
+
+                      </div>
+                      :
+
+                      <div className={`flex-column`}>
+
+                        <p className={`text-slate-600 w-full flex justify-center items-center`}>Você está desconectado</p>
+
+                        <div className={`p-4 w-full flex justify-center items-center`}>
+
+                        <Dialog>
+                          <DialogTrigger>
+                            <IoIosLogIn size={50} className={`text-slate-900`} />
+                          </DialogTrigger>
+                          <DialogContent className={`p-0 bg-transparent`}>
+
+                            {LogInComponent}
+
+                          </DialogContent>
+                        </Dialog>
+
+                        </div>
+
+                        <p className={`text-slate-600`}>Clique no ícone acima para entrar</p>
+
+                      </div>
+
+                  }
+
                 </div>
               </div>
 
 
               <DrawerFooter>
-                <Button>Fazer pedido</Button>
+                  {
+                    userData.email
+                      ?
+                      <Link href="/carrinho" className={`w-full`}>
+                        <Button className={`w-full`}>Ir para o carrinho</Button>
+                      </Link>
+                      :
+                      <Button disabled={true}>Ir para o carrinho</Button>
+                  }
                 <DrawerClose>
                   <p className={`w-full border rounded-md p-[6px] text-sm`}>Voltar</p>
                 </DrawerClose>
@@ -248,13 +283,13 @@ export default function Home() {
         <div className={`w-full bg-slate-100 h-[120vh] flex justify-center items-center`}>
           
 
-          <button onClick={()=>{signOut()}}>
+          <Button onClick={()=>{signOut()}}>
             DESLOGAR
-          </button>
+          </Button>
 
 
 
-          <button onClick={()=>{
+          <button className={`min-w-16 bg-slate-500`} onClick={()=>{
             console.log(handleFunc())
           }}>
 
