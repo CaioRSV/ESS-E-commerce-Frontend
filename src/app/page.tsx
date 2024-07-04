@@ -54,6 +54,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 
+import LoadingView from '@/components/loadingView';
+
 import { Input } from '@/components/ui/input';
 
 import { signIn, signOut, useSession } from "next-auth/react";
@@ -62,6 +64,7 @@ import { fetchMe } from '@/lib/api';
 
 import axios from "@/lib/axios";
 import useAxiosAuth from '@/lib/hooks/useAxiosAuth';
+
 
 
 interface AuthMe {
@@ -153,7 +156,9 @@ export default function Home() {
   };
 
   return (
+    <>
     <main className="min-h-screen w-full hide-scrollbar">
+    <LoadingView></LoadingView>
       <div className="">
 
         <div className={`w-full flex fixed p-2 gap-1`}>
@@ -298,11 +303,11 @@ export default function Home() {
             }
          
           </button>
-
-
         </div>
 
       </div>
     </main>
+
+  </>
   );
 }
