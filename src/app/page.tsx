@@ -7,6 +7,7 @@ import Carrinho from './carrinho/page';
 import Link from 'next/link';
 
 import { FaRProject, FaShoppingCart, FaUser } from "react-icons/fa";
+import { CgSpinner } from "react-icons/cg";
 
 
 import { BiShoppingBag } from "react-icons/bi";
@@ -101,37 +102,6 @@ export default function Home() {
   const [password, setPassword] = useState<string>("admin");
   const [userData, setUserData] = useState<AuthMe>({});
 
-  const LogInCardComponent = (
-      <Card>
-        <CardHeader>
-          <CardTitle>Login</CardTitle>
-          <CardDescription>Só clicar ai por enqnt</CardDescription>
-        </CardHeader>
-        <CardContent className={`flex gap-3`}>
-          <Input />
-
-          <Input />
-          
-          {/* <Link href="/carrinho"> */}
-            <Button onClick={()=>{handleSignIn()}}>Entrar</Button>
-          {/* </Link> */}
-
-        </CardContent>
-      </Card>
-  );
-
-  const LoggedInCardComponent = (
-    <Card>
-      <CardContent className={`flex gap-3`}>
-        <p>{`${JSON.stringify(userData.name)}`}</p>
-        <p>{`${JSON.stringify(userData.email)}`}</p>
-
-      </CardContent>
-    </Card>    
-  )
-
-  const LogInComponent = !session?.user? LogInCardComponent : LoggedInCardComponent;
-
   useEffect(() => {
     if (session && session.user){
       const getInfo = async () => {
@@ -143,14 +113,100 @@ export default function Home() {
     }
   }, [session])
 
+  const [loadingLogin, setLoadingLogin] = useState<boolean>(false);
+  const [messageLogin, setMessageLogin] = useState<string>();
 
   const handleSignIn = async () => {
+    setLoadingLogin(true);
     const result = await signIn('credentials', {
       redirect: false,
       email,
       password,
     });
+
+    if(result?.ok){
+      setMessageLogin("authorized");
+    }
+    else{
+      if(result?.error){
+        setMessageLogin(result.error);
+      }
+    }
+
+    setLoadingLogin(false);
+
   };
+
+  const handleSignOut = async () => {
+    if(!(session == null)){
+      signOut();
+    }
+  }
+
+  const LogInCardComponent = (
+        <Card>
+          {
+            loadingLogin
+            ?
+            <div className={`w-full h-[150px] flex justify-center items-center`}>    
+                <CgSpinner size={30} className={`animate-spin`} />     
+            </div>
+            :
+            <>
+            <CardHeader>
+                <CardTitle>Login</CardTitle>
+                <CardDescription>
+                  {
+                    !messageLogin
+                      ?
+                      `logai man`
+                      :
+                      messageLogin=="authorized"
+                        ?
+                        `Login realizado com sucesso`
+                        :
+                        `Erro: ${messageLogin}--------------------------------???`
+                  }
+                </CardDescription>
+            </CardHeader>
+            <CardContent className={`flex gap-3`}>
+                <Input />
+                <Input />
+                {/* <Link href="/carrinho"> */}
+                  <Button onClick={()=>{handleSignIn()}}>Entrar</Button>
+                {/* </Link> */}
+            </CardContent>
+            </>
+          }
+        </Card>
+    );
+
+  const LoggedInCardComponent = (
+    <Card>
+      <CardContent className={`flex gap-3`}>
+        <p>{`${
+            JSON.stringify(userData.name)
+              ?
+              JSON.stringify(userData.name)
+              :
+              `Carregando...`
+        }`}</p>
+
+        <p>{`${
+          JSON.stringify(userData.email)
+            ?
+            JSON.stringify(userData.email)
+            :
+            ``
+        }`}</p>
+
+      </CardContent>
+    </Card>    
+  )
+
+
+  const LogInComponent = session?(session.user?LoggedInCardComponent:LogInCardComponent):LogInCardComponent;
+
 
   return (
     <main className="min-h-screen w-full hide-scrollbar">
@@ -159,13 +215,13 @@ export default function Home() {
         <div className={`w-full flex fixed p-2 gap-1`}>
 
 
-          <Dialog>
+          <Dialog onOpenChange={()=>{setMessageLogin("")}} >
             <DialogTrigger className={`w-12 p-1 flex justify-center items-center \ bg-background rounded-full border`}>
               <FaUser size={16} className={``} />
             </DialogTrigger>
             <DialogContent className={`p-0 bg-transparent`}>
 
-              {LogInComponent}
+              {LogInComponent}   
 
             </DialogContent>
           </Dialog>
@@ -238,7 +294,7 @@ export default function Home() {
 
                         <div className={`p-4 w-full flex justify-center items-center`}>
 
-                        <Dialog>
+                        <Dialog onOpenChange={()=>{setMessageLogin("")}}>
                           <DialogTrigger>
                             <IoIosLogIn size={50} className={`text-slate-900`} />
                           </DialogTrigger>
@@ -283,7 +339,7 @@ export default function Home() {
         <div className={`w-full bg-slate-100 h-[120vh] flex justify-center items-center`}>
           
 
-          <Button onClick={()=>{signOut()}}>
+          <Button onClick={()=>{handleSignOut()}}>
             DESLOGAR
           </Button>
 
