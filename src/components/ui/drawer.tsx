@@ -1,5 +1,8 @@
 "use client"
 
+
+// Atenção: Levemente alterado em posicionamento para o uso como carrinho 
+
 import * as React from "react"
 import { Drawer as DrawerPrimitive } from "vaul"
 

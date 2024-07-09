@@ -1,29 +1,12 @@
-'use client'
+'use client' // Componente Cliente -> Manipulação de variáveis de estado
 
 import { useState, useEffect } from 'react'; 
 
+// Componentes 
 import Carrinho from './carrinho/page';
 
-import Link from 'next/link';
-
-import { FaRProject, FaShoppingCart, FaUser } from "react-icons/fa";
-import { CgSpinner } from "react-icons/cg";
-
-
-import { BiShoppingBag } from "react-icons/bi";
-import { IoIosLogIn } from "react-icons/io";
-
-
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarSeparator,
-  MenubarShortcut,
-  MenubarTrigger,
-} from "@/components/ui/menubar"
-
+// Componentes Externos
+// shadcnui: https://ui.shadcn.com/docs
 import { Button } from "@/components/ui/button"
 
 import {
@@ -57,14 +40,30 @@ import {
 
 import { Input } from '@/components/ui/input';
 
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarSeparator,
+  MenubarShortcut,
+  MenubarTrigger,
+} from "@/components/ui/menubar"
+
+// Session Authorization (NextAuth + Axios)
 import { signIn, signOut, useSession } from "next-auth/react";
-
-import { fetchMe } from '@/lib/api';
-
-import axios from "@/lib/axios";
 import useAxiosAuth from '@/lib/hooks/useAxiosAuth';
 
+// Routing
+import Link from 'next/link';
 
+// React Icons
+import { FaRProject, FaShoppingCart, FaUser } from "react-icons/fa";
+import { CgSpinner } from "react-icons/cg";
+import { BiShoppingBag } from "react-icons/bi";
+import { IoIosLogIn } from "react-icons/io";
+
+// ---
 interface AuthMe {
   sub?: string;
   id?: string;
@@ -85,23 +84,15 @@ interface AuthMe {
 }
 
 export default function Home() {
+  // Auth Session
+
   let { data: session } = useSession();
-
-  const [objTest, setObjTest] = useState<object>({});
-
-  console.log(session);
-
   const axiosAuth = useAxiosAuth();
-
-  const handleFunc = async () => {
-      const res = await axiosAuth.get("/api/auth/me");
-      setObjTest(res);
-  }
-
-  const [email, setEmail] = useState<string>("admin@gmail.com");
-  const [password, setPassword] = useState<string>("admin");
   const [userData, setUserData] = useState<AuthMe>({});
 
+
+    // Sempre que a sessão for atualizada (incluindo em primeiro carregamento),
+    // O programa dá fetch nos dados do usuário e mantém na variável de estado UserData
   useEffect(() => {
     if (session && session.user){
       const getInfo = async () => {
@@ -116,6 +107,7 @@ export default function Home() {
   const [loadingLogin, setLoadingLogin] = useState<boolean>(false);
   const [messageLogin, setMessageLogin] = useState<string>();
 
+    // Função de Login
   const handleSignIn = async () => {
     setLoadingLogin(true);
     const result = await signIn('credentials', {
@@ -136,13 +128,31 @@ export default function Home() {
     setLoadingLogin(false);
 
   };
-
+    // Função de logout (só caso não tenha sessão ativa)
   const handleSignOut = async () => {
     if(!(session == null)){
       signOut();
     }
   }
 
+  console.log(session);
+
+  //
+  const [objTest, setObjTest] = useState<object>({}); // Para teste de visualização abaixo
+  
+    // Função pra visualizar os dados fetchados do usuário (Puramente demonstrativo, o userData atualiza sozinho com o useEffect)
+  const handleFunc = () => {
+      setObjTest(userData);
+      console.log(userData);
+  }
+
+  // Utils aba de Login
+
+  const [email, setEmail] = useState<string>("admin@gmail.com");
+  const [password, setPassword] = useState<string>("admin");
+
+
+    // Componentes internos modularizados para permitir eles darem pop up de diversos locais
   const LogInCardComponent = (
         <Card>
           {
@@ -155,23 +165,23 @@ export default function Home() {
             <>
             <CardHeader>
                 <CardTitle>Login</CardTitle>
-                <CardDescription>
+                <CardDescription className={`${!messageLogin?(messageLogin=="authorized"?"text-green-700":""):"text-red-800"}`}>
                   {
                     !messageLogin
                       ?
-                      `logai man`
+                      `Insira abaixo seu e-mail e senha`
                       :
                       messageLogin=="authorized"
                         ?
                         `Login realizado com sucesso`
                         :
-                        `Erro: ${messageLogin}--------------------------------???`
+                        `Erro: ${messageLogin}. Tente novamente.`
                   }
                 </CardDescription>
             </CardHeader>
             <CardContent className={`flex gap-3`}>
-                <Input />
-                <Input />
+                <Input placeholder={`E-mail`} />
+                <Input placeholder={`Senha`} />
                 {/* <Link href="/carrinho"> */}
                   <Button onClick={()=>{handleSignIn()}}>Entrar</Button>
                 {/* </Link> */}
@@ -181,6 +191,7 @@ export default function Home() {
         </Card>
     );
 
+    // Componentes internos modularizados para permitir eles darem pop up de diversos locais
   const LoggedInCardComponent = (
     <Card>
       <CardContent className={`flex gap-3`}>
@@ -200,20 +211,27 @@ export default function Home() {
             ``
         }`}</p>
 
+        <Button onClick={()=>{handleSignOut()}}>
+          DESLOGAR
+        </Button>
+
       </CardContent>
     </Card>    
   )
 
-
+        // Logica de definição de qual componente interno vai ser exibido na aba de login
+        // Caso tenha tenha sessão e essa sessão tenha usuário, mostra info dele
+        // Caso contrário, exibe componente de login
   const LogInComponent = session?(session.user?LoggedInCardComponent:LogInCardComponent):LogInCardComponent;
 
+  //
 
+  // Retornando componente completo da página
   return (
     <main className="min-h-screen w-full hide-scrollbar">
       <div className="">
 
         <div className={`w-full flex fixed p-2 gap-1`}>
-
 
           <Dialog onOpenChange={()=>{setMessageLogin("")}} >
             <DialogTrigger className={`w-12 p-1 flex justify-center items-center \ bg-background rounded-full border`}>
@@ -337,23 +355,21 @@ export default function Home() {
         </div>
 
         <div className={`w-full bg-slate-100 h-[120vh] flex justify-center items-center`}>
+
+
+          <div>
+            <p className={`text-md p-2`}>Clique no botão para exibir dados do usuário atual ( <span className={`bg-black text-green-700 p-2`}>{`/auth/me`}</span>)</p>
+            
+            <button className={`min-w-16 bg-slate-500`} onClick={()=>{
+              console.log(handleFunc())
+            }}>
+
+              {
+                `${JSON.stringify(objTest)}`
+              }
           
-
-          <Button onClick={()=>{handleSignOut()}}>
-            DESLOGAR
-          </Button>
-
-
-
-          <button className={`min-w-16 bg-slate-500`} onClick={()=>{
-            console.log(handleFunc())
-          }}>
-
-            {
-              `${JSON.stringify(objTest)}`
-            }
-         
-          </button>
+            </button>
+          </div>
 
 
         </div>
