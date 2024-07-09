@@ -182,9 +182,7 @@ export default function Home() {
             <CardContent className={`flex gap-3`}>
                 <Input placeholder={`E-mail`} />
                 <Input placeholder={`Senha`} />
-                {/* <Link href="/carrinho"> */}
                   <Button onClick={()=>{handleSignIn()}}>Entrar</Button>
-                {/* </Link> */}
             </CardContent>
             </>
           }
