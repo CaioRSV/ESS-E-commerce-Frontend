@@ -228,7 +228,6 @@ export default function Home() {
   return (
     <main className="min-h-screen w-full hide-scrollbar">
       <div className="">
-
         <div className={`w-full flex fixed p-2 gap-1`}>
 
           <Dialog onOpenChange={()=>{setMessageLogin("")}} >
@@ -356,7 +355,7 @@ export default function Home() {
 
 
           <div>
-            <p className={`text-md p-2`}>Clique no botão para exibir dados do usuário atual ( <span className={`bg-black text-green-700 p-2`}>{`/auth/me`}</span>)</p>
+            <p className={`text-md p-2 font-abeezee`}>Clique no botão para exibir dados do usuário atual ( <span className={`bg-black text-green-700 p-2`}>{`/auth/me`}</span>)</p>
             
             <button className={`min-w-16 bg-slate-500`} onClick={()=>{
               console.log(handleFunc())
