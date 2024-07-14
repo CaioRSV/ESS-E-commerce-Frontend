@@ -3,7 +3,7 @@
 // Fetch User Info
 
 export async function fetchMe(accessToken:string, callback:Function ) {
-    return await fetch(`http://localhost:3333/api/auth/me`, {
+    return await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/auth/me`, {
         method: "GET",
         headers: {
               "Content-Type": "application/json",

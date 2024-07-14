@@ -1,6 +1,7 @@
 'use client' // Componente Cliente -> Manipulação de variáveis de estado
 
 import { useState, useEffect } from 'react'; 
+import Link from 'next/link';
 
 export default function Carrinho() {
   return (
@@ -9,7 +10,9 @@ export default function Carrinho() {
         
         <div className={`rounded-md min-h-full w-full bg-green-800 border-2`}>
           <div className={`w-full bg-green-100`}>
-            {`<-`}
+            <Link href="/">
+              {`<-`}
+            </Link>
           </div>
             
           <div className={`md:flex w-full h-full`}>

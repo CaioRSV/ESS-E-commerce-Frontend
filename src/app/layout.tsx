@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
+
 import Navbar from "@/components/navbar";
+import OfertasTopBar from "@/components/ofertasTopBar";
 
 import Provider from "./Provider";
 
@@ -23,10 +25,8 @@ export default function RootLayout({
       
       <Provider>
         <body className={inter.className}>
-          <div className={`w-full bg-black text-white text-[13px] flex justify-center items-center p-1`}>
-            Aproveite as nossas promoções! Todos os produtos até 50% OFF
-          </div>
-
+          
+          <OfertasTopBar/>
           <Navbar/>
 
           {children}
