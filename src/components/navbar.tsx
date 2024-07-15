@@ -50,6 +50,9 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
+//
+import OrderList from './orderList';
+
 
 const Navbar = () => {
 
@@ -207,6 +210,8 @@ const Navbar = () => {
           DESLOGAR
         </Button>
 
+        <OrderList/>
+
       </CardContent>
     </Card>    
   )
@@ -286,7 +291,7 @@ const Navbar = () => {
                             cart?.products && cart.products.length>0
                               ?
                                 cart.products.map(item => (
-                                  <div className={`m-2 w-full h-[80px] rounded-md border border-slate-500 flex`} key={`${item.cartId}/${item.productId}`} >
+                                  <div className={`m-2 w-full h-[80px] rounded-md border border-slate-300 flex`} key={`${item.cartId}/${item.productId}`} >
                                     <img className={`m-2 bg-projGray border border-slate-300 rounded-md h-[80%]`} src="https://images.vexels.com/content/156298/preview/rubber-shoes-silhouette-9c69af.png"></img>
                                     <div className={`h-full p-2 flex-column justify-center`}>
                                       <p className={`font-abeezee`}>{`Id Prod: ${item.productId}`}</p>
