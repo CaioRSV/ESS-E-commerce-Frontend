@@ -95,8 +95,8 @@ const Navbar = () => {
   const [loadingLogin, setLoadingLogin] = useState<boolean>(false);
   const [messageLogin, setMessageLogin] = useState<string>();
 
-  const [email, setEmail] = useState<string>("admin@gmail.com");
-  const [password, setPassword] = useState<string>("admin");
+  const [email, setEmail] = useState<string>("crsv@cin.ufpe.br");
+  const [password, setPassword] = useState<string>("!CaioRSV2700");
 
   useEffect(() => {
     if (session && session.user){
@@ -218,29 +218,29 @@ const Navbar = () => {
 
   return (
     <div className={`w-full h-fit p-2 sticky top-0 z-50 bg-white`}>
-        <div className={`bg-white border-2 rounded-md h-12 sticky flex ml-[30px] mr-[30px] gap-3`}>
+        <div className={`bg-white rounded-md h-12 sticky flex ml-[30px] mr-[30px] gap-3`}>
             <div className={`p-4 flex justify-center items-center`}>
-              <p className={`text-abel text-[20px]`}>SAPATOS.COM</p>
+              <p className={`font-abel text-[25px]`}>SAPATOS.COM</p>
             </div>
 
             <div className={`p-4 flex justify-center items-center cursor-pointer`}>
-              <div className={`text-abeezee text-[14px]`}>CATEGORIAS</div>
+              <div className={`font-abeezee text-[14px]`}>CATEGORIAS</div>
             </div>
 
             <div className={`p-4 flex justify-center items-center cursor-pointer`}>
-              <div className={`text-abeezee text-[14px] text-projRed`}>OFERTAS</div>
+              <div className={`font-abeezee text-[14px] text-projRed`}>OFERTAS</div>
             </div>
 
             <div className={`p-4 flex justify-center items-center cursor-pointer`}>
-              <div className={`text-abeezee text-[14px]`}>MARCAS</div>
+              <div className={`font-abeezee text-[14px]`}>MARCAS</div>
             </div>
 
             <div className={`p-4 flex justify-center items-center flex-1`}>
-              <div className={`text-abeezee text-[14px] rounded-full bg-projGray flex-1 flex`}>
+              <div className={`font-abeezee text-[14px] rounded-full bg-projGray flex-1 flex`}>
                 <div className={`min-h-full min-w-[50px] flex items-center justify-center`}>
                   <FaMagnifyingGlass size={20} className={`text-black opacity-40`}/>
                 </div>
-                <Input placeholder="Pesquise" className={`text-abeezee bg-transparent border-transparent focus-visible:ring-0 focus-visible:ring-offset-0`}/>
+                <Input placeholder="Pesquise" className={`font-abeezee bg-transparent border-transparent focus-visible:ring-0 focus-visible:ring-offset-0`}/>
               </div>
             </div>
 
@@ -280,21 +280,21 @@ const Navbar = () => {
                         ?
                         <>
                           {
-                            cart?.products
+                            cart?.products && cart.products.length>0
                               ?
                                 cart.products.map(item => (
                                   <div className={`m-2 w-full h-[80px] rounded-md border border-slate-500 flex`} key={`${item.cartId}/${item.productId}`} >
                                     <img className={`m-2 bg-projGray border border-slate-300 rounded-md h-[80%]`} src="https://images.vexels.com/content/156298/preview/rubber-shoes-silhouette-9c69af.png"></img>
                                     <div className={`h-full p-2 flex-column justify-center`}>
-                                      <p className={`text-abeezee`}>{`Id Prod: ${item.productId}`}</p>
-                                      <p className={`text-abeezee`}>{`Quantidade: ${item.quantity}`}</p>
+                                      <p className={`font-abeezee`}>{`Id Prod: ${item.productId}`}</p>
+                                      <p className={`font-abeezee`}>{`Quantidade: ${item.quantity}`}</p>
                                     </div>
                                   </div>
                                   
                                 ))
                               :
-                              <div className={`flex-column`}>
-                                <p className={`text-slate-600`}>Carrinho vazio</p>
+                              <div>
+                                <p className={`text-slate-600 flex-column`}>Carrinho vazio</p>
                                 <div className={`p-4 w-full flex justify-center items-center`}>
                                   <BiShoppingBag size={26} className={`text-slate-600`} />
                                 </div>
