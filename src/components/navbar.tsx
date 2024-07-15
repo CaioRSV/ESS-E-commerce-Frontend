@@ -101,8 +101,8 @@ const Navbar = () => {
   const [loadingLogin, setLoadingLogin] = useState<boolean>(false);
   const [messageLogin, setMessageLogin] = useState<string>();
 
-  const [email, setEmail] = useState<string>("crsv@cin.ufpe.br");
-  const [password, setPassword] = useState<string>("!CaioRSV2700");
+  const [email, setEmail] = useState<string>("admin@gmail.com");
+  const [password, setPassword] = useState<string>("admin");
 
   useEffect(() => {
     if (session && session.user){
