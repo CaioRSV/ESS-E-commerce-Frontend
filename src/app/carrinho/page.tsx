@@ -3,6 +3,8 @@
 
 import { useSession } from "next-auth/react"
 
+import { axiosAuth } from "@/lib/axios";
+
 import { getServerSession } from "next-auth";
 
 
@@ -13,6 +15,41 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 import { IoMdArrowRoundForward } from "react-icons/io";
+import { TbShoppingCartQuestion } from "react-icons/tb";
+
+interface Product{
+  cartId: number
+  productId: number
+  quantity: number
+  userId: number
+}
+
+interface Cart{
+  id?: number
+  userId?: number
+  locked?: boolean
+  products: Product[]
+}
+
+interface DadosPedido{
+  subtotal: number
+  desconto: number
+  frete: number
+  total: number
+}
+
+function floatToMoney(number:number) {
+  if (typeof number !== 'number' || isNaN(number)) {
+    return 'Erro: Número inválido';
+  }
+
+  const numeroFormatado = number.toFixed(2);
+
+  const [intPart, decimalPart] = numeroFormatado.split('.');
+
+  const moneyFormat = intPart + '.' + decimalPart;
+  return moneyFormat;
+}
 
 
 export default function Carrinho() {
@@ -23,6 +60,44 @@ export default function Carrinho() {
     redirect("/");
   }
   //
+
+  const [cart, setCart] = useState<Cart>();
+
+  const fetchCart = async () => {
+    const cart = await axiosAuth.get("/api/cart")
+    setCart(cart.data);
+    console.log(cart.data);
+  }
+
+  useEffect(() => {
+    if (session && session.user){
+      fetchCart();
+    }
+  }, [session])
+
+  //
+
+  const [dadosPedido, setDadosPedido] = useState<DadosPedido>({
+    subtotal: 1,
+    desconto: 2,
+    frete: 3,
+    total: 4
+  })
+
+  const [tempoEntrega, setTempoEntrega] = useState<string>();
+
+  const changeQuantity = async (productId: number, quantity:number, addNumber: number) => {
+    const res = await axiosAuth.put("/api/cart/update", {
+      cartId: cart?.id,
+      productId: productId,
+      quantity: quantity+addNumber
+    });
+
+    
+    if(res.status==200){
+      fetchCart();
+    }
+  }
   
   return (
     <div className={`w-screen h-screen`}>
@@ -46,63 +121,45 @@ export default function Carrinho() {
               <div className={`w-full h-full mr-4`}>
                 <div className={`w-full min-h-32 bg-white rounded-xl border border-projGray p-4`}>
                   
-                  <div className={`w-full h-[145px] p-2 flex`}>
-                    <img className={`rounded-md h-full bg-projGray`} src="https://images.vexels.com/content/156298/preview/rubber-shoes-silhouette-9c69af.png" />
-                    <div className={`ml-3 h-full w-full relative overflow-hidden`}>
-                      <p className={`font-abeezee text-[18px] italic`}>{`Nome`}</p>
-                      <p className={`font-abeezee text-[12px]`}>{`Tamanho:`} <span className={`opacity-75`}>{`99`}</span> </p>
-                      <p className={`font-abeezee text-[12px]`}>{`Cor:`} <span className={`opacity-75`}>{`seila`}</span> </p>
-
-                      <div className={`w-full h-[63px] flex items-end`}>
-                        <p className={`font-abeezee text-2xl italic flex-1`}>{`R$ 98,98`}</p>
-
-                        <div className={`flex bg-projGray rounded-full w-40 pt-1 pb-1 justify-center items-center`}>
-                          <p className={`cursor-pointer font-abeezee text-3xl flex-1 flex justify-center items-center rounded-full`}>-</p>
-                          <p className={`font-abeezee text-md flex-1 flex justify-center items-center rounded-full italic`}>1</p>
-                          <p className={`cursor-pointer font-abeezee text-3xl flex-1 flex justify-center items-center rounded-full`}>+</p>
-                        </div>
-
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className={`w-full p-2`}>
-                    <div className={`w-full h-[1px] bg-projGray`}></div>
-                  </div>
-
-
-                  {/*  */}
                   {
-                    [1,2,3].map(item => (
-                      <>
-                                          <div className={`w-full h-[145px] p-2 flex`}>
-                    <img className={`rounded-md h-full bg-projGray`} src="https://images.vexels.com/content/156298/preview/rubber-shoes-silhouette-9c69af.png" />
-                    <div className={`ml-3 h-full w-full relative`}>
-                      <p className={`font-abeezee text-[18px] italic`}>{`Nome`}</p>
-                      <p className={`font-abeezee text-[12px]`}>{`Tamanho:`} <span className={`opacity-75`}>{`99`}</span> </p>
-                      <p className={`font-abeezee text-[12px]`}>{`Cor:`} <span className={`opacity-75`}>{`seila`}</span> </p>
-
-                      <div className={`w-full h-[63px] flex items-end`}>
-                        <p className={`font-abeezee text-2xl italic flex-1`}>{`R$ 98,98`}</p>
-
-                        <div className={`flex bg-projGray rounded-full w-40 pt-1 pb-1 justify-center items-center`}>
-                          <p className={`cursor-pointer font-abeezee text-3xl flex-1 flex justify-center items-center rounded-full`}>-</p>
-                          <p className={`font-abeezee text-md flex-1 flex justify-center items-center rounded-full italic`}>1</p>
-                          <p className={`cursor-pointer font-abeezee text-3xl flex-1 flex justify-center items-center rounded-full`}>+</p>
+                    cart && cart.products && cart.products.length>0
+                      ?
+                      cart?.products.map(item => (
+                        <div key={`${item.cartId}/${item.productId}`}>
+                        <div className={`w-full h-[145px] p-2 flex`}>
+                          <img className={`rounded-md h-full bg-projGray`} src="https://images.vexels.com/content/156298/preview/rubber-shoes-silhouette-9c69af.png" />
+                          <div className={`ml-3 h-full w-full relative overflow-hidden`}>
+                            <p className={`font-abeezee text-[18px] italic`}>{`Produto de ID: ${item.productId}`}</p>
+                            <p className={`font-abeezee text-[12px]`}>{`Tamanho:`} <span className={`opacity-75`}>{`99`}</span> </p>
+                            <p className={`font-abeezee text-[12px]`}>{`Cor:`} <span className={`opacity-75`}>{`seila`}</span> </p>
+  
+                            <div className={`w-full h-[63px] flex items-end`}>
+                              <p className={`font-abeezee text-2xl italic flex-1`}>{`R$ 98,98`}</p>
+  
+                              <div className={`flex bg-projGray rounded-full w-40 pt-1 pb-1 justify-center items-center`}>
+                                <p className={`cursor-pointer font-abeezee text-3xl flex-1 flex justify-center items-center rounded-full`} onClick={()=>{changeQuantity(item.productId, item.quantity, -1)}}>-</p>
+                                <p className={`font-abeezee text-md flex-1 flex justify-center items-center rounded-full italic`}>{`${item.quantity}`}</p>
+                                <p className={`cursor-pointer font-abeezee text-3xl flex-1 flex justify-center items-center rounded-full`} onClick={()=>{changeQuantity(item.productId, item.quantity, 1)}}>+</p>
+                              </div>
+  
+                            </div>
+                          </div>
                         </div>
-
+  
+                        <div className={`w-full p-2`}>
+                          <div className={`w-full h-[1px] bg-projGray`}></div>
+                        </div>
+                        </div>                      
+                      ))
+                      :
+                      <div className={`w-full h-48 flex justify-center items-center opacity-50`}>
+                        <div className={`flex-column`}>
+                          <TbShoppingCartQuestion size={21} className={`w-full flex justify-center items-center`} />
+                          <p>O carrinho ainda está vazio</p>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-
-                  <div className={`w-full p-2`}>
-                    <div className={`w-full h-[1px] bg-projGray`}></div>
-                  </div>
-                      </>
-                    ))
                   }
 
-                  {/*  */}
 
                 </div>
               </div>
@@ -114,19 +171,19 @@ export default function Carrinho() {
                   <div className={`w-full flex relative pt-2`}>
                     <p className={`opacity-80`}>{`Subtotal`}</p>
 
-                    <p className={`absolute right-0`}>{`R$ 0,00`}</p>
+                    <p className={`absolute right-0`}>{`R$ ${floatToMoney(dadosPedido.subtotal)}`}</p>
                   </div>
 
                   <div className={`w-full flex relative pt-2`}>
                     <p className={`opacity-80`}>{`Desconto (20%)`}</p>
 
-                    <p className={`absolute right-0 text-projRed`}>{`-R$ 0,00`}</p>
+                    <p className={`absolute right-0 text-projRed`}>{`-R$ ${floatToMoney(dadosPedido.desconto)}`}</p>
                   </div>
 
                   <div className={`w-full flex relative pt-2`}>
                     <p className={`opacity-80`}>{`Frete`}</p>
 
-                    <p className={`absolute right-0`}>{`R$ 0,00`}</p>
+                    <p className={`absolute right-0`}>{`R$ ${floatToMoney(dadosPedido.frete)}`}</p>
                   </div>
 
                   <div className={`w-full h-[1px] bg-projGray mt-3 mb-3`}/>
@@ -134,14 +191,15 @@ export default function Carrinho() {
                   <div className={`w-full flex relative`}>
                     <p className={`text-lg font-[500]`}>{`Total`}</p>
 
-                    <p className={`absolute right-0 text-lg font-[600]`}>{`R$ 0,00`}</p>
+                    <p className={`absolute right-0 text-lg font-[600]`}>{`R$ ${floatToMoney(dadosPedido.total)}`}</p>
                   </div>
 
-                  <div className={`w-full pt-2`}>
-                    <p className={`text-md font-[450]`}>{`Tempo de entrega`}</p>
+                  <div className={`w-full pt-2 relative`}>
+                    <p className={`text-md font-[450] w-full relative`}>{`Tempo de entrega`} <span className={`absolute right-0`}>{`${tempoEntrega?tempoEntrega:""}`}</span></p>
                     <div className={`w-full flex pt-2 gap-2`}>
                       <Input placeholder={`Digite seu CEP`} className={`bg-projGray rounded-full w-full font-abeezee`}/>
-                      <div className={`font-abeezee italic text-sm h-[40px] cursor-pointer rounded-full bg-black text-white flex justify-center items-center pl-6 pr-6`} onClick={()=>{}}>
+                      <div className={`font-abeezee italic text-sm h-[40px] cursor-pointer rounded-full bg-black text-white flex justify-center items-center pl-6 pr-6`} 
+                      onClick={()=>{setTempoEntrega("? dias")}}>
                         Calcular
                       </div>
                     </div>
