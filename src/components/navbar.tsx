@@ -18,6 +18,7 @@ import { FaMagnifyingGlass } from "react-icons/fa6";
 import { BiShoppingBag } from "react-icons/bi";
 import { IoIosLogIn } from "react-icons/io";
 import { CgSpinner } from "react-icons/cg";
+import { CgSpinnerTwoAlt } from "react-icons/cg";
 
 
 import { Button } from './ui/button';
@@ -76,13 +77,15 @@ const Navbar = () => {
   }
 
   const [cart, setCart] = useState<Cart>();
+  const [cartLoading, setCartLoading] = useState<boolean>(false);
 
   const getCarrinho = () => {
     if (session && session.user){
       const getInfo = async () => {
+        setCartLoading(true);
         const info = await axiosAuth.get("/api/cart")
         setCart(info.data);
-        console.log(info.data);
+        setCartLoading(false);
       }
       
       getInfo();
@@ -303,26 +306,30 @@ const Navbar = () => {
                         </>
                         :
 
-                        <div className={`flex-column`}>
+                        cartLoading
+                          ?
+                          <CgSpinnerTwoAlt size={20} className={`animate-spin opacity-50`} />
+                          :
+                          <div className={`flex-column`}>
 
-                          <p className={`text-slate-600 w-full flex justify-center items-center`}>Você está desconectado</p>
+                            <p className={`text-slate-600 w-full flex justify-center items-center`}>Você está desconectado</p>
 
-                          <div className={`p-4 w-full flex justify-center items-center`}>
+                            <div className={`p-4 w-full flex justify-center items-center`}>
 
-                          <Dialog onOpenChange={()=>{setMessageLogin("")}}>
-                            <DialogTrigger>
-                              <IoIosLogIn size={50} className={`text-slate-900`} />
-                            </DialogTrigger>
-                            <DialogContent className={`p-0 bg-transparent`}>
+                            <Dialog onOpenChange={()=>{setMessageLogin("")}}>
+                              <DialogTrigger>
+                                <IoIosLogIn size={50} className={`text-slate-900`} />
+                              </DialogTrigger>
+                              <DialogContent className={`p-0 bg-transparent`}>
 
-                              {LogInComponent}
+                                {LogInComponent}
 
-                            </DialogContent>
-                          </Dialog>
+                              </DialogContent>
+                            </Dialog>
 
-                          </div>
+                            </div>
 
-                          <p className={`text-slate-600`}>Clique no ícone acima para entrar</p>
+                            <p className={`text-slate-600`}>Clique no ícone acima para entrar</p>
 
                         </div>
 
