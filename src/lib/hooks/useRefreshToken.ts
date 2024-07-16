@@ -1,28 +1,29 @@
 "use client";
 
-import { useSession } from "next-auth/react"
+import { useSession, signOut } from "next-auth/react"
 import axios from "../axios";
 
 export const useRefreshToken = () => {
     const {data:session} = useSession();
-
-
-    // Passando refreshToken pelo header oara verificação
+    // Passando refreshToken pelo header para verificação
     
     const refreshToken = async () => {
-        const res = await axios.get("/api/auth/refresh",
-            {
-                headers: {
-                    Authorization: `Bearer ${session?.user.refreshToken}`
+        try{
+            const res = await axios.get("/api/auth/refresh",
+                {
+                    headers: {
+                        Authorization: `Bearer ${session?.user.refreshToken}`
+                    }
                 }
+            )
+        
+            if (session) {
+                
+                session.user.accessToken = res.data.accessToken;
             }
-        )
-    
-        if (session) {
-            
-            session.user.accessToken = res.data.accessToken;
+        } catch(error){
+            signOut();
         }
-
     }
 
     return refreshToken;
