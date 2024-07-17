@@ -40,19 +40,20 @@ export default function ProductPage() {
     const newData = { ...data, price: priceAsFloat, stock: stockAsFloat};
   
     try {
-      await axios.post("/api/Product", newData);
-      console.log("Informações enviadas com sucesso!");
+      //await axiosAuth.refreshToken();
+      await axiosAuth.post("/api/product", newData);
+      console.log("Informações enviadas com sucesso com token de atualização!");
       alert("Item cadastrado com sucesso!");
       window.location.reload();
+    } catch (refreshError) {
+      console.error("Erro ao enviar informações para o backend com token de atualização:", refreshError);
+      alert("Sessão expirada. Por favor, faça login novamente.");
+      signOut();
+    }};
 
-    } catch (error) {
-      console.error("Erro ao enviar informações para o backend:", error);
-    }
-  };
- 
   useEffect(() => {
     const getInfo = async () => {
-      const info = await axiosAuth.get("/api/Product");
+      const info = await axiosAuth.get("/api/product");
       console.log(info.data);
       setProductData(info.data);
     };

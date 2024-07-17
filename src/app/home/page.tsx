@@ -22,7 +22,7 @@ export default function HomePage() {
 
   useEffect(() => {
     const getInfo = async () => {
-      const info = await axiosAuth.get("/api/Product");
+      const info = await axiosAuth.get("/api/product");
       console.log(info.data);
       setProductData(info.data);
     };
@@ -63,27 +63,6 @@ export default function HomePage() {
 
   return (
     <main className="flex flex-col items-center p-8">
-      <header className="w-full max-w-7xl mb-8">
-        <nav className="flex justify-between items-center py-4">
-          <h1 className="text-3xl font-bold">SAPATOS.COM</h1>
-          <div>
-            <a href="#" className="mr-4">
-              CADASTRO
-            </a>
-            <a href="#">LOGIN</a>
-          </div>
-        </nav>
-        <div className="flex justify-between items-center">
-          <input
-            type="text"
-            placeholder="O que você procura?"
-            className="border rounded p-2 w-1/2"
-          />
-          <button className="ml-4 bg-black text-white px-4 py-2 rounded">
-            Pesquisar
-          </button>
-        </div>
-      </header>
 
       <section className="w-full max-w-7xl mb-12">
         <h2 className="text-2xl font-bold mb-4">Queima de Estoque</h2>
