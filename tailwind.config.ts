@@ -18,7 +18,17 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        // Custom Fonts
+        abel: ['Abel', 'ui-monospace'],
+        abeezee: ['ABeeZee', 'ui-monospace']
+        //
+      },
       colors: {
+        // Custom Colors
+        projGray: "hsl(0, 0%, 94%)",
+        projRed: "hsl(0, 100%, 60%)",
+        //
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
