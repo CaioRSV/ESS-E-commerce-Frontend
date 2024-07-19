@@ -1,12 +1,14 @@
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "./ui/card";
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
+'use client'; // Ensure this is a client-side component
+
 import React, { useEffect, useState } from 'react';
-import { signIn } from "next-auth/react";
-import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
-import { getErrorMessage } from "@/app/utils/get-error-message";
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { Input } from './ui/input';
+import { Button } from './ui/button';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from './ui/card';
+import { signIn } from 'next-auth/react';
+import useAxiosAuth from '@/lib/hooks/useAxiosAuth';
+import { getErrorMessage } from '@/app/utils/get-error-message';
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -29,10 +31,9 @@ const validationSchema = Yup.object({
     .trim(),
 });
 
-type TRegisterComponentProps = {}
-
-const RegisterComponent = ({ }: TRegisterComponentProps) => {
+const RegisterComponent = () => {
   const [messageErrorRegister, setMessageErrorRegister] = useState<string | null>(null);
+  const [messageErrorEmail, setMessageErrorEmail] = useState<string | null>(null);
   const [inRequest, setInRequest] = useState<boolean>(false);
 
   useEffect(() => {
@@ -43,12 +44,22 @@ const RegisterComponent = ({ }: TRegisterComponentProps) => {
 
   const authAxios = useAxiosAuth();
 
-  async function registerUser(data: {
-    email: string;
-    name: string;
-    password: string;
-  }) {
-    return await authAxios.post('/api/auth/register', data)
+  async function registerUser(data: { email: string; name: string; password: string }) {
+    return await authAxios.post('/api/auth/register', data);
+  }
+
+  async function checkEmailAvailability(email: string) {
+    try {
+      const response = await authAxios.post('/api/auth/email/availability', { email });
+      if (!response.data.available) {
+        setMessageErrorEmail('O e-mail já está em uso.');
+      } else {
+        setMessageErrorEmail(null);
+      }
+    } catch (error) {
+      console.error('Erro ao verificar disponibilidade do e-mail:', error);
+      setMessageErrorEmail(getErrorMessage(error, 'Erro ao verificar disponibilidade do e-mail.'));
+    }
   }
 
   const formik = useFormik({
@@ -63,11 +74,7 @@ const RegisterComponent = ({ }: TRegisterComponentProps) => {
     },
   });
 
-  const handleRegister = async (values: {
-    email: string;
-    name: string;
-    password: string;
-  }) => {
+  const handleRegister = async (values: { email: string; name: string; password: string }) => {
     try {
       setInRequest(true);
       await registerUser(values);
@@ -90,11 +97,7 @@ const RegisterComponent = ({ }: TRegisterComponentProps) => {
         <CardTitle>Registro</CardTitle>
       </CardHeader>
       <CardContent className={`flex gap-3 flex-col`}>
-        {messageErrorRegister != null && (
-          <>
-            <CardDescription>{messageErrorRegister}</CardDescription>
-          </>
-        )}
+        {messageErrorRegister && <CardDescription>{messageErrorRegister}</CardDescription>}
         <form onSubmit={formik.handleSubmit}>
           <div className="mb-4">
             <Input
@@ -102,11 +105,17 @@ const RegisterComponent = ({ }: TRegisterComponentProps) => {
               placeholder="E-mail"
               value={formik.values.email}
               onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={formik.touched.email && formik.errors.email ? '' : ''}
+              onBlur={(e) => {
+                formik.handleBlur(e);
+                checkEmailAvailability(e.target.value);
+              }}
+              className={formik.touched.email && (formik.errors.email || messageErrorEmail) ? 'error' : ''}
             />
             {formik.touched.email && formik.errors.email && (
               <div className="text-projRed">{formik.errors.email}</div>
+            )}
+            {messageErrorEmail && (
+              <div className="text-projRed">{messageErrorEmail}</div>
             )}
           </div>
 
@@ -117,7 +126,7 @@ const RegisterComponent = ({ }: TRegisterComponentProps) => {
               value={formik.values.name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={formik.touched.name && formik.errors.name ? '' : ''}
+              className={formik.touched.name && formik.errors.name ? 'error' : ''}
             />
             {formik.touched.name && formik.errors.name && (
               <div className="text-projRed">{formik.errors.name}</div>
@@ -132,13 +141,15 @@ const RegisterComponent = ({ }: TRegisterComponentProps) => {
               value={formik.values.password}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              className={formik.touched.password && formik.errors.password ? '' : ''}
+              className={formik.touched.password && formik.errors.password ? 'error' : ''}
             />
             {formik.touched.password && formik.errors.password && (
               <div className="text-projRed">{formik.errors.password}</div>
             )}
           </div>
-          <Button type="submit" disabled={inRequest || !formik.isValid || !formik.dirty}>Registrar-se</Button>
+          <Button type="submit" disabled={inRequest || !formik.isValid || !formik.dirty || messageErrorEmail != null}>
+            Registrar-se
+          </Button>
         </form>
       </CardContent>
     </Card>
