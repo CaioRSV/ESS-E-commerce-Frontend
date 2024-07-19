@@ -53,6 +53,8 @@ import {
 //
 import OrderList from './orderList';
 
+import { useProductDataContext } from '@/app/contexts/ProductData';
+
 
 const Navbar = () => {
 
@@ -87,6 +89,17 @@ const Navbar = () => {
       const getInfo = async () => {
         setCartLoading(true);
         const info = await axiosAuth.get("/api/cart")
+
+
+        // Guardando no contexto de ProductData informações sobre os produtos presentes no carrinho
+        for(const item of info.data.products){
+          if(!productData.some(itemExistente => itemExistente.id === item.productId)){
+            const productInfo = await axiosAuth.get("/api/Product/"+item.productId);
+            setProductData((prev) => [...prev, productInfo.data])
+          }
+        }
+
+        //
         setCart(info.data);
         setCartLoading(false);
       }
@@ -221,8 +234,9 @@ const Navbar = () => {
         // Caso contrário, exibe componente de login
   const LogInComponent = session?(session.user?LoggedInCardComponent:LogInCardComponent):LogInCardComponent;
 
-
   //
+
+  const {productData, setProductData} = useProductDataContext();
 
   return (
     <div className={`w-full h-fit p-2 sticky top-0 z-50 bg-white`}>
@@ -290,16 +304,23 @@ const Navbar = () => {
                           {
                             cart?.products && cart.products.length>0
                               ?
-                                cart.products.map(item => (
-                                  <div className={`m-2 w-full h-[80px] rounded-md border border-slate-300 flex`} key={`${item.cartId}/${item.productId}`} >
-                                    <img className={`m-2 bg-projGray border border-slate-300 rounded-md h-[80%]`} src="https://images.vexels.com/content/156298/preview/rubber-shoes-silhouette-9c69af.png"></img>
-                                    <div className={`h-full p-2 flex-column justify-center`}>
-                                      <p className={`font-abeezee`}>{`Id Prod: ${item.productId}`}</p>
-                                      <p className={`font-abeezee`}>{`Quantidade: ${item.quantity}`}</p>
-                                    </div>
-                                  </div>
-                                  
-                                ))
+                                <div className={`ml-2 mr-5`}>
+                                  {
+                                    cart.products.map(item => (
+                                      <div className={`m-2 w-full h-[80px] rounded-md border border-slate-300 flex`} key={`${item.cartId}/${item.productId}`} >
+                                        <img className={`m-2 bg-projGray border border-slate-300 rounded-md h-[62px] w-[62px]`} src={`${
+                                          productData.find(product => product.id === item.productId)
+                                          ?.productMedia?.slice(-1)[0]?.media?.url ?? 'no_image'
+                                        }`}></img>
+                                        <div className={`h-full p-2 flex-column justify-center`}>
+                                          <p className={`font-abeezee`}>{` ${productData.find(product => product.id === item.productId)?.name}`}</p>
+                                          <p className={`font-abeezee`}>{`${item.quantity} unidades`}</p>
+                                        </div>
+                                      </div>
+                                      
+                                    ))
+                                  }
+                                </div>
                               :
                               <div>
                                 <p className={`text-slate-600 flex-column`}>Carrinho vazio</p>
