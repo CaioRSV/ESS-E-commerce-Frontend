@@ -1,4 +1,3 @@
-import { registerUser } from "@/lib/api";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "./ui/card";
@@ -6,6 +5,7 @@ import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { signIn } from "next-auth/react";
+import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -30,15 +30,25 @@ const validationSchema = Yup.object({
 
 type TRegisterComponentProps = {}
 
-const RegisterComponent = ({}: TRegisterComponentProps) => {
+const RegisterComponent = ({ }: TRegisterComponentProps) => {
   const [messageErrorRegister, setMessageErrorRegister] = useState<string | null>(null);
   const [inRequest, setInRequest] = useState<boolean>(false);
-  
+
   useEffect(() => {
     return () => {
       setMessageErrorRegister(null);
     }
   }, []);
+
+  const authAxios = useAxiosAuth();
+
+  async function registerUser(data: {
+    email: string;
+    name: string;
+    password: string;
+  }) {
+    return await authAxios.post('/api/auth/register', data)
+  }
 
   const formik = useFormik({
     initialValues: {

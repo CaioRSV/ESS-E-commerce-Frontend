@@ -42,8 +42,8 @@ const LoggedInCardComponent = ({ userData, handleSignOut }: TLoggedInCardCompone
             <ChangePasswordComponent onClose={handleChangePasswordClose} />
           </DialogContent>
         </Dialog>
-        <Button onClick={handleSignOut}>Deslogar</Button>
         <OrderList />
+        <Button onClick={handleSignOut}>Deslogar</Button>
       </CardContent>
     </Card>
   );

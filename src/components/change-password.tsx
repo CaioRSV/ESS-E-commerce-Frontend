@@ -4,9 +4,7 @@ import * as Yup from 'yup';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
-import { updatePersonalPassword } from '@/lib/api';
 import useAxiosAuth from '@/lib/hooks/useAxiosAuth';
-import { signOut } from 'next-auth/react';
 
 const validationSchema = Yup.object({
   actualPassword: Yup.string()
@@ -90,7 +88,7 @@ const ChangePasswordComponent = ({ onClose }: TChangePasswordComponentProps) => 
               className={formik.touched.actualPassword && formik.errors.actualPassword ? 'error' : ''}
             />
             {formik.touched.actualPassword && formik.errors.actualPassword && (
-              <div className="error-message">{formik.errors.actualPassword}</div>
+              <div className="text-projRed">{formik.errors.actualPassword}</div>
             )}
           </div>
           <div className='mb-4'>
@@ -104,7 +102,7 @@ const ChangePasswordComponent = ({ onClose }: TChangePasswordComponentProps) => 
               className={formik.touched.newPassword && formik.errors.newPassword ? 'error' : ''}
             />
             {formik.touched.newPassword && formik.errors.newPassword && (
-              <div className="error-message">{formik.errors.newPassword}</div>
+              <div className="text-projRed">{formik.errors.newPassword}</div>
             )}
           </div>
           <Button type="submit"  disabled={!formik.isValid || !formik.dirty || inRequest}>Mudar Senha</Button>

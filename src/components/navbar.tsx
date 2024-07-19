@@ -55,6 +55,7 @@ import {
 import { useProductDataContext } from '@/app/contexts/ProductData';
 import RegisterComponent from './register';
 import LoggedInCardComponent from './logged-in';
+import ForgotPasswordComponent from './forgot-password';
 
 
 const Navbar = () => {
@@ -204,7 +205,7 @@ const Navbar = () => {
                     <Button className='w-full'>Esqueci minha senha</Button>
                   </DialogTrigger>
                   <DialogContent className={`p-0 bg-transparent`}>
-                    <RegisterComponent />
+                    <ForgotPasswordComponent />
                   </DialogContent>
                 </Dialog>
           
