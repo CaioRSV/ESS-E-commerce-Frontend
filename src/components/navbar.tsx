@@ -56,6 +56,7 @@ import { useProductDataContext } from '@/app/contexts/ProductData';
 import RegisterComponent from './register';
 import LoggedInCardComponent from './logged-in';
 import ForgotPasswordComponent from './forgot-password';
+import { useRouter } from 'next/navigation';
 
 
 const Navbar = () => {
@@ -64,7 +65,7 @@ const Navbar = () => {
 
   let { data: session } = useSession();
   const axiosAuth = useAxiosAuth();
-
+  const route = useRouter();
   const { userData, setUserData } = useUserDataContext();
 
   // Carrinho fetch
@@ -234,11 +235,15 @@ const Navbar = () => {
 
   const { productData, setProductData } = useProductDataContext();
 
+  const handleLogoClick = () => {
+    route.push("/");
+  }
+
   return (
     <div className={`w-full h-fit p-2 sticky top-0 z-50 bg-white`}>
       <div className={`bg-white rounded-md h-12 sticky flex ml-[30px] mr-[30px] gap-3`}>
         <div className={`p-4 flex justify-center items-center`}>
-          <p className={`font-abel text-[25px]`}>SAPATOS.COM</p>
+          <a className={`font-abel text-[25px] hover:cursor-pointer`} onClick={handleLogoClick}>SAPATOS.COM</a>
         </div>
 
         <div className={`p-4 flex justify-center items-center cursor-pointer`}>
