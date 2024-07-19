@@ -1,7 +1,10 @@
-import { useRouter } from 'next/router';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Button } from './ui/button';
 import OrderList from './orderList';
+import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog';
+import UpdateProfileComponent from './update-profile';
+import ChangePasswordComponent from './change-password';
 import { AuthMe } from '@/app/contexts/UserData';
 
 export type TLoggedInCardComponentProps = {
@@ -10,6 +13,12 @@ export type TLoggedInCardComponentProps = {
 };
 
 const LoggedInCardComponent = ({ userData, handleSignOut }: TLoggedInCardComponentProps) => {
+  const [isUpdateProfileOpen, setUpdateProfileOpen] = useState(false);
+  const [isChangePasswordOpen, setChangePasswordOpen] = useState(false);
+
+  const handleUpdateProfileClose = () => setUpdateProfileOpen(false);
+  const handleChangePasswordClose = () => setChangePasswordOpen(false);
+
   return (
     <Card>
       <CardHeader>
@@ -17,10 +26,24 @@ const LoggedInCardComponent = ({ userData, handleSignOut }: TLoggedInCardCompone
         <CardDescription>{userData?.email ? userData.email : ''}</CardDescription>
       </CardHeader>
       <CardContent className="flex gap-3 flex-col">
-        <Button onClick={() => {}}>Atualizar meus dados</Button>
-        <Button onClick={() => {}}>Mudar minha senha</Button>
-        <OrderList />
+        <Dialog open={isUpdateProfileOpen} onOpenChange={setUpdateProfileOpen}>
+          <DialogTrigger asChild>
+            <Button onClick={() => setUpdateProfileOpen(true)}>Atualizar meus dados</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <UpdateProfileComponent onClose={handleUpdateProfileClose} />
+          </DialogContent>
+        </Dialog>
+        <Dialog open={isChangePasswordOpen} onOpenChange={setChangePasswordOpen}>
+          <DialogTrigger asChild>
+            <Button onClick={() => setChangePasswordOpen(true)}>Mudar minha senha</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <ChangePasswordComponent onClose={handleChangePasswordClose} />
+          </DialogContent>
+        </Dialog>
         <Button onClick={handleSignOut}>Deslogar</Button>
+        <OrderList />
       </CardContent>
     </Card>
   );

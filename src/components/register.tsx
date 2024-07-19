@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "./ui/card";
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { signIn } from "next-auth/react";
 
 const validationSchema = Yup.object({
@@ -31,9 +31,15 @@ const validationSchema = Yup.object({
 type TRegisterComponentProps = {}
 
 const RegisterComponent = ({}: TRegisterComponentProps) => {
-  const [messageErrorRegister, setMessageErrorRegister] = useState<string>();
+  const [messageErrorRegister, setMessageErrorRegister] = useState<string | null>(null);
   const [inRequest, setInRequest] = useState<boolean>(false);
   
+  useEffect(() => {
+    return () => {
+      setMessageErrorRegister(null);
+    }
+  }, []);
+
   const formik = useFormik({
     initialValues: {
       email: '',

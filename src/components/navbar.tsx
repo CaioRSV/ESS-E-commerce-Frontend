@@ -189,26 +189,39 @@ const Navbar = () => {
                 }
               </CardDescription>
             </CardHeader>
-            <CardContent className={`flex gap-3`}>
+            <CardContent className={`flex gap-3 flex-col`}>
               <Input placeholder={`E-mail`} onChange={(event) => setEmail(event.target.value)
 
               } />
               <Input placeholder={`Senha`} type='password' onChange={(event) => setPassword(event.target.value)}
               />
-              <Button onClick={() => { handleSignIn() }}>Entrar</Button>
+              <div className='gap-3 flex'>
+              <Button className='flex-1' onClick={() => { handleSignIn() }}>Entrar</Button>
 
+              
               <Dialog>
-                <DialogTrigger>
-                  <Button>Registrar</Button>
-                </DialogTrigger>
-                <DialogContent className={`p-0 bg-transparent`}>
-                  <RegisterComponent />
-                </DialogContent>
-              </Dialog>
+                  <DialogTrigger>
+                    <Button className='w-full'>Esqueci minha senha</Button>
+                  </DialogTrigger>
+                  <DialogContent className={`p-0 bg-transparent`}>
+                    <RegisterComponent />
+                  </DialogContent>
+                </Dialog>
+          
+                </div>
+                <Dialog>
+                  <DialogTrigger>
+                    <Button className='flex-1'>Registrar-se</Button>
+                  </DialogTrigger>
+                  <DialogContent className={`p-0 bg-transparent`}>
+                    <RegisterComponent />
+                  </DialogContent>
+                </Dialog>
+        
             </CardContent>
           </>
       }
-    </Card>
+    </Card >
   );
 
   // Logica de definição de qual componente interno vai ser exibido na aba de login
@@ -291,7 +304,7 @@ const Navbar = () => {
                               cart.products.map(item => (
                                 <div className={`m-2 w-full h-[80px] rounded-md border border-slate-300 flex`} key={`${item.cartId}/${item.productId}`} >
                                   <img className={`m-2 bg-projGray border border-slate-300 rounded-md h-[62px] w-[62px]`} src={`${productData.find(product => product.id === item.productId)
-                                      ?.productMedia?.slice(-1)[0]?.media?.url ?? 'no_image'
+                                    ?.productMedia?.slice(-1)[0]?.media?.url ?? 'no_image'
                                     }`}></img>
                                   <div className={`h-full p-2 flex-column justify-center`}>
                                     <p className={`font-abeezee`}>{` ${productData.find(product => product.id === item.productId)?.name}`}</p>
