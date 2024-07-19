@@ -6,6 +6,7 @@ import { useFormik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { signIn } from "next-auth/react";
 import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
+import { getErrorMessage } from "@/app/utils/get-error-message";
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -77,7 +78,7 @@ const RegisterComponent = ({ }: TRegisterComponentProps) => {
       });
     } catch (error) {
       console.error(error);
-      setMessageErrorRegister("Erro ao registrar o usuário, valide os dados preenchidos");
+      setMessageErrorRegister(getErrorMessage(error, "Erro ao registrar o usuário, valide os dados preenchidos"));
     } finally {
       setInRequest(false);
     }

@@ -197,10 +197,10 @@ const Navbar = () => {
               <Input placeholder={`Senha`} type='password' onChange={(event) => setPassword(event.target.value)}
               />
               <div className='gap-3 flex'>
-              <Button className='flex-1' onClick={() => { handleSignIn() }}>Entrar</Button>
+                <Button className='flex-1' onClick={() => { handleSignIn() }}>Entrar</Button>
 
-              
-              <Dialog>
+
+                <Dialog>
                   <DialogTrigger>
                     <Button className='w-full'>Esqueci minha senha</Button>
                   </DialogTrigger>
@@ -208,17 +208,17 @@ const Navbar = () => {
                     <ForgotPasswordComponent />
                   </DialogContent>
                 </Dialog>
-          
-                </div>
-                <Dialog>
-                  <DialogTrigger>
-                    <Button className='flex-1'>Registrar-se</Button>
-                  </DialogTrigger>
-                  <DialogContent className={`p-0 bg-transparent`}>
-                    <RegisterComponent />
-                  </DialogContent>
-                </Dialog>
-        
+              </div>
+              
+              <Dialog>
+                <DialogTrigger>
+                  <Button className='flex-1'>Registrar-se</Button>
+                </DialogTrigger>
+                <DialogContent className={`p-0 bg-transparent`}>
+                  <RegisterComponent />
+                </DialogContent>
+              </Dialog>
+
             </CardContent>
           </>
       }

@@ -5,6 +5,7 @@ import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import useAxiosAuth from '@/lib/hooks/useAxiosAuth';
+import { getErrorMessage } from '@/app/utils/get-error-message';
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -55,7 +56,7 @@ const ForgotPasswordComponent = ({ onClose }: TForgotPasswordComponentProps) => 
         if(onClose) onClose();
       } catch (error) {
         console.error('Erro ao solicitar redefinição de senha:', error);
-        setMessageError('Erro ao solicitar redefinição de senha');
+        setMessageError(getErrorMessage(error, 'Erro ao solicitar redefinição de senha.'));
       } finally {
         setInRequest(false);
       }

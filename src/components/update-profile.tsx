@@ -6,6 +6,7 @@ import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { AuthMe, useUserDataContext } from '@/app/contexts/UserData';
 import useAxiosAuth from '@/lib/hooks/useAxiosAuth';
+import { getErrorMessage } from '@/app/utils/get-error-message';
 
 const validationSchema = Yup.object({
   name: Yup.string()
@@ -60,7 +61,7 @@ const UpdateProfileComponent = ({ onClose }: TUpdateProfileComponentProps) => {
         onClose();
       } catch (error) {
         console.error('Erro ao atualizar perfil:', error);
-        setMessageErrorChangePersonalData('Erro ao atualizar perfil');
+        setMessageErrorChangePersonalData(getErrorMessage(error, 'Erro ao atualizar perfil'));
       } finally {
         setInRequest(false);
       }
