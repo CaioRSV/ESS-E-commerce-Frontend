@@ -49,7 +49,7 @@ const OrderList = () => {
     <>
     <Dialog>
         <DialogTrigger onClick={()=>{getOrderList()}}>
-            <Button>OrderList</Button>
+            <Button className='w-full'>Lista de pedidos</Button>
         </DialogTrigger>
         <DialogContent className={``}>
         <div className={`size-[460px] overflow-y-scroll p-3`}>
