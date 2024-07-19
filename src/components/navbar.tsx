@@ -50,6 +50,18 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuIndicator,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  NavigationMenuViewport,
+} from "@/components/ui/navigation-menu"
+
+
 //
 import OrderList from './orderList';
 
@@ -245,17 +257,54 @@ const Navbar = () => {
               <p className={`font-abel text-[25px]`}>SAPATOS.COM</p>
             </div>
 
-            <div className={`p-4 flex justify-center items-center cursor-pointer`}>
-              <div className={`font-abeezee text-[14px]`}>CATEGORIAS</div>
-            </div>
+            <NavigationMenu>
+              <NavigationMenuList>
 
-            <div className={`p-4 flex justify-center items-center cursor-pointer`}>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>
+                  <div className={`p-4 flex justify-center items-center cursor-pointer`}>
+                    <div className={`font-abeezee text-[14px]`}>CATEGORIAS</div>
+                  </div>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className={`w-[500px] h-[100px]`}>
+                      <p>dasdsadas</p>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <div className={`p-4 flex justify-center items-center cursor-pointer hover:bg-accent/80 transition-all hover:text-accent-foreground h-10 rounded-md`}>
+                    <div className={`font-abeezee text-[14px] text-projRed`}>OFERTAS</div>
+                  </div>
+                  <NavigationMenuContent>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>
+                  <div className={`p-4 flex justify-center items-center cursor-pointer`}>
+                    <div className={`font-abeezee text-[14px]`}>MARCAS</div>
+                  </div>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                  <div className={`w-[500px] h-[100px]`}>
+                  <p>22222222</p>
+                      </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+              </NavigationMenuList>
+            </NavigationMenu>
+
+
+            {/* <div className={`p-4 flex justify-center items-center cursor-pointer`}>
               <div className={`font-abeezee text-[14px] text-projRed`}>OFERTAS</div>
-            </div>
+            </div> */}
 
-            <div className={`p-4 flex justify-center items-center cursor-pointer`}>
+            {/* <div className={`p-4 flex justify-center items-center cursor-pointer`}>
               <div className={`font-abeezee text-[14px]`}>MARCAS</div>
-            </div>
+            </div> */}
 
             <div className={`p-4 flex justify-center items-center flex-1`}>
               <div className={`font-abeezee text-[14px] rounded-full bg-projGray flex-1 flex`}>
