@@ -22,4 +22,22 @@ export async function fetchMe(accessToken:string, callback:Function ) {
         })
 }
 
-// Fetch new Access Token
+export async function registerUser(data: {
+    email: string;
+    name: string;
+    password: string;
+}) {
+    return await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/auth/register`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    })
+    .then(res => {
+        return res.json();
+    })
+    .then(data => {
+        return data;
+    })
+}

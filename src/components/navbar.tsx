@@ -20,7 +20,6 @@ import { IoIosLogIn } from "react-icons/io";
 import { CgSpinner } from "react-icons/cg";
 import { CgSpinnerTwoAlt } from "react-icons/cg";
 
-
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import {
@@ -35,6 +34,7 @@ import {
 } from "@/components/ui/drawer"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -54,6 +54,7 @@ import {
 import OrderList from './orderList';
 
 import { useProductDataContext } from '@/app/contexts/ProductData';
+import RegisterComponent from './register';
 
 
 const Navbar = () => {
@@ -114,8 +115,8 @@ const Navbar = () => {
   const [loadingLogin, setLoadingLogin] = useState<boolean>(false);
   const [messageLogin, setMessageLogin] = useState<string>();
 
-  const [email, setEmail] = useState<string>("admin@gmail.com");
-  const [password, setPassword] = useState<string>("admin");
+  const [email, setEmail] = useState<string>();
+  const [password, setPassword] = useState<string>();
 
   useEffect(() => {
     if (session && session.user){
@@ -146,21 +147,20 @@ const Navbar = () => {
     }
     else{
       if(result?.error){
-        setMessageLogin(result.error);
+        setMessageLogin('Email ou senha incorretos');
       }
     }
 
     setLoadingLogin(false);
 
   };
-    // Função de logout (só caso não tenha sessão ativa)
+
+  // Função de logout (só caso não tenha sessão ativa)
   const handleSignOut = async () => {
     if(!(session == null)){
       signOut();
     }
   } 
-
-  //
 
       // Componentes internos modularizados para permitir eles darem pop up de diversos locais
       const LogInCardComponent = (
@@ -190,9 +190,21 @@ const Navbar = () => {
                 </CardDescription>
             </CardHeader>
             <CardContent className={`flex gap-3`}>
-                <Input placeholder={`E-mail`} />
-                <Input placeholder={`Senha`} />
-                  <Button onClick={()=>{handleSignIn()}}>Entrar</Button>
+                <Input placeholder={`E-mail`} onChange={(event) => setEmail(event.target.value)
+
+                }/>
+                <Input placeholder={`Senha`} type='password' onChange={(event) => setPassword(event.target.value)}
+                />
+                <Button onClick={()=>{handleSignIn()}}>Entrar</Button>
+
+                <Dialog>
+                  <DialogTrigger>
+                    <Button>Registrar</Button>
+                  </DialogTrigger>
+                  <DialogContent className={`p-0 bg-transparent`}>
+                    <RegisterComponent/>
+                  </DialogContent>
+                </Dialog>
             </CardContent>
             </>
           }
