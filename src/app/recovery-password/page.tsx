@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { Input } from '@/components/ui/input';
 import useAxiosAuth from '@/lib/hooks/useAxiosAuth';
 import { getErrorMessage } from '@/app/utils/get-error-message';
 import { useSession } from 'next-auth/react';
@@ -41,6 +42,10 @@ const ChangePasswordComponent = () => {
         cleanErrors();
         await changePassword(values);
         setMessageSuccess('Senha alterada com sucesso.');
+
+        setTimeout(() => {
+          router.push('/');
+        }, 2000);
       } catch (error) {
         console.error('Erro ao alterar senha:', error);
         setMessageError(getErrorMessage(error, 'Erro ao alterar senha.'));
@@ -72,16 +77,16 @@ const ChangePasswordComponent = () => {
   }
 
   return (
-    <Card className='bg-slate-200 w-80 m-auto'>
+    <Card className='bg-slate-200 w-96 m-auto'>
       <CardHeader>
-        <CardTitle>Alterar Senha</CardTitle>
+        <CardTitle>Escolha uma nova senha</CardTitle>
         {messageError && <CardDescription className="text-red-600">{messageError}</CardDescription>}
         {messageSuccess && <CardDescription className="text-green-600">{messageSuccess}</CardDescription>}
       </CardHeader>
       <CardContent className="flex gap-3 flex-col">
         <form onSubmit={formik.handleSubmit}>
           <div className="mb-4">
-            <input
+            <Input
               name="newPassword"
               placeholder="Nova Senha"
               type="password"
