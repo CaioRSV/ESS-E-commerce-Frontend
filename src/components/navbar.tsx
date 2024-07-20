@@ -34,18 +34,13 @@ import {
 } from "@/components/ui/drawer"
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -210,7 +205,7 @@ const Navbar = () => {
                   </DialogContent>
                 </Dialog>
               </div>
-              
+
               <Dialog>
                 <DialogTrigger>
                   <Button className='flex-1'>Registrar-se</Button>
@@ -239,6 +234,16 @@ const Navbar = () => {
     route.push("/");
   }
 
+  const [userIsAdmin, setUserIsAdmin] = useState(userData.role === 'ADMIN');
+
+  useEffect(() => {
+    setUserIsAdmin(userData && userData.role === 'ADMIN');
+  }, [userData.role]);
+
+  const handleAdminUserRoute = () => {
+    route.push("/admin/user");
+  }
+  
   return (
     <div className={`w-full h-fit p-2 sticky top-0 z-50 bg-white`}>
       <div className={`bg-white rounded-md h-12 sticky flex ml-[30px] mr-[30px] gap-3`}>
@@ -258,6 +263,12 @@ const Navbar = () => {
           <div className={`font-abeezee text-[14px]`}>MARCAS</div>
         </div>
 
+        {userIsAdmin && (
+            <div className={`p-4 flex justify-center items-center cursor-pointer`} onClick={handleAdminUserRoute}>
+              <div className={`font-abeezee text-[14px]`}>[ADMIN] USUARIOS</div>
+            </div>
+        )}
+
         <div className={`p-4 flex justify-center items-center flex-1`}>
           <div className={`font-abeezee text-[14px] rounded-full bg-projGray flex-1 flex`}>
             <div className={`min-h-full min-w-[50px] flex items-center justify-center`}>
@@ -266,6 +277,7 @@ const Navbar = () => {
             <Input placeholder="Pesquise" className={`font-abeezee bg-transparent border-transparent focus-visible:ring-0 focus-visible:ring-offset-0`} />
           </div>
         </div>
+        
 
 
         <Dialog onOpenChange={() => { setMessageLogin("") }} >

@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Button } from './ui/button';
 import OrderList from './orderList';
 import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog';
 import UpdateProfileComponent from './update-profile';
 import ChangePasswordComponent from './change-password';
-import { AuthMe } from '@/app/contexts/UserData';
+import { AuthMe, useUserDataContext } from '@/app/contexts/UserData';
 
 export type TLoggedInCardComponentProps = {
   userData: AuthMe;

@@ -1,4 +1,4 @@
-'use client'; // Ensure this is a client-side component
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -22,7 +22,7 @@ const validationSchema = Yup.object({
   recoveryToken: Yup.string().required('O token de recuperação é obrigatório'),
 });
 
-const ChangePasswordComponent = () => {
+const ChangePassword = () => {
   const router = useRouter();
   const { status } = useSession();
   const query = useSearchParams();
@@ -108,4 +108,4 @@ const ChangePasswordComponent = () => {
   );
 };
 
-export default ChangePasswordComponent;
+export default ChangePassword;
