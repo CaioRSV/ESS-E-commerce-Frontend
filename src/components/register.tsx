@@ -1,4 +1,4 @@
-'use client'; // Ensure this is a client-side component
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
