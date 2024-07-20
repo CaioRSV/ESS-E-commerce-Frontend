@@ -18,13 +18,9 @@ const useAxiosAuth = () => {
 
             return config;
 
-        }
-        ,
-        (error) => {
+        }, (error) => {
             Promise.reject(error);
-        }
-        
-        );
+        });
 
         const responseIntercept = axiosAuth.interceptors.response.use(
             (response) => {
