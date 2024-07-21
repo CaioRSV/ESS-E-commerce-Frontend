@@ -22,7 +22,10 @@ export const useRefreshToken = () => {
                 session.user.accessToken = res.data.accessToken;
             }
         } catch(error){
-            signOut();
+            signOut({
+                redirect: true,
+                callbackUrl: "/"
+            });
         }
     }
 

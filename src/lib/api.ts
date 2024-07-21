@@ -21,5 +21,3 @@ export async function fetchMe(accessToken:string, callback:Function ) {
             return data;
         })
 }
-
-// Fetch new Access Token
