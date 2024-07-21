@@ -176,8 +176,8 @@ const CategoriesComponent: React.FC = () => {
     setDeleteDialogVisible(true);
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading) return <div>CATEGORIAS</div>;
+  if (error) return <div>CATEGORIAS</div>;
 
   return (
     <div className={cn("w-full")}>
