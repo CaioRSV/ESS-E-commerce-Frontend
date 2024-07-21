@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from '@/lib/axios';
 import useAxiosAuth from '@/lib/hooks/useAxiosAuth';
 import { cn } from "@/lib/utils";
-import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useUserDataContext } from '@/app/contexts/UserData';
 
 interface Media {
@@ -27,9 +27,13 @@ const CategoriesComponent: React.FC = () => {
   const [dropdownVisible, setDropdownVisible] = useState<boolean>(false);
   const [activeCategory, setActiveCategory] = useState<number | null>(null);
   const [dialogVisible, setDialogVisible] = useState<boolean>(false);
+  const [editDialogVisible, setEditDialogVisible] = useState<boolean>(false);
+  const [deleteDialogVisible, setDeleteDialogVisible] = useState<boolean>(false);
   const [newCategoryName, setNewCategoryName] = useState<string>('');
   const [newCategoryImage, setNewCategoryImage] = useState<string>('');
   const [creatingCategory, setCreatingCategory] = useState<boolean>(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [deletingCategoryId, setDeletingCategoryId] = useState<number | null>(null);
 
   const axiosAuth = useAxiosAuth();
   const { userData } = useUserDataContext();
@@ -92,6 +96,86 @@ const CategoriesComponent: React.FC = () => {
     }
   };
 
+  const handleEditCategory = async () => {
+    if (!newCategoryName.trim() || !newCategoryImage.trim() || !editingCategory) return; // Ensure both fields are filled
+    setCreatingCategory(true);
+
+    // Construct the updated Media object
+    const updatedMedia: Media = {
+      id: editingCategory.Media?.id || 0, // Use existing id or a placeholder value
+      url: newCategoryImage
+    };
+
+    // Optimistically update the UI
+    const updatedCategory: Category = {
+      ...editingCategory,
+      name: newCategoryName,
+      Media: updatedMedia
+    };
+
+    setCategories(prevCategories =>
+      prevCategories.map(cat => cat.id === updatedCategory.id ? updatedCategory : cat)
+    );
+
+    try {
+      await axiosAuth.put(`/api/categories/`, {
+        id: editingCategory.id,
+        name: newCategoryName,
+        imageUrl: newCategoryImage,
+      });
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred');
+      }
+      // Rollback UI change
+      setCategories(prevCategories =>
+        prevCategories.map(cat => cat.id === editingCategory.id ? editingCategory : cat)
+      );
+    } finally {
+      setNewCategoryName('');
+      setNewCategoryImage('');
+      setCreatingCategory(false);
+      setEditDialogVisible(false);
+      setEditingCategory(null);
+    }
+  };
+
+  const handleDeleteCategory = async () => {
+    if (deletingCategoryId === null) return; // Ensure there's a category to delete
+    try {
+      const response = await axiosAuth.delete(`/api/categories/${deletingCategoryId}`);
+      if (response.status !== 200) {
+        throw new Error('Failed to delete category');
+      }
+      setCategories(prevCategories =>
+        prevCategories.filter(cat => cat.id !== deletingCategoryId)
+      );
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred');
+      }
+    } finally {
+      setDeleteDialogVisible(false);
+      setDeletingCategoryId(null);
+    }
+  };
+
+  const openEditDialog = (category: Category) => {
+    setEditingCategory(category);
+    setNewCategoryName(category.name);
+    setNewCategoryImage(category.Media?.url || '');
+    setEditDialogVisible(true);
+  };
+
+  const openDeleteDialog = (categoryId: number) => {
+    setDeletingCategoryId(categoryId);
+    setDeleteDialogVisible(true);
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -113,7 +197,7 @@ const CategoriesComponent: React.FC = () => {
             "flex flex-col"
           )}>
             {categories.map((category) => (
-              <div key={category.id} className={cn("flex flex-col items-center")}>
+              <div key={category.id} className={cn("flex items-center mb-2", "w-full", "relative")}>
                 <button
                   onClick={() => handleCategoryClick(category.id)}
                   className={cn(
@@ -126,6 +210,22 @@ const CategoriesComponent: React.FC = () => {
                   )}
                   <span>{category.name}</span>
                 </button>
+                {userData?.role === 'ADMIN' && (
+                  <div className="absolute right-0 top-1/2 transform -translate-y-1/2 flex flex-col items-center space-y-1">
+                    <button
+                      onClick={() => openEditDialog(category)}
+                      className="p-1 text-gray-600 hover:text-gray-900"
+                    >
+                      <PencilIcon className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => openDeleteDialog(category.id)}
+                      className="p-1 text-red-600 hover:text-red-900"
+                    >
+                      <TrashIcon className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
             {userData?.role === 'ADMIN' && (
@@ -169,19 +269,86 @@ const CategoriesComponent: React.FC = () => {
             <div className="flex justify-end">
               <button
                 onClick={() => setDialogVisible(false)}
-                className="mr-2 bg-gray-300 px-4 py-2 rounded"
+                className="mr-2 p-2 bg-gray-500 text-white rounded hover:bg-gray-600"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCreateCategory}
+                className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                 disabled={creatingCategory}
-                className={cn(
-                  "bg-blue-500 text-white px-4 py-2 rounded",
-                  creatingCategory && "bg-blue-300 cursor-not-allowed"
-                )}
               >
-                {creatingCategory ? "Creating..." : "Create"}
+                {creatingCategory ? 'Creating...' : 'Create'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {editDialogVisible && editingCategory && (
+        <div className={cn(
+          "fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center",
+          "z-20"
+        )}>
+          <div className={cn(
+            "bg-white p-6 rounded shadow-md",
+            "w-96"
+          )}>
+            <h2 className="text-lg font-bold mb-4">Edit Category</h2>
+            <input
+              type="text"
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              placeholder="Category name"
+              className="mb-4 p-2 border border-gray-300 rounded w-full"
+            />
+            <input
+              type="text"
+              value={newCategoryImage}
+              onChange={(e) => setNewCategoryImage(e.target.value)}
+              placeholder="Image URL"
+              className="mb-4 p-2 border border-gray-300 rounded w-full"
+            />
+            <div className="flex justify-end">
+              <button
+                onClick={() => setEditDialogVisible(false)}
+                className="mr-2 p-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleEditCategory}
+                className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                disabled={creatingCategory}
+              >
+                {creatingCategory ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {deleteDialogVisible && (
+        <div className={cn(
+          "fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center",
+          "z-20"
+        )}>
+          <div className={cn(
+            "bg-white p-6 rounded shadow-md",
+            "w-96"
+          )}>
+            <h2 className="text-lg font-bold mb-4">Confirm Deletion</h2>
+            <p>Are you sure you want to delete this category?</p>
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={() => setDeleteDialogVisible(false)}
+                className="mr-2 p-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteCategory}
+                className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                Delete
               </button>
             </div>
           </div>
