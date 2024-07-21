@@ -251,19 +251,19 @@ const CategoriesComponent: React.FC = () => {
             "bg-white p-6 rounded shadow-md",
             "w-96"
           )}>
-            <h2 className="text-lg font-bold mb-4">Create New Category</h2>
+            <h2 className="text-lg font-bold mb-4">Criar Categoria</h2>
             <input
               type="text"
               value={newCategoryName}
               onChange={(e) => setNewCategoryName(e.target.value)}
-              placeholder="Category name"
+              placeholder="Nome da Categoria"
               className="mb-4 p-2 border border-gray-300 rounded w-full"
             />
             <input
               type="text"
               value={newCategoryImage}
               onChange={(e) => setNewCategoryImage(e.target.value)}
-              placeholder="Image URL"
+              placeholder="URL da Imagem"
               className="mb-4 p-2 border border-gray-300 rounded w-full"
             />
             <div className="flex justify-end">
@@ -271,14 +271,14 @@ const CategoriesComponent: React.FC = () => {
                 onClick={() => setDialogVisible(false)}
                 className="mr-2 p-2 bg-gray-500 text-white rounded hover:bg-gray-600"
               >
-                Cancel
+                Cancelar
               </button>
               <button
                 onClick={handleCreateCategory}
                 className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                 disabled={creatingCategory}
               >
-                {creatingCategory ? 'Creating...' : 'Create'}
+                {creatingCategory ? 'Creating...' : 'Criar'}
               </button>
             </div>
           </div>
@@ -293,19 +293,19 @@ const CategoriesComponent: React.FC = () => {
             "bg-white p-6 rounded shadow-md",
             "w-96"
           )}>
-            <h2 className="text-lg font-bold mb-4">Edit Category</h2>
+            <h2 className="text-lg font-bold mb-4">Editar Categoria</h2>
             <input
               type="text"
               value={newCategoryName}
               onChange={(e) => setNewCategoryName(e.target.value)}
-              placeholder="Category name"
+              placeholder="Nome da Categoria"
               className="mb-4 p-2 border border-gray-300 rounded w-full"
             />
             <input
               type="text"
               value={newCategoryImage}
               onChange={(e) => setNewCategoryImage(e.target.value)}
-              placeholder="Image URL"
+              placeholder="URL da Imagem"
               className="mb-4 p-2 border border-gray-300 rounded w-full"
             />
             <div className="flex justify-end">
@@ -313,14 +313,14 @@ const CategoriesComponent: React.FC = () => {
                 onClick={() => setEditDialogVisible(false)}
                 className="mr-2 p-2 bg-gray-500 text-white rounded hover:bg-gray-600"
               >
-                Cancel
+                Cancelar
               </button>
               <button
                 onClick={handleEditCategory}
                 className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                 disabled={creatingCategory}
               >
-                {creatingCategory ? 'Saving...' : 'Save'}
+                {creatingCategory ? 'Saving...' : 'Editar'}
               </button>
             </div>
           </div>
@@ -335,20 +335,20 @@ const CategoriesComponent: React.FC = () => {
             "bg-white p-6 rounded shadow-md",
             "w-96"
           )}>
-            <h2 className="text-lg font-bold mb-4">Confirm Deletion</h2>
-            <p>Are you sure you want to delete this category?</p>
+            <h2 className="text-lg font-bold mb-4">Confirmar exclusão</h2>
+            <p>Tem certeza de que deseja excluir esta categoria?</p>
             <div className="flex justify-end mt-4">
               <button
                 onClick={() => setDeleteDialogVisible(false)}
                 className="mr-2 p-2 bg-gray-500 text-white rounded hover:bg-gray-600"
               >
-                Cancel
+                Cancelar
               </button>
               <button
                 onClick={handleDeleteCategory}
                 className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
               >
-                Delete
+                Confirmar
               </button>
             </div>
           </div>
