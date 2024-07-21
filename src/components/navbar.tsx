@@ -45,6 +45,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
+import CategoryNavbar from './categories';
 //
 
 import { useProductDataContext } from '@/app/contexts/ProductData';
@@ -104,8 +105,7 @@ const Navbar = () => {
 
       getInfo();
     }
-  }
-
+  } 
 
   //
 
@@ -252,7 +252,7 @@ const Navbar = () => {
         </div>
 
         <div className={`p-4 flex justify-center items-center cursor-pointer`}>
-          <div className={`font-abeezee text-[14px]`}>CATEGORIAS</div>
+          <div className={`font-abeezee text-[14px]`}><CategoryNavbar/></div>
         </div>
 
         <div className={`p-4 flex justify-center items-center cursor-pointer`}>
