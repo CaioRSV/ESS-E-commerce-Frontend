@@ -77,6 +77,22 @@ const Navbar = () => {
   
   const {userData, setUserData} = useUserDataContext();
 
+  // SearchBar
+  const [searchString, setSearchString] = useState<string>("");
+
+  // Categorias e Marcas
+  interface Categoria {
+    id: string
+    nome: string
+  };
+
+  interface Marcas {
+    
+  };
+
+  const [categorias, setCategorias] = useState<Categoria[]>();
+  const marcas = ["Marca1", "Marca2"]
+
   // Carrinho fetch
 
   interface Product{
@@ -137,6 +153,12 @@ const Navbar = () => {
 
         const cart = await axiosAuth.get("/api/cart")
         setCart(cart.data);
+
+        const categories = await axiosAuth.get("/api/categories")
+        setCategorias(
+          categories.data.map((item: { id: any; name: any; }) => ({ id: item.id, nome: item.name }))
+        );
+
       }
       
       getInfo();
@@ -250,6 +272,8 @@ const Navbar = () => {
 
   const {productData, setProductData} = useProductDataContext();
 
+  //
+
   return (
     <div className={`w-full h-fit p-2 sticky top-0 z-50 bg-white`}>
         <div className={`bg-white rounded-md h-12 sticky flex ml-[30px] mr-[30px] gap-3`}>
@@ -257,7 +281,7 @@ const Navbar = () => {
               <p className={`font-abel text-[25px]`}>SAPATOS.COM</p>
             </div>
 
-            <NavigationMenu>
+            <NavigationMenu className={`transition-all`}>
               <NavigationMenuList>
 
                 <NavigationMenuItem>
@@ -267,8 +291,27 @@ const Navbar = () => {
                   </div>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <div className={`w-[500px] h-[100px]`}>
-                      <p>dasdsadas</p>
+                    <div className={`w-[390px] h-fit mb-2`}>
+                      {
+                        categorias && categorias.length>0
+                          ?
+                          <div className={`w-full h-full p-4`}>
+                            <p className={`w-full font-abel font-semibold text-lg pb-2`} >Categorias</p>
+                            {
+                              categorias.map(item => (
+                                <div key={item.id} className={`w-fit hover:text-projRed transition-colors`}>
+                                  <Link href={`/produtos?categoria=${item.id}`}>
+                                    <p className={`font-abeezee`}>{item.nome}</p>
+                                  </Link>
+                                </div>
+                              ))
+                            }
+                          </div>
+                          :
+                          <div className={`w-full h-full flex justify-center items-center p-8`}>
+                            <CgSpinnerTwoAlt size={16} className={`animate-spin opacity-50`} />
+                          </div>
+                      }
                     </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
@@ -288,9 +331,20 @@ const Navbar = () => {
                   </div>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                  <div className={`w-[500px] h-[100px]`}>
-                  <p>22222222</p>
-                      </div>
+                  <div className={`w-[390px] h-fit mb-2`}>
+                    <div className={`w-full h-full p-4`}>
+                            <p className={`w-full font-abel font-semibold text-lg pb-2`}>Marcas</p>
+                            {
+                              marcas.map(marca => (
+                                <div key={marca} className={`w-fit hover:text-projRed transition-colors`}>
+                                  <Link href={`/produtos?marca=${marca}`}>
+                                    <p className={`font-abeezee`}>{marca}</p>
+                                  </Link>
+                                </div>
+                              ))
+                            }
+                          </div>
+                  </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
 
@@ -309,9 +363,11 @@ const Navbar = () => {
             <div className={`p-4 flex justify-center items-center flex-1`}>
               <div className={`font-abeezee text-[14px] rounded-full bg-projGray flex-1 flex`}>
                 <div className={`min-h-full min-w-[50px] flex items-center justify-center`}>
-                  <FaMagnifyingGlass size={20} className={`text-black opacity-40`}/>
+                  <Link href={`${searchString.length>0 ? `/produtos?searchString=${searchString}` : `/` }`}>
+                    <FaMagnifyingGlass size={20} className={`text-black transition-opacity opacity-40 hover:opacity-60 cursor-pointer`}/>
+                  </Link>
                 </div>
-                <Input placeholder="Pesquise" className={`font-abeezee bg-transparent border-transparent focus-visible:ring-0 focus-visible:ring-offset-0`}/>
+                <Input onChange={(e)=>{setSearchString(e.target.value)}} placeholder="Pesquise" className={`font-abeezee bg-transparent border-transparent focus-visible:ring-0 focus-visible:ring-offset-0`}/>
               </div>
             </div>
 
