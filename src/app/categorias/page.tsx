@@ -26,7 +26,7 @@ interface Category {
 const CategoriesPage: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); // Error state
   const [dialogVisible, setDialogVisible] = useState<boolean>(false);
   const [editDialogVisible, setEditDialogVisible] = useState<boolean>(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState<boolean>(false);
@@ -35,6 +35,7 @@ const CategoriesPage: React.FC = () => {
   const [creatingCategory, setCreatingCategory] = useState<boolean>(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [deletingCategory, setDeletingCategory] = useState<Category | null>(null);
+  const [errorDialogVisible, setErrorDialogVisible] = useState<boolean>(false); // Error dialog visibility
 
   const axiosAuth = useAxiosAuth();
   const { userData } = useUserDataContext();
@@ -57,6 +58,7 @@ const CategoriesPage: React.FC = () => {
           setError('Ocorreu um erro desconhecido');
         }
         setLoading(false);
+        setErrorDialogVisible(true); // Show error dialog
       }
     };
 
@@ -71,22 +73,20 @@ const CategoriesPage: React.FC = () => {
         name: newCategoryName,
         imageUrl: newCategoryImage
       });
-      if (response.status !== 201) {
-        throw new Error('Falha ao criar categoria');
-      }
       const newCategory: Category = response.data;
       setCategories(prevCategories => [...prevCategories, newCategory]);
       setNewCategoryName('');
       setNewCategoryImage('');
       setCreatingCategory(false);
       setDialogVisible(false);
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
+    } catch (err: any) {
+      if (err?.request?.status === 409) {
+        setError('Categoria já existe!');
       } else {
         setError('Ocorreu um erro desconhecido');
       }
       setCreatingCategory(false);
+      setErrorDialogVisible(true); // Show error dialog
     }
   };
 
@@ -99,9 +99,6 @@ const CategoriesPage: React.FC = () => {
         imageUrl: newCategoryImage,
         id: editingCategory.id
       });
-      if (response.status !== 200) {
-        throw new Error('Falha ao atualizar categoria');
-      }
       const updatedCategory: Category = { ...editingCategory, name: newCategoryName, Media: { id: editingCategory.mediaId, url: newCategoryImage } };
       setCategories(prevCategories => 
         prevCategories.map(cat => cat.id === updatedCategory.id ? updatedCategory : cat)
@@ -111,13 +108,14 @@ const CategoriesPage: React.FC = () => {
       setCreatingCategory(false);
       setEditDialogVisible(false);
       setEditingCategory(null);
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
+    } catch (err: any) {
+      if (err?.request?.status === 409) {
+        setError('Categoria já existe!');
       } else {
         setError('Ocorreu um erro desconhecido');
       }
       setCreatingCategory(false);
+      setErrorDialogVisible(true); // Show error dialog
     }
   };
 
@@ -136,6 +134,7 @@ const CategoriesPage: React.FC = () => {
       } else {
         setError('Ocorreu um erro desconhecido');
       }
+      setErrorDialogVisible(true); // Show error dialog
     }
   };
 
@@ -162,8 +161,12 @@ const CategoriesPage: React.FC = () => {
     router.push(`/products?category-id=${categoryId}`); // Navigate to category-specific page
   };
 
-  if (loading) return <div>Carregando...</div>;
-  if (error) return <div>Erro: {error}</div>;
+  const closeErrorDialog = () => {
+    setErrorDialogVisible(false);
+    setError(null); // Clear the error message
+  };
+
+  if (loading) return <div>Carregando...</div>; // Optionally, you could also use an error dialog for loading state
 
   return (
     <div className={cn("w-full flex flex-col")}>
@@ -327,6 +330,28 @@ const CategoriesPage: React.FC = () => {
                 className={`px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600`}
               >
                 Excluir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {errorDialogVisible && error && (
+        <div className={cn(
+          "fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center",
+          "z-20"
+        )}>
+          <div className={cn(
+            "bg-white p-6 rounded shadow-md",
+            "w-96"
+          )}>
+            <h2 className="text-lg font-bold mb-4">Erro</h2>
+            <p>{error}</p>
+            <div className="flex justify-end space-x-2 mt-4">
+              <button
+                onClick={closeErrorDialog}
+                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+              >
+                Fechar
               </button>
             </div>
           </div>
