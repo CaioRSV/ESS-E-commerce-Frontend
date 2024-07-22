@@ -3,7 +3,7 @@ import React from 'react'
 
 import { createContext, useContext, useState, ReactNode } from 'react'
 
-interface AuthMe {
+export interface AuthMe {
     sub?: string;
     id?: string;
     name?: string;

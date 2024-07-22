@@ -18,6 +18,8 @@ import { IoMdArrowRoundForward } from "react-icons/io";
 import { TbShoppingCartQuestion } from "react-icons/tb";
 import { CgSpinnerTwoAlt } from "react-icons/cg";
 
+import { useProductDataContext } from "../contexts/ProductData";
+
 
 interface Product{
   cartId: number
@@ -62,19 +64,54 @@ export default function Carrinho() {
     redirect("/");
   }
   //
-
   const [cart, setCart] = useState<Cart>();
   const [loading, setLoading] = useState<boolean>(false);
+
+  const {productData, setProductData} = useProductDataContext();
+
+  const updateDadosPedido = (cartData_temp:Cart) => {
+    let newSubTotal = 0;
+
+    cartData_temp.products.forEach(item => {
+      newSubTotal += (productData.find(produto => produto.id===item.productId)?.price ?? 0)*item.quantity
+    })
+
+    if(newSubTotal>0){
+      let desconto = newSubTotal/10;
+      let frete = 25.0;
+  
+      setDadosPedido(prev => ({
+        ...prev, subtotal: newSubTotal, total: newSubTotal - desconto + frete, desconto: desconto, frete: frete
+      }))
+  
+      console.log(newSubTotal);
+    }
+    else{
+      setDadosPedido(prev => ({
+        ...prev, subtotal: 0, total: 0, desconto: 0, frete: 0
+      }))
+    }
+  }
 
   const fetchCart = async () => {
     setLoading(true);
     const cart = await axiosAuth.get("/api/cart")
+
+    for(const item of cart.data.products){
+      if(!productData.some(itemExistente => itemExistente.id === item.productId)){
+        const productInfo = await axiosAuth.get("/api/Product/"+item.productId);
+        setProductData((prev) => [...prev, productInfo.data])
+      }
+    }
+
     setCart(cart.data);
+    updateDadosPedido(cart.data);
     setLoading(false);
   }
 
   const fetchCartNoLoading = async () => {
     const cart = await axiosAuth.get("/api/cart")
+    updateDadosPedido(cart.data);
     setCart(cart.data);
   }
 
@@ -87,10 +124,10 @@ export default function Carrinho() {
   //
 
   const [dadosPedido, setDadosPedido] = useState<DadosPedido>({
-    subtotal: 1,
-    desconto: 2,
-    frete: 3,
-    total: 4
+    subtotal: 0,
+    desconto: 0,
+    frete: 0,
+    total: 0
   })
 
   const [tempoEntrega, setTempoEntrega] = useState<string>();
@@ -142,15 +179,21 @@ export default function Carrinho() {
                         
                           cart?.products.map(item => (
                             <div key={`${item.cartId}/${item.productId}`}>
-                            <div className={`w-full h-[145px] p-2 flex`}>
-                              <img className={`rounded-md h-full bg-projGray`} src="https://images.vexels.com/content/156298/preview/rubber-shoes-silhouette-9c69af.png" />
+                            <div className={`w-full h-[145px]  p-2 flex`}>
+                              <img className={`rounded-md w-[145px] h-full bg-projGray`} src={`${
+                                productData.find(product => product.id === item.productId)
+                                ?.productMedia?.slice(-1)[0]?.media?.url ?? 'no_image'
+                              }`} />
                               <div className={`ml-3 h-full w-full relative overflow-hidden`}>
-                                <p className={`font-abeezee text-[18px] italic`}>{`Produto de ID: ${item.productId}`}</p>
-                                <p className={`font-abeezee text-[12px]`}>{`Tamanho:`} <span className={`opacity-75`}>{`99`}</span> </p>
-                                <p className={`font-abeezee text-[12px]`}>{`Cor:`} <span className={`opacity-75`}>{`seila`}</span> </p>
-      
+                                <p className={`font-abeezee text-[18px] italic`}>{`${productData.find(product => product.id === item.productId)?.name}`}</p>
+                                
+                                <p className={`font-abeezee text-[12px]`}>{`Descrição:`} <span className={`opacity-75`}>{`${productData.find(product => product.id === item.productId)?.description}`}</span> </p>
+                                <p className={`font-abeezee text-[12px]`}>{`Tamanho:`} <span className={`opacity-75`}>{`${35}`}</span> </p>
+
                                 <div className={`w-full h-[63px] flex items-end`}>
-                                  <p className={`font-abeezee text-2xl italic flex-1`}>{`R$ 98,98`}</p>
+                                  <p className={`font-abeezee text-2xl italic flex-1`}>{`R$ ${floatToMoney(
+                                    productData.find(product => product.id === item.productId)?.price ?? 98
+                                  )}`}</p>
       
                                   <div className={`flex bg-projGray rounded-full w-40 pt-1 pb-1 justify-center items-center`}>
                                     <p className={`cursor-pointer font-abeezee text-3xl flex-1 flex justify-center items-center rounded-full`} onClick={()=>{changeQuantity(item.productId, item.quantity, -1)}}>-</p>
