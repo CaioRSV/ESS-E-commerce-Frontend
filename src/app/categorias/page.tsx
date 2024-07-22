@@ -158,7 +158,7 @@ const CategoriesPage: React.FC = () => {
 
   // New function to handle category button click
   const handleCategoryClick = (categoryId: number) => {
-    router.push(`/products?category-id=${categoryId}`); // Navigate to category-specific page
+    router.push(`/produto?categoria=${categoryId}`); // Navigate to category-specific page
   };
 
   const closeErrorDialog = () => {

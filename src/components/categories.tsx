@@ -33,7 +33,7 @@ const CategoriesComponent: React.FC = () => {
   };
 
   const handleCategoryClick = (categoryId: number) => {
-    router.push(`/products?category-id=${categoryId}`);
+    router.push(`/produto?categoria=${categoryId}`);
   };
 
   return (
