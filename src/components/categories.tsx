@@ -32,6 +32,10 @@ const CategoriesComponent: React.FC = () => {
     router.push('/categorias');
   };
 
+  const handleCategoryClick = (categoryId: number) => {
+    router.push(`/products?category-id=${categoryId}`);
+  };
+
   return (
     <div className={cn("relative w-full")}
          onMouseEnter={() => setHover(true)}
@@ -50,10 +54,15 @@ const CategoriesComponent: React.FC = () => {
           "absolute top-full left-0 w-full bg-white border border-gray-300 rounded shadow-lg",
           "z-10"
         )}>
-          <ul className="list-none p-2 m-0">
+          <ul className="list-none p-0 m-0">
             {categories.map(category => (
-              <li key={category.id} className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                {category.name}
+              <li key={category.id} className="w-full">
+                <button
+                  onClick={() => handleCategoryClick(category.id)}
+                  className="w-full text-left bg-transparent hover:bg-gray-100 cursor-pointer rounded p-4"
+                >
+                  {category.name}
+                </button>
               </li>
             ))}
           </ul>

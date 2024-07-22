@@ -6,6 +6,7 @@ import useAxiosAuth from '@/lib/hooks/useAxiosAuth';
 import { cn } from "@/lib/utils";
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useUserDataContext } from '@/app/contexts/UserData';
+import { useRouter } from 'next/navigation'; // Import useRouter for navigation
 
 interface Media {
   id: number;
@@ -37,6 +38,7 @@ const CategoriesPage: React.FC = () => {
 
   const axiosAuth = useAxiosAuth();
   const { userData } = useUserDataContext();
+  const router = useRouter(); // Initialize useRouter
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -149,6 +151,11 @@ const CategoriesPage: React.FC = () => {
     setDeleteDialogVisible(true);
   };
 
+  // New function to handle category button click
+  const handleCategoryClick = (categoryId: number) => {
+    router.push(`/products?category-id=${categoryId}`); // Navigate to category-specific page
+  };
+
   if (loading) return <div>Carregando...</div>;
   if (error) return <div>Erro: {error}</div>;
 
@@ -156,7 +163,18 @@ const CategoriesPage: React.FC = () => {
     <div className={cn("w-full flex flex-col")}>
       <div className={cn("flex flex-col mb-4")}>
         {categories.map((category) => (
-          <div key={category.id} className={cn("flex items-start justify-between p-4 border-b border-gray-300", "w-full", "relative")}>
+          <button 
+            key={category.id} 
+            onClick={() => handleCategoryClick(category.id)}
+            className={cn(
+              "flex items-start justify-between p-4 border-b border-gray-300",
+              "w-full",
+              "bg-white",
+              "hover:bg-gray-100", // Add hover effect
+              "relative",
+              "text-left" // Align text to the left
+            )}
+          >
             <div className="flex items-center">
               {category.Media?.url && (
                 <img src={category.Media.url} alt={category.name} className="w-12 h-12 object-cover mr-4" />
@@ -166,20 +184,20 @@ const CategoriesPage: React.FC = () => {
             {userData?.role === 'ADMIN' && (
               <div className="flex space-x-2">
                 <button
-                  onClick={() => openEditDialog(category)}
+                  onClick={(e) => { e.stopPropagation(); openEditDialog(category); }} // Prevent click event from propagating to parent button
                   className="p-1 text-gray-600 hover:text-gray-900"
                 >
                   <PencilIcon className="w-4 h-4" /> {/* Adjusted icon size */}
                 </button>
                 <button
-                  onClick={() => openDeleteDialog(category)}
+                  onClick={(e) => { e.stopPropagation(); openDeleteDialog(category); }} // Prevent click event from propagating to parent button
                   className="p-1 text-gray-600 hover:text-gray-900"
                 >
                   <TrashIcon className="w-4 h-4" /> {/* Adjusted icon size */}
                 </button>
               </div>
             )}
-          </div>
+          </button>
         ))}
       </div>
       {userData?.role === 'ADMIN' && (
@@ -313,4 +331,3 @@ const CategoriesPage: React.FC = () => {
 };
 
 export default CategoriesPage;
-
