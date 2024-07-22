@@ -284,14 +284,6 @@ const Navbar = () => {
         <div className={`p-4 flex justify-center items-center`}>
           <a className={`font-abel text-[25px] hover:cursor-pointer`} onClick={handleLogoClick}>SAPATOS.COM</a>
         </div>
-
-        <div className={`p-4 flex justify-center items-center cursor-pointer`}>
-          <div className={`font-abeezee text-[14px]`}>CATEGORIAS</div>
-        </div>
-
-        <div className={`p-4 flex justify-center items-center cursor-pointer`}>
-          <div className={`font-abeezee text-[14px] text-projRed`}>OFERTAS</div>
-        </div>
             <NavigationMenu className={`transition-all`}>
               <NavigationMenuList>
 
@@ -366,10 +358,6 @@ const Navbar = () => {
             {/* <div className={`p-4 flex justify-center items-center cursor-pointer`}>
               <div className={`font-abeezee text-[14px] text-projRed`}>OFERTAS</div>
             </div> */}
-
-        <div className={`p-4 flex justify-center items-center cursor-pointer`}>
-          <div className={`font-abeezee text-[14px]`}>MARCAS</div>
-        </div>
 
         {userIsAdmin && (
             <div className={`p-4 flex justify-center items-center cursor-pointer`} onClick={handleAdminUserRoute}>

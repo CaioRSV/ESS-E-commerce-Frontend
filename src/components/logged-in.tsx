@@ -6,6 +6,7 @@ import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog';
 import UpdateProfileComponent from './update-profile';
 import ChangePasswordComponent from './change-password';
 import { AuthMe, useUserDataContext } from '@/app/contexts/UserData';
+import OrderListAdmin from './orderListAdmin';
 
 export type TLoggedInCardComponentProps = {
   userData: AuthMe;
@@ -42,7 +43,13 @@ const LoggedInCardComponent = ({ userData, handleSignOut }: TLoggedInCardCompone
             <ChangePasswordComponent onClose={handleChangePasswordClose} />
           </DialogContent>
         </Dialog>
-        <OrderList />
+        {
+          userData.role=='ADMIN'
+            ?
+            <OrderListAdmin />
+            :
+            <OrderList />
+        }
         <Button onClick={handleSignOut}>Deslogar</Button>
       </CardContent>
     </Card>

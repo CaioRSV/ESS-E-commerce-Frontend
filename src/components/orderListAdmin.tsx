@@ -93,16 +93,25 @@ const OrderList = () => {
 
     }
 
+    // Looking for users
+    const [searchString, setSearchString] = useState<string>("");
+
   return (
     <>
     <Dialog>
         <DialogTrigger onClick={()=>{getOrderList()}}>
-            <Button className='w-full'>Lista de pedidos</Button>
+            <Button className='w-full'>Lista de Pedidos de Usuários</Button>
         </DialogTrigger>
         <DialogContent className={``}>
         <div className={`size-[460px] overflow-y-scroll p-3 font-abel text-lg`}>
             {
-                fetched && fetched.length>0
+                searchString.length==0
+                    ?
+                    <div>
+                        AOSDIOASIDOAISDOAO
+                    </div>
+                    :
+                    fetched && fetched.length>0
                     ?
                     fetched.map(item => (
                         <>
