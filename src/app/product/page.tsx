@@ -52,13 +52,18 @@ export default function ProductPage() {
     }};
 
   useEffect(() => {
-    const getInfo = async () => {
-      const info = await axiosAuth.get("/api/product");
-      console.log(info.data);
-      setProductData(info.data);
+    if (session && session.user) {
+      const getInfo = async () => {
+        const info = await axiosAuth.get("/api/product");
+        if (info.data){
+          console.log(info.data);
+        }
+      //setProductData(info.data);
     };
     getInfo();
-  }, [axiosAuth, session]);
+ // }, [axiosAuth, session]);
+    }
+  } , [axiosAuth, session]);
 
   const categories = ["Tênis", "Botas", "Rasteiras"];
 

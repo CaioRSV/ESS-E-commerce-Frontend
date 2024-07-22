@@ -21,12 +21,16 @@ export default function HomePage() {
   const [productData, setProductData] = useState<Product[]>([]);
 
   useEffect(() => {
-    const getInfo = async () => {
-      const info = await axiosAuth.get("/api/product");
-      console.log(info.data);
-      setProductData(info.data);
+    if (session && session.user) {
+      const getInfo = async () => {
+        const info = await axiosAuth.get("/api/product");
+        if (info.data){
+          console.log(info.data);
+        }
+      //setProductData(info.data);
     };
     getInfo();
+  }
   }, [axiosAuth, session]);
 
   const renderProducts = (products: Product[]) => {
