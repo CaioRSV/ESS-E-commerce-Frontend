@@ -139,6 +139,12 @@ const CategoriesPage: React.FC = () => {
     }
   };
 
+  const openCreateDialog = () => {
+    setNewCategoryName('');
+    setNewCategoryImage('');
+    setDialogVisible(true);
+  };
+
   const openEditDialog = (category: Category) => {
     setEditingCategory(category);
     setNewCategoryName(category.name);
@@ -203,7 +209,7 @@ const CategoriesPage: React.FC = () => {
       {userData?.role === 'ADMIN' && (
         <div className={cn("flex justify-center mt-4")}>
           <button
-            onClick={() => setDialogVisible(true)}
+            onClick={openCreateDialog} // Use the new function to open the create dialog
             className={cn(
               "flex items-center justify-center p-2 bg-green-500 text-white rounded",
               "hover:bg-green-600"
