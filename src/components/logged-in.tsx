@@ -31,7 +31,7 @@ const LoggedInCardComponent = ({ userData, handleSignOut }: TLoggedInCardCompone
           <DialogTrigger asChild>
             <Button onClick={() => setUpdateProfileOpen(true)}>Atualizar meus dados</Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent id="loggedInCloseButton">
             <UpdateProfileComponent onClose={handleUpdateProfileClose} />
           </DialogContent>
         </Dialog>
