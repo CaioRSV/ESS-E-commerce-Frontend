@@ -223,11 +223,11 @@ const Navbar = () => {
             <CardContent className={`flex gap-3 flex-col`}>
               <Input placeholder={`E-mail`} onChange={(event) => setEmail(event.target.value)
 
-              } />
+              } id="emailInput" />
               <Input placeholder={`Senha`} type='password' onChange={(event) => setPassword(event.target.value)}
-              />
+               id="senhaInput" />
               <div className='gap-3 flex'>
-                <Button className='flex-1' onClick={() => { handleSignIn() }}>Entrar</Button>
+                <Button className='flex-1' onClick={() => { handleSignIn() }} id="loginButton" >Entrar</Button>
 
 
                 <Dialog>
@@ -381,7 +381,7 @@ const Navbar = () => {
             
             <Dialog onOpenChange={()=>{setMessageLogin("")}} >
               <DialogTrigger>
-                <div className={`p-4 flex justify-center items-center cursor-pointer`}>
+                <div className={`p-4 flex justify-center items-center cursor-pointer`} id="navbarLoginButton" >
                   <FaRegUserCircle size={20}/>
                 </div>
               </DialogTrigger>

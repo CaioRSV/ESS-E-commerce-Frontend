@@ -23,7 +23,7 @@ const LoggedInCardComponent = ({ userData, handleSignOut }: TLoggedInCardCompone
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Bem-vindo, {userData?.name ? userData.name : 'Carregando...'}</CardTitle>
+        <CardTitle id="loggedInMessage" >Bem-vindo, {userData?.name ? userData.name : 'Carregando...'}</CardTitle>
         <CardDescription>{userData?.email ? userData.email : ''}</CardDescription>
       </CardHeader>
       <CardContent className="flex gap-3 flex-col">
