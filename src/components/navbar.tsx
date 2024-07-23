@@ -58,6 +58,7 @@ import {
 
 //
 import OrderList from './orderList';
+import CategoriesComponent from './categories'
 
 import { useProductDataContext } from '@/app/contexts/ProductData';
 import RegisterComponent from './register';
@@ -132,8 +133,7 @@ const Navbar = () => {
 
       getInfo();
     }
-  }
-
+  } 
 
   //
 
@@ -286,38 +286,10 @@ const Navbar = () => {
         </div>
             <NavigationMenu className={`transition-all`}>
               <NavigationMenuList>
-
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger>
-                  <div className={`p-4 flex justify-center items-center cursor-pointer`}>
-                    <div className={`font-abeezee text-[14px]`}>CATEGORIAS</div>
-                  </div>
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <div className={`w-[390px] h-fit mb-2`}>
-                      {
-                        categorias && categorias.length>0
-                          ?
-                          <div className={`w-full h-full p-4`}>
-                            <p className={`w-full font-abel font-semibold text-lg pb-2`} >Categorias</p>
-                            {
-                              categorias.map(item => (
-                                <div key={item.id} className={`w-fit hover:text-projRed transition-colors`}>
-                                  <Link href={`/produtos?categoria=${item.id}`}>
-                                    <p className={`font-abeezee`}>{item.nome}</p>
-                                  </Link>
-                                </div>
-                              ))
-                            }
-                          </div>
-                          :
-                          <div className={`w-full h-full flex justify-center items-center p-8`}>
-                            <CgSpinnerTwoAlt size={16} className={`animate-spin opacity-50`} />
-                          </div>
-                      }
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
+                
+              <div className={`p-4 flex justify-center items-center cursor-pointer`}>
+                <div className={`font-abeezee text-[14px]`}><CategoriesComponent/></div>
+              </div>
 
                 <NavigationMenuItem>
                   <div className={`p-4 flex justify-center items-center cursor-pointer hover:bg-accent/80 transition-all hover:text-accent-foreground h-10 rounded-md`}>
