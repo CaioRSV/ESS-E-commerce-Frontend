@@ -8,6 +8,8 @@ import { axiosAuth } from "@/lib/axios";
 import { getServerSession } from "next-auth";
 
 
+
+
 import { Input } from '@/components/ui/input';
 
 import { useState, useEffect } from 'react'; 
@@ -17,6 +19,7 @@ import { redirect } from 'next/navigation';
 import { IoMdArrowRoundForward } from "react-icons/io";
 import { TbShoppingCartQuestion } from "react-icons/tb";
 import { CgSpinnerTwoAlt } from "react-icons/cg";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 import { useProductDataContext } from "../contexts/ProductData";
 
@@ -185,6 +188,9 @@ export default function Carrinho() {
                                 ?.productMedia?.slice(-1)[0]?.media?.url ?? 'no_image'
                               }`} />
                               <div className={`ml-3 h-full w-full relative overflow-hidden`}>
+                                <div className={`rounded-full w-fit absolute right-0`}>
+                                  <FaRegTrashAlt size={20} className={`text-projRed`}/>
+                                </div>
                                 <p className={`font-abeezee text-[18px] italic`}>{`${productData.find(product => product.id === item.productId)?.name}`}</p>
                                 
                                 <p className={`font-abeezee text-[12px]`}>{`Descrição:`} <span className={`opacity-75`}>{`${productData.find(product => product.id === item.productId)?.description}`}</span> </p>
@@ -192,7 +198,7 @@ export default function Carrinho() {
 
                                 <div className={`w-full h-[63px] flex items-end`}>
                                   <p className={`font-abeezee text-2xl italic flex-1`}>{`R$ ${floatToMoney(
-                                    productData.find(product => product.id === item.productId)?.price ?? 98
+                                    productData.find(product => product.id === item.productId)?.price ?? 1
                                   )}`}</p>
       
                                   <div className={`flex bg-projGray rounded-full w-40 pt-1 pb-1 justify-center items-center`}>
