@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from '@/lib/axios';
 import { cn } from "@/lib/utils";
+import Link from 'next/link';
+import { NavigationMenuItem, NavigationMenuTrigger, NavigationMenuContent } from "@/components/ui/navigation-menu";
+import { CgSpinnerTwoAlt } from 'react-icons/cg';
 
 interface Category {
   id: number;
@@ -11,7 +14,7 @@ interface Category {
 const CategoriesComponent: React.FC = () => {
   const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
-  const [hover, setHover] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -21,54 +24,48 @@ const CategoriesComponent: React.FC = () => {
           setCategories(response.data);
         }
       } catch (err) {
-        console.error('Failed to fetch categories', err);
+        console.error('Falha ao buscar categorias', err);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchCategories();
   }, []);
 
-  const handleCategoriesClick = () => {
-    router.push('/categorias');
-  };
-
-  const handleCategoryClick = (categoryId: number) => {
-    router.push(`/produto?categoria=${categoryId}`);
-  };
-
   return (
-    <div className={cn("relative w-full")}
-         onMouseEnter={() => setHover(true)}
-         onMouseLeave={() => setHover(false)}>
-      <button
-        className={cn(
-          "bg-white px-4 py-2 text-black flex items-center justify-center w-full rounded",
-          "hover:bg-gray-100"
-        )}
-        onClick={handleCategoriesClick}
-      >
-        CATEGORIAS
-      </button>
-      {hover && (
-        <div className={cn(
-          "absolute top-full left-0 w-full bg-white border border-gray-300 rounded shadow-lg",
-          "z-10"
-        )}>
-          <ul className="list-none p-0 m-0">
-            {categories.map(category => (
-              <li key={category.id} className="w-full">
-                <button
-                  onClick={() => handleCategoryClick(category.id)}
-                  className="w-full text-left bg-transparent hover:bg-gray-100 cursor-pointer rounded p-4"
-                >
-                  {category.name}
-                </button>
-              </li>
-            ))}
-          </ul>
+    <NavigationMenuItem>
+      <NavigationMenuTrigger>
+        <Link href="/categorias">
+          <div className="p-4 flex justify-center items-center cursor-pointer">
+            <div className="font-abeezee text-[14px]">CATEGORIAS</div>
+          </div>
+        </Link>
+      </NavigationMenuTrigger>
+      <NavigationMenuContent>
+        <div className="w-[390px] h-fit mb-2">
+          {loading ? (
+            <div className="w-full h-full flex justify-center items-center p-8">
+              <CgSpinnerTwoAlt size={16} className="animate-spin opacity-50" />
+            </div>
+          ) : categories && categories.length > 0 ? (
+            <div className="w-full h-full p-4">
+              {categories.map(item => (
+                <div key={item.id} className="w-full hover:text-projRed transition-colors">
+                  <Link href={`/produtos?categoria=${item.id}`} className="block w-full">
+                    <p className="font-abeezee">{item.name}</p>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="w-full h-full flex justify-center items-center p-8">
+              <p className="font-abeezee">Nenhuma categoria disponível</p>
+            </div>
+          )}
         </div>
-      )}
-    </div>
+      </NavigationMenuContent>
+    </NavigationMenuItem>
   );
 };
 
