@@ -6,7 +6,7 @@ import useAxiosAuth from '@/lib/hooks/useAxiosAuth';
 import { cn } from "@/lib/utils";
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useUserDataContext } from '@/app/contexts/UserData';
-import { useRouter } from 'next/navigation'; // Import useRouter for navigation
+import { useRouter } from 'next/navigation';
 
 interface Media {
   id: number;
@@ -26,7 +26,7 @@ interface Category {
 const CategoriesPage: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null); // Error state
+  const [error, setError] = useState<string | null>(null); 
   const [dialogVisible, setDialogVisible] = useState<boolean>(false);
   const [editDialogVisible, setEditDialogVisible] = useState<boolean>(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState<boolean>(false);
@@ -35,11 +35,11 @@ const CategoriesPage: React.FC = () => {
   const [creatingCategory, setCreatingCategory] = useState<boolean>(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [deletingCategory, setDeletingCategory] = useState<Category | null>(null);
-  const [errorDialogVisible, setErrorDialogVisible] = useState<boolean>(false); // Error dialog visibility
+  const [errorDialogVisible, setErrorDialogVisible] = useState<boolean>(false); 
 
   const axiosAuth = useAxiosAuth();
   const { userData } = useUserDataContext();
-  const router = useRouter(); // Initialize useRouter
+  const router = useRouter();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -58,7 +58,7 @@ const CategoriesPage: React.FC = () => {
           setError('Ocorreu um erro desconhecido');
         }
         setLoading(false);
-        setErrorDialogVisible(true); // Show error dialog
+        setErrorDialogVisible(true);
       }
     };
 
@@ -66,7 +66,7 @@ const CategoriesPage: React.FC = () => {
   }, []);
 
   const handleCreateCategory = async () => {
-    if (!newCategoryName.trim() || !newCategoryImage.trim()) return; // Ensure both fields are filled
+    if (!newCategoryName.trim() || !newCategoryImage.trim()) return;
     setCreatingCategory(true);
     try {
       const response = await axiosAuth.post("/api/categories", {
@@ -86,12 +86,12 @@ const CategoriesPage: React.FC = () => {
         setError('Ocorreu um erro desconhecido');
       }
       setCreatingCategory(false);
-      setErrorDialogVisible(true); // Show error dialog
+      setErrorDialogVisible(true);
     }
   };
 
   const handleEditCategory = async () => {
-    if (!newCategoryName.trim() || !newCategoryImage.trim() || !editingCategory) return; // Ensure both fields are filled
+    if (!newCategoryName.trim() || !newCategoryImage.trim() || !editingCategory) return;
     setCreatingCategory(true);
     try {
       const response = await axiosAuth.put(`/api/categories`, {
@@ -156,17 +156,16 @@ const CategoriesPage: React.FC = () => {
     setDeleteDialogVisible(true);
   };
 
-  // New function to handle category button click
   const handleCategoryClick = (categoryId: number) => {
-    router.push(`/produto?categoria=${categoryId}`); // Navigate to category-specific page
+    router.push(`/produto?categoria=${categoryId}`);
   };
 
   const closeErrorDialog = () => {
     setErrorDialogVisible(false);
-    setError(null); // Clear the error message
+    setError(null);
   };
 
-  if (loading) return <div>Carregando...</div>; // Optionally, you could also use an error dialog for loading state
+  if (loading) return <div>Carregando...</div>;
 
   return (
     <div className={cn("w-full flex flex-col")}>
@@ -179,9 +178,9 @@ const CategoriesPage: React.FC = () => {
               "flex items-start justify-between p-4 border-b border-gray-300",
               "w-full",
               "bg-white",
-              "hover:bg-gray-100", // Add hover effect
+              "hover:bg-gray-100",
               "relative",
-              "text-left" // Align text to the left
+              "text-left"
             )}
           >
             <div className="flex items-center">
@@ -193,16 +192,16 @@ const CategoriesPage: React.FC = () => {
             {userData?.role === 'ADMIN' && (
               <div className="flex space-x-2">
                 <button
-                  onClick={(e) => { e.stopPropagation(); openEditDialog(category); }} // Prevent click event from propagating to parent button
+                  onClick={(e) => { e.stopPropagation(); openEditDialog(category); }}
                   className="p-1 text-gray-600 hover:text-gray-900"
                 >
-                  <PencilIcon className="w-4 h-4" /> {/* Adjusted icon size */}
+                  <PencilIcon className="w-4 h-4" /> 
                 </button>
                 <button
-                  onClick={(e) => { e.stopPropagation(); openDeleteDialog(category); }} // Prevent click event from propagating to parent button
+                  onClick={(e) => { e.stopPropagation(); openDeleteDialog(category); }} 
                   className="p-1 text-gray-600 hover:text-gray-900"
                 >
-                  <TrashIcon className="w-4 h-4" /> {/* Adjusted icon size */}
+                  <TrashIcon className="w-4 h-4" /> 
                 </button>
               </div>
             )}
@@ -212,7 +211,7 @@ const CategoriesPage: React.FC = () => {
       {userData?.role === 'ADMIN' && (
         <div className={cn("flex justify-center mt-4")}>
           <button
-            onClick={openCreateDialog} // Use the new function to open the create dialog
+            onClick={openCreateDialog} 
             className={cn(
               "flex items-center justify-center p-2 bg-green-500 text-white rounded",
               "hover:bg-green-600"
