@@ -289,11 +289,9 @@ const Navbar = () => {
 
                 <NavigationMenuItem>
                   <NavigationMenuTrigger>
-                    <Link href="/categorias">
                   <div className={`p-4 flex justify-center items-center cursor-pointer`}>
                     <div className={`font-abeezee text-[14px]`}>CATEGORIAS</div>
                   </div>
-                    </Link>
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <div className={`w-[390px] h-fit mb-2`}>
