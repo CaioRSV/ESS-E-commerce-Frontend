@@ -93,6 +93,11 @@ const OrderList = () => {
 
     }
 
+
+    const cancelOrder = async (orderId:number) => {
+        const data = await axiosAuth.delete(`/api/orders/${orderId}`);
+    }
+
   return (
     <>
     <Dialog>
@@ -106,7 +111,7 @@ const OrderList = () => {
                     ?
                     fetched.map(item => (
                         <>
-                        <div className={`w-full flex justify-center items-center bg-projGray rounded-lg mt-3 p-2`}>
+                        <div className={`w-full flex justify-center items-center bg-projGray rounded-lg mt-3 p-2 ${item.status=='CANCELED'?'opacity-50':''}`}>
                             <div className={`w-full`}>
                                 <p className={`w-full flex justify-center font-semibold`}>{`Pedido N#`+item.id}</p>
                                 <p className={`w-full flex justify-center`}>{item.createdAt?IsoToString(item.createdAt):""}</p>
@@ -145,7 +150,7 @@ const OrderList = () => {
                                     item.status=='PROCESSING'
                                         ?
                                         <div className={`w-full flex justify-center mt-1 mb-1`}>
-                                            <p className={` bg-red-300 bg-opacity-25 p-2 rounded-md text-sm cursor-pointer`}>Cancelar Pedido</p>
+                                            <p className={` bg-red-300 bg-opacity-25 p-2 rounded-md text-sm cursor-pointer`} onClick={()=>{cancelOrder(item.id)}} >Cancelar Pedido</p>
                                         </div>           
                                         :
                                         <></>
