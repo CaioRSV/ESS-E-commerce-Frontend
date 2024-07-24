@@ -184,7 +184,7 @@ const CategoriesPage: React.FC = () => {
               "relative",
               "text-left"
             )}
-            id={`category-item-${createIdFromName(category.name)}`}
+            id={`category-item-${category.id}`}
           >
             <div className="flex items-center">
               {category.Media?.url && (
@@ -201,15 +201,13 @@ const CategoriesPage: React.FC = () => {
               <div className="flex space-x-2">
                 <button
                   onClick={(e) => { e.stopPropagation(); openEditDialog(category); }}
-                  className="p-1 text-gray-600 hover:text-gray-900"
-                  id={`edit-category-${category.id}`}
+                  className="p-1 text-gray-600 hover:text-gray-900 edit"
                 >
                   <PencilIcon className="w-4 h-4" /> 
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); openDeleteDialog(category); }} 
-                  className="p-1 text-gray-600 hover:text-gray-900"
-                  id={`delete-category-${category.id}`}
+                  className="p-1 text-gray-600 hover:text-gray-900 delete"
                 >
                   <TrashIcon className="w-4 h-4" /> 
                 </button>
