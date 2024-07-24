@@ -165,8 +165,6 @@ const CategoriesPage: React.FC = () => {
     setError(null);
   };
 
-  const createIdFromName = (name: string) => name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-
   if (loading) return <div id="loading-message">Carregando...</div>;
 
   return (
