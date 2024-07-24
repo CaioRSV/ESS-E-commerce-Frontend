@@ -72,9 +72,25 @@ When('the user changes the category image to {string}', (newImageUrl: string) =>
 });
 
 When('the user clicks the update button', () => {
+  cy.intercept("PUT", `${serverBaseUrl}/api/categories`).as("UpdateCategoryRequest");
   cy.get('#confirm-edit-category-button').click();
+  cy.wait("@UpdateCategoryRequest");
 });
 
 Then('the category name should be updated to {string}', (updatedName: string) => {
   cy.get(`#category-item-${categoryId}`).should('exist').contains(updatedName);
+});
+
+When('the user opens the delete dialog for the category named {string}', (name: string) => {
+  cy.get(`#category-item-${categoryId} .delete`).click();
+});
+
+When('the user confirms the deletion', () => {
+  cy.intercept("DELETE", `${serverBaseUrl}/api/categories/${categoryId}`).as("DeleteCategoryRequest");
+  cy.get('#confirm-delete-category-button').click();
+  cy.wait("@DeleteCategoryRequest");
+});
+
+Then('the category should no longer exist in the list', () => {
+  cy.get(`#category-item-${categoryId}`).should('not.exist');
 });

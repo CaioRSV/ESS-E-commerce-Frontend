@@ -17,3 +17,9 @@ Feature: Category
     And the user changes the category image to "https://cdn-icons-png.flaticon.com/512/500/500225.png"
     And the user clicks the update button
     Then the category name should be updated to "Sapato"
+
+  Scenario: Delete an existing category
+    Given a category with name "Sapato" exists
+    When the user opens the delete dialog for the category named "Sapato"
+    And the user confirms the deletion
+    Then the category should no longer exist in the list
