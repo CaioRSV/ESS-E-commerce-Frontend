@@ -147,6 +147,19 @@ export default function Carrinho() {
       fetchCartNoLoading();
     }
   }
+
+  const removeFromCart = async (productId: number) => {
+    const res = await axiosAuth.delete("/api/cart/remove", {
+      data: {
+        cartId: cart?.id,
+        productId: productId,
+      }
+    });
+    
+    if(res.status==200){
+      fetchCartNoLoading();
+    }
+  }
   
   return (
     <div className={`w-screen h-screen`}>
@@ -168,7 +181,7 @@ export default function Carrinho() {
         <div className={`min-h-full w-full`}>         
           <div className={`md:flex w-full h-full`}>
               <div className={`w-full h-full mr-4`}>
-                <div className={`w-full min-h-32 bg-white rounded-xl border border-projGray p-4`}>
+                <div className={`w-full min-h-32 bg-white rounded-xl border border-projGray p-4`} id="productContainer">
                   
                   {
                     loading
@@ -188,7 +201,7 @@ export default function Carrinho() {
                                 ?.productMedia?.slice(-1)[0]?.media?.url ?? 'no_image'
                               }`} />
                               <div className={`ml-3 h-full w-full relative overflow-hidden`}>
-                                <div className={`rounded-full w-fit absolute right-0`}>
+                                <div className={`rounded-full w-fit absolute right-0 cursor-pointer`} onClick={()=>{removeFromCart(item.productId)}}>
                                   <FaRegTrashAlt size={20} className={`text-projRed`}/>
                                 </div>
                                 <p className={`font-abeezee text-[18px] italic`}>{`${productData.find(product => product.id === item.productId)?.name}`}</p>
