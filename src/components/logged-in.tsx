@@ -7,6 +7,7 @@ import UpdateProfileComponent from './update-profile';
 import ChangePasswordComponent from './change-password';
 import { AuthMe, useUserDataContext } from '@/app/contexts/UserData';
 import OrderListAdmin from './orderListAdmin';
+import { useRouter } from 'next/navigation';
 
 export type TLoggedInCardComponentProps = {
   userData: AuthMe;
@@ -14,12 +15,14 @@ export type TLoggedInCardComponentProps = {
 };
 
 const LoggedInCardComponent = ({ userData, handleSignOut }: TLoggedInCardComponentProps) => {
+  const router = useRouter();
   const [isUpdateProfileOpen, setUpdateProfileOpen] = useState(false);
   const [isChangePasswordOpen, setChangePasswordOpen] = useState(false);
 
   const handleUpdateProfileClose = () => setUpdateProfileOpen(false);
   const handleChangePasswordClose = () => setChangePasswordOpen(false);
-
+  const redirectToUser = () => router.push('/admin/user');
+  
   return (
     <Card>
       <CardHeader>
@@ -43,6 +46,11 @@ const LoggedInCardComponent = ({ userData, handleSignOut }: TLoggedInCardCompone
             <ChangePasswordComponent onClose={handleChangePasswordClose} />
           </DialogContent>
         </Dialog>
+        {
+          userData.role=='ADMIN'
+            && 
+            <Button onClick={() => redirectToUser()}>Usuários</Button>
+        }
         {
           userData.role=='ADMIN'
             ?

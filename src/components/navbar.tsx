@@ -326,17 +326,6 @@ const Navbar = () => {
               </NavigationMenuList>
             </NavigationMenu>
 
-
-            {/* <div className={`p-4 flex justify-center items-center cursor-pointer`}>
-              <div className={`font-abeezee text-[14px] text-projRed`}>OFERTAS</div>
-            </div> */}
-
-        {userIsAdmin && (
-            <div className={`p-4 flex justify-center items-center cursor-pointer`} onClick={handleAdminUserRoute}>
-              <div className={`font-abeezee text-[14px]`}>[ADMIN] USUARIOS</div>
-            </div>
-        )}
-
             <div className={`p-4 flex justify-center items-center flex-1`}>
               <div className={`font-abeezee text-[14px] rounded-full bg-projGray flex-1 flex`}>
                 <div className={`min-h-full min-w-[50px] flex items-center justify-center`}>
