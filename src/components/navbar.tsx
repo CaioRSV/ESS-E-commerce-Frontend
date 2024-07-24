@@ -366,7 +366,7 @@ const Navbar = () => {
 
           <DrawerTrigger onClick={() => { getCarrinho() }}>
             <div className={`p-4 flex justify-center items-center cursor-pointer`}>
-              <FiShoppingCart size={20} />
+              <FiShoppingCart size={20} id="navbarCartButton" />
             </div>
           </DrawerTrigger>
 
@@ -451,7 +451,7 @@ const Navbar = () => {
                 userData.email
                   ?
                   <Link href="/carrinho" className={`w-full`}>
-                    <Button className={`w-full`}>Ir para o carrinho</Button>
+                    <Button className={`w-full`} id="goToCartButton" >Ir para o carrinho</Button>
                   </Link>
                   :
                   <Button disabled={true}>Ir para o carrinho</Button>
