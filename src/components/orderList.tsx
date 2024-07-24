@@ -102,10 +102,10 @@ const OrderList = () => {
     <>
     <Dialog>
         <DialogTrigger onClick={()=>{getOrderList()}}>
-            <Button className='w-full'>Lista de pedidos</Button>
+            <Button className='w-full' id="pedidosCustomerButton">Lista de pedidos</Button>
         </DialogTrigger>
         <DialogContent className={``}>
-        <div className={`size-[460px] overflow-y-scroll p-3 font-abel text-lg`}>
+        <div className={`size-[460px] overflow-y-scroll p-3 font-abel text-lg`} id="pedidosUserContainer">
             {
                 fetched && fetched.length>0
                     ?

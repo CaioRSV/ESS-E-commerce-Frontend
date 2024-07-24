@@ -2,5 +2,29 @@
     "Admin": {
         "email": "admin@gmail.com",
         "senha": "admin"
+    },
+    "Customer": {
+        "email": "teste@gmail.com",
+        "senha": "@Teste123"
+    },
+    "Tênis": {
+        "nome": "Tênis",
+        "imagemUrl": "https://cdn-icons-png.flaticon.com/512/500/500225.png"
+    },
+    "Bota": {
+        "nome": "Bota",
+        "imagemUrl": "https://cdn-icons-png.flaticon.com/512/908/908036.png"
+    },
+    "Salto": {
+        "nome": "Salto",
+        "imagemUrl": "https://cdn-icons-png.flaticon.com/512/24/24697.png"
+    },
+    "Sandália": {
+        "nome": "Sandália",
+        "imagemUrl": "https://cdn-icons-png.flaticon.com/512/6401/6401715.png"
+    },
+    "Chuteira": {
+        "nome": "Chuteira",
+        "imagemUrl": "https://cdn-icons-png.flaticon.com/512/933/933633.png"
     }
 }
