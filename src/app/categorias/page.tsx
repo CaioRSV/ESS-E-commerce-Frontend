@@ -165,7 +165,7 @@ const CategoriesPage: React.FC = () => {
     setError(null);
   };
 
-  if (loading) return <div>Carregando...</div>;
+  if (loading) return <div id="loading-message">Carregando...</div>;
 
   return (
     <div className={cn("w-full flex flex-col")}>
@@ -182,24 +182,30 @@ const CategoriesPage: React.FC = () => {
               "relative",
               "text-left"
             )}
+            id={`category-item-${category.id}`}
           >
             <div className="flex items-center">
               {category.Media?.url && (
-                <img src={category.Media.url} alt={category.name} className="w-12 h-12 object-cover mr-4" />
+                <img 
+                  src={category.Media.url} 
+                  alt={category.name} 
+                  className="w-12 h-12 object-cover mr-4" 
+                  id={`category-image-${category.id}`}
+                />
               )}
-              <span>{category.name}</span>
+              <span id={`category-name-${category.id}`}>{category.name}</span>
             </div>
             {userData?.role === 'ADMIN' && (
               <div className="flex space-x-2">
                 <button
                   onClick={(e) => { e.stopPropagation(); openEditDialog(category); }}
-                  className="p-1 text-gray-600 hover:text-gray-900"
+                  className="p-1 text-gray-600 hover:text-gray-900 edit"
                 >
                   <PencilIcon className="w-4 h-4" /> 
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); openDeleteDialog(category); }} 
-                  className="p-1 text-gray-600 hover:text-gray-900"
+                  className="p-1 text-gray-600 hover:text-gray-900 delete"
                 >
                   <TrashIcon className="w-4 h-4" /> 
                 </button>
@@ -216,6 +222,7 @@ const CategoriesPage: React.FC = () => {
               "flex items-center justify-center p-2 bg-green-500 text-white rounded",
               "hover:bg-green-600"
             )}
+            id="add-category-button"
           >
             <PlusIcon className="w-5 h-5" />
             <span className="ml-2">Adicionar Categoria</span>
@@ -238,6 +245,7 @@ const CategoriesPage: React.FC = () => {
               onChange={(e) => setNewCategoryName(e.target.value)}
               placeholder="Nome da categoria"
               className="mb-4 p-2 border border-gray-300 rounded w-full"
+              id="new-category-name-input"
             />
             <input
               type="text"
@@ -245,11 +253,13 @@ const CategoriesPage: React.FC = () => {
               onChange={(e) => setNewCategoryImage(e.target.value)}
               placeholder="URL da Imagem"
               className="mb-4 p-2 border border-gray-300 rounded w-full"
+              id="new-category-image-input"
             />
             <div className="flex justify-end space-x-2">
               <button
                 onClick={() => setDialogVisible(false)}
                 className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                id="cancel-create-category-button"
               >
                 Cancelar
               </button>
@@ -257,6 +267,7 @@ const CategoriesPage: React.FC = () => {
                 onClick={handleCreateCategory}
                 className={`px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 ${creatingCategory ? 'opacity-50 cursor-not-allowed' : ''}`}
                 disabled={creatingCategory}
+                id="confirm-create-category-button"
               >
                 {creatingCategory ? 'Criando...' : 'Criar'}
               </button>
@@ -280,6 +291,7 @@ const CategoriesPage: React.FC = () => {
               onChange={(e) => setNewCategoryName(e.target.value)}
               placeholder="Nome da categoria"
               className="mb-4 p-2 border border-gray-300 rounded w-full"
+              id="edit-category-name-input"
             />
             <input
               type="text"
@@ -287,11 +299,13 @@ const CategoriesPage: React.FC = () => {
               onChange={(e) => setNewCategoryImage(e.target.value)}
               placeholder="URL da Imagem"
               className="mb-4 p-2 border border-gray-300 rounded w-full"
+              id="edit-category-image-input"
             />
             <div className="flex justify-end space-x-2">
               <button
                 onClick={() => setEditDialogVisible(false)}
                 className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                id="cancel-edit-category-button"
               >
                 Cancelar
               </button>
@@ -299,6 +313,7 @@ const CategoriesPage: React.FC = () => {
                 onClick={handleEditCategory}
                 className={`px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 ${creatingCategory ? 'opacity-50 cursor-not-allowed' : ''}`}
                 disabled={creatingCategory}
+                id="confirm-edit-category-button"
               >
                 {creatingCategory ? 'Atualizando...' : 'Atualizar'}
               </button>
@@ -321,12 +336,14 @@ const CategoriesPage: React.FC = () => {
               <button
                 onClick={() => setDeleteDialogVisible(false)}
                 className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                id="cancel-delete-category-button"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleDeleteCategory}
                 className={`px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600`}
+                id="confirm-delete-category-button"
               >
                 Excluir
               </button>
@@ -349,6 +366,7 @@ const CategoriesPage: React.FC = () => {
               <button
                 onClick={closeErrorDialog}
                 className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                id="close-error-dialog-button"
               >
                 Fechar
               </button>
@@ -361,3 +379,4 @@ const CategoriesPage: React.FC = () => {
 };
 
 export default CategoriesPage;
+
