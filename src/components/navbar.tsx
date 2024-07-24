@@ -457,7 +457,7 @@ const Navbar = () => {
                   <Button disabled={true}>Ir para o carrinho</Button>
               }
               <DrawerClose>
-                <p className={`w-full border rounded-md p-[6px] text-sm`}>Voltar</p>
+                <p className={`w-full border rounded-md p-[6px] text-sm`} id="closeCartButton">Voltar</p>
               </DrawerClose>
             </DrawerFooter>
           </DrawerContent>
