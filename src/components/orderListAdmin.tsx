@@ -150,7 +150,7 @@ const OrderList = () => {
         setUserList([]);
     }}>
         <DialogTrigger onClick={()=>{}}>
-            <Button className='w-full'>Lista de Pedidos de Usuários</Button>
+            <Button className='w-full' id="pedidosAdminButton">Lista de Pedidos de Usuários</Button>
         </DialogTrigger>
         <DialogContent className={``}>
         <div className={`size-[460px] overflow-y-scroll p-3 font-abel text-lg`}>
@@ -166,7 +166,7 @@ const OrderList = () => {
                                 setSearchSwitch(!searchSwitch)
                             }
                         }}
-                    >
+                    id="historicoPedidosUsuarioInput">
                     </Input>
 
                     <Button className={`rounded-full`} onClick={()=>{setSearchSwitch(!searchSwitch)}}>
@@ -194,7 +194,7 @@ const OrderList = () => {
                                             <div className={`p-1 flex justify-center items-center`}>
                                                 <Button className={`bg-orange-600 w-[110px] h-[80px] rounded-full font-abeezee`}
                                                     onClick={()=>{setViewBool(true);setUserID(item.id);getOrderList(item.email)}}
-                                                >
+                                                id="openHistoricoButton" > 
                                                     Abrir Histórico
                                                 </Button>
                                             </div>
@@ -220,7 +220,7 @@ const OrderList = () => {
                     </div>
                 </div>
 
-                <div className={`w-full h-[350px] rounded-lg`}>
+                <div className={`w-full h-[350px] rounded-lg`} id="pedidosContainerAdmin">
                     {
                         fetched && fetched.length>0
                             ?

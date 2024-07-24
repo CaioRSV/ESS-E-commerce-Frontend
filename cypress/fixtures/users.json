@@ -3,6 +3,10 @@
         "email": "admin@gmail.com",
         "senha": "admin"
     },
+    "Customer": {
+        "email": "teste@gmail.com",
+        "senha": "@Teste123"
+    },
     "Tênis": {
         "nome": "Tênis",
         "imagemUrl": "https://cdn-icons-png.flaticon.com/512/500/500225.png"
