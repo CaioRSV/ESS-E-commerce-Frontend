@@ -1,7 +1,7 @@
 'use client' // Componente Cliente -> Manipulação de variáveis de estado
 
 import { useState, useEffect } from 'react'; 
-import HomePage from './home/page';
+import HomePage from './product/productCostumer';
 
 export default function Home() {
   return (
