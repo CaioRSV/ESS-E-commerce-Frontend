@@ -215,9 +215,9 @@ export default function Carrinho() {
                                   )}`}</p>
       
                                   <div className={`flex bg-projGray rounded-full w-40 pt-1 pb-1 justify-center items-center`}>
-                                    <p className={`cursor-pointer font-abeezee text-3xl flex-1 flex justify-center items-center rounded-full`} onClick={()=>{changeQuantity(item.productId, item.quantity, -1)}}>-</p>
-                                    <p className={`font-abeezee text-md flex-1 flex justify-center items-center rounded-full italic`}>{`${item.quantity}`}</p>
-                                    <p className={`cursor-pointer font-abeezee text-3xl flex-1 flex justify-center items-center rounded-full`} onClick={()=>{changeQuantity(item.productId, item.quantity, 1)}}>+</p>
+                                    <p className={`cursor-pointer font-abeezee text-3xl flex-1 flex justify-center items-center rounded-full`} onClick={()=>{changeQuantity(item.productId, item.quantity, -1)}} id="minusOneQuantity" >-</p>
+                                    <p className={`font-abeezee text-md flex-1 flex justify-center items-center rounded-full italic`} id="itemQuantity">{`${item.quantity}`}</p>
+                                    <p className={`cursor-pointer font-abeezee text-3xl flex-1 flex justify-center items-center rounded-full`} onClick={()=>{changeQuantity(item.productId, item.quantity, 1)}} id="plusOneQuantity">+</p>
                                   </div>
       
                                 </div>

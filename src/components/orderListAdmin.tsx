@@ -169,12 +169,12 @@ const OrderList = () => {
                     id="historicoPedidosUsuarioInput">
                     </Input>
 
-                    <Button className={`rounded-full`} onClick={()=>{setSearchSwitch(!searchSwitch)}}>
+                    <Button className={`rounded-full`} onClick={()=>{setSearchSwitch(!searchSwitch)}} id="historicoPedidosSearchButton">
                         <FaMagnifyingGlass size={12} color={'white'}></FaMagnifyingGlass>
                     </Button>
                     </div>
 
-                    <div className={`w-full h-full overflow-y-scroll`}>
+                    <div className={`w-full h-full overflow-y-scroll`} id="historicoPedidosUserContainer">
                     {
                                 userList && userList.length>0
                                 ?
