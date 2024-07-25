@@ -20,15 +20,9 @@ return (
     <div>
             {userData?.role === 'ADMIN' ? (
                 <ProductPage />
-            ) : userData?.role === 'CUSTOMER' ? (
-                <HomePage />
             ) : (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <div style={{ border: '1px solid black', borderRadius: '10px', padding: '20px' }}>
-                <h1><strong>Por favor, faça login</strong></h1>
-                </div>
-        </div>
-            )}
+                <HomePage />
+            ) }
         </div>
     )
 

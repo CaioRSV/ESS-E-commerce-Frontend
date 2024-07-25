@@ -47,14 +47,17 @@ export default function ProductPage() {
   const handleConfirmYes: SubmitHandler<Product> = async (data) => {
     const priceAsFloat = parseFloat(String(data.price));
     const stockAsFloat = parseFloat(String(data.stock));
+    const categoryIdAsNumber = Number(data.categoryId);
     if (isNaN(priceAsFloat) || isNaN(stockAsFloat)) {
       console.error("Invalid price or stock value:", data.price, data.stock);
       return;
     }
-    const newData = { ...data, price: priceAsFloat, stock: stockAsFloat };
-  
+    const newData = { ...data, price: priceAsFloat, stock: stockAsFloat, categoryId: categoryIdAsNumber };
+    console.log( newData);
+
     try {
-      await axiosAuth.post("/api/product", newData);
+      const response = await axiosAuth.post("/api/product", newData);
+      console.log(response);
       alert("Item cadastrado com sucesso!");
       window.location.reload();
     } catch (refreshError) {
@@ -63,26 +66,59 @@ export default function ProductPage() {
     }
   };
 
-  const handleConfirmPatch: SubmitHandler<Product> = async (data) => {
-    const priceAsFloat = parseFloat(String(data.price));
-    const stockAsFloat = parseFloat(String(data.stock));
-    if (isNaN(priceAsFloat) || isNaN(stockAsFloat)) {
-      console.error("Invalid price or stock value:", data.price, data.stock);
-      return;
-    }
-    const newData = { ...data, price: priceAsFloat, stock: stockAsFloat };
+  // const handleConfirmPatch: SubmitHandler<Product> = async (data) => {
+  //   const priceAsFloat = parseFloat(String(data.price));
+  //   const stockAsFloat = parseFloat(String(data.stock));
+  //   const newData = { ...data, price: priceAsFloat, stock: stockAsFloat };
+  //   console.log(newData);
+  //   try {
+  //     await axiosAuth.patch(`/api/product/${selectedProduct?.id}`, newData);
+  //     alert("Alterações salvas com sucesso!");
+  //     window.location.reload();
+  //   } catch (refreshError) {
+  //     console.error("Erro ao enviar informações para o backend:", refreshError);
+  //     alert("Erro");
+  //   }
+  // };
 
+  const handleConfirmPatch: SubmitHandler<Product> = async (data) => {
+    const priceAsFloat = data.price !== undefined ? parseFloat(String(data.price)) : undefined;
+    const stockAsFloat = data.stock !== undefined ? parseFloat(String(data.stock)) : undefined;
+    const categoryIdAsNumber = Number(data.categoryId);
+
+    const newData: Partial<Product> = {};
+    
+    Object.keys(data).forEach(key => {
+      const value = (data as any)[key];
+      if (value !== undefined && value !== "") {
+        if (key === 'price' && priceAsFloat !== undefined) {
+          newData[key] = priceAsFloat;
+        } else if (key === 'stock' && stockAsFloat !== undefined) {
+          newData[key] = stockAsFloat;
+        } else if (key === 'categoryId') {
+          newData[key] = categoryIdAsNumber;
+        } else {
+          newData[key] = value;
+        }
+      }
+    });
+    console.log({productData, updatedData: newData});
+    console.log(newData);
+    
     try {
-      await axiosAuth.patch(`/api/product/${selectedProduct?.id}`, newData);
+      const response = await axiosAuth.patch(`/api/product/${selectedProduct?.id}`, newData);
+      console.log(response)
       alert("Alterações salvas com sucesso!");
       window.location.reload();
     } catch (refreshError) {
       console.error("Erro ao enviar informações para o backend:", refreshError);
-      alert(refreshError);
+      alert("Erro");
     }
   };
+  
 
   const handleConfirmDelete = async () => {
+    console.log(selectedProduct);
     if (!selectedProduct) {
       return;
     }
@@ -146,7 +182,7 @@ export default function ProductPage() {
           {selectedProduct ? (
             <div>
               <h2 className="text-xl font-bold">{selectedProduct.name}</h2>
-              <form onSubmit={handleSubmit(handleConfirmPatch , handleConfirmDelete)}>
+              <form onSubmit={handleSubmit(handleConfirmPatch)}>
               <div>
                 <label>Nome da peça</label>
                 <input
@@ -189,7 +225,8 @@ export default function ProductPage() {
                   {...register("categoryId", { required: false })}
                   className="w-full border rounded p-2 mb-4"
                   defaultValue={selectedProduct?.categoryId} //implementar defaultvalue barra de rolagem
-                >
+                > 
+                <option value="" disabled selected>{selectedProduct.category}</option>
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.name}
@@ -205,20 +242,14 @@ export default function ProductPage() {
                   placeholder={selectedProduct.description}
                 />
               </div>
+              <button className="bg-black text-white px-4 py-2 rounded" type="submit">
+                  Salvar alterações
+                </button>
             </form>
               <div className="flex space-x-4">
                 <button
-                  className="mt-4 bg-black text-white px-4 py-2 rounded"
-                  onClick={() => {
-                    handleSubmit(handleConfirmPatch);
-                  }}
-                >
-                  Salvar alterações
-                </button>
-                <button
                   className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
-                  onClick={() => {
-                    handleSubmit(handleConfirmDelete);
+                  onClick={() => {handleConfirmDelete();
                   }}
                 >
                   Deletar

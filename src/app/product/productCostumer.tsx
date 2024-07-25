@@ -60,6 +60,7 @@ export default function HomePage() {
         setCategories(data);
         const categoryMap = data.reduce((map, category) => {
           map[category.name] = String(category.id);
+          console.log(categoryMap);
           return map;
         }, {} as { [key: string]: string });
         setCategoryMap(categoryMap);
@@ -90,7 +91,7 @@ export default function HomePage() {
     if (marcaParam && marcaParam?.length > 0){  
       setSearchFilter(marcaParam);
     }
-    if (session && session.user) {
+    if (session) {
       const getInfo = async () => {
         const generalProduct = await axiosAuth.get("/api/product");
         setProductData(generalProduct.data.data);
@@ -163,8 +164,7 @@ export default function HomePage() {
             <div key={category.id}>
               <h3 className="text-lg font-bold">{category.name}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {renderProducts(productData.filter((product) => String(category.id) === categoryMap[category.name]))}
-                
+                {renderProducts(productData.filter((product) => String(product.categoryId) === categoryMap[category.name]))}
               </div>
             </div>
           ))}
