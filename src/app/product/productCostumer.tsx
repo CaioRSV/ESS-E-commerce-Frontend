@@ -15,6 +15,7 @@ interface Product {
   categoryId?: string;
   stock?: number;
   salePrice?: number;
+  productMedia?: { id: number; media: Media; mediaId: number; productId: number; }[];
 }
 
 interface Category {
@@ -48,6 +49,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null); 
   const [errorDialogVisible, setErrorDialogVisible] = useState<boolean>(false); 
+  const [searchSwitch, setSearchSwitch] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -79,33 +81,56 @@ export default function HomePage() {
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    let tempSearch = param.get("search");
-    let tempCategoria = param.get("categoria");
-    if (searchParam && searchParam?.length > 0){
-      setSearchFilter(searchParam);
-    }
-    if (categoriaParam && categoriaParam?.length > 0){
-      setCategoriaFilter(categoriaParam);
-    }
-    if (marcaParam && marcaParam?.length > 0){  
-      setSearchFilter(marcaParam);
-    }
-    if (session) {
-      const getInfo = async () => {
-        const generalProduct = await axiosAuth.get("/api/product");
-        setProductData(generalProduct.data.data);
-        const info = await axiosAuth.get(`/api/product?${tempSearch?`search=${tempSearch}`:''}
-        ${tempCategoria?`${tempSearch?'&':''}categoryId=${tempCategoria}`:''}
-          `)
-        if (info.data){
-          console.log(info.data);
-        }
-        setProductList(info.data.data);
-    };
-    getInfo();
+useEffect(() => {
+  let tempSearch = param.get("search");
+  let tempCategoria = param.get("categoria");
+  if (searchParam && searchParam?.length > 0){
+    setSearchFilter(searchParam);
   }
-  }, [session]);
+  if (categoriaParam && categoriaParam?.length > 0){
+    setCategoriaFilter(categoriaParam);
+  }
+  if (marcaParam && marcaParam?.length > 0){  
+    setSearchFilter(marcaParam);
+  }
+  if (session) {
+      const getInfo = async () => {
+          try {
+              // Obtenção dos produtos gerais
+              console.log('Fetching general products...');
+              const generalProductResponse = await axiosAuth.get("/api/product");
+              const generalProducts = generalProductResponse.data.data;
+              console.log('General products:', generalProducts);
+
+              // Obtenção dos detalhes dos produtos
+              console.log('Fetching product details...');
+              const detailedProducts = await Promise.all(generalProducts.map(async (product: { id: any; }) => {
+                  const productDetailResponse = await axiosAuth.get(`/api/product/${product.id}`);
+                  console.log(`Product details for ID ${product.id}:`, productDetailResponse.data);
+                  const productDetails = productDetailResponse.data;
+                  
+                  // Extrair a primeira URL da mídia do produto
+                  const imageUrl = productDetails.productMedia?.[productDetails.productMedia.length - 1]?.media?.url || '';
+                  
+                  return {
+                      ...productDetails,
+                      imageUrl,
+                  };
+              }));
+
+              setProductData(generalProducts);
+              setProductList(detailedProducts);
+
+              console.log('Detailed products:', detailedProducts);
+
+          } catch (error) {
+              console.error("Error fetching product information:", error);
+          }
+      };
+
+      getInfo();
+  }
+}, [session, searchSwitch]);
 
   const changeFilter = async(searchP:string) => {
     const getInfo = async () => {
@@ -120,12 +145,13 @@ export default function HomePage() {
   }
 
   const renderProducts = (products: Product[]) => {
+    console.log(products);
     return products.map((product) => (
       <div key={product.id} className="border p-4 rounded-lg">
         <img
           src={product.imageUrl}
           alt={product.name}
-          className="w-full h-40 object-cover mb-4"
+          className="w-32 h-32 object-cover mb-4"
         />
         <h3 className="text-lg font-bold">{product.name}</h3>
         {product.salePrice ? (
@@ -153,7 +179,7 @@ export default function HomePage() {
       <section className="w-full max-w-7xl mb-12">
         <h2 className="text-2xl font-bold mb-4">Para você!</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {renderProducts(getRandomProducts(productData))}
+          {renderProducts(getRandomProducts(productList))}
         </div>
       </section>
 
@@ -164,7 +190,10 @@ export default function HomePage() {
             <div key={category.id}>
               <h3 className="text-lg font-bold">{category.name}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {renderProducts(productData.filter((product) => String(product.categoryId) === categoryMap[category.name]))}
+                {renderProducts(productList.filter((product) => String(product.categoryId) == String(category.id)))}
+                <p onClick = {() => {{productList.forEach(item => {
+    console.log(`${item.categoryId}/${category.id}`)
+  })}}}> aaaa</p>
               </div>
             </div>
           ))}

@@ -7,14 +7,15 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "@/lib/axios";
 
 interface Product {
-  id: number;
-  name: string;
+  id?: number;
+  name?: string;
   description: string;
-  price: number;
-  imageUrl: string;
-  categoryId: string;
-  stock: number;
-  category: any;
+  price?: number;
+  imageUrl?: string;
+  categoryId?: string;
+  stock?: number;
+  salePrice?: number;
+  productMedia?: { id: number; media: Media; mediaId: number; productId: number; }[];
 }
 
 interface Category {
@@ -36,12 +37,12 @@ export default function ProductPage() {
   const { data: session } = useSession();
   const axiosAuth = useAxiosAuth();
   const [productData, setProductData] = useState<Product[]>([]);
+  const [productList, setProductList] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null); 
   const [errorDialogVisible, setErrorDialogVisible] = useState<boolean>(false); 
-
   const { register, handleSubmit, formState: { errors } } = useForm<Product>();
 
   const handleConfirmYes: SubmitHandler<Product> = async (data) => {
@@ -65,21 +66,6 @@ export default function ProductPage() {
       alert(refreshError);
     }
   };
-
-  // const handleConfirmPatch: SubmitHandler<Product> = async (data) => {
-  //   const priceAsFloat = parseFloat(String(data.price));
-  //   const stockAsFloat = parseFloat(String(data.stock));
-  //   const newData = { ...data, price: priceAsFloat, stock: stockAsFloat };
-  //   console.log(newData);
-  //   try {
-  //     await axiosAuth.patch(`/api/product/${selectedProduct?.id}`, newData);
-  //     alert("Alterações salvas com sucesso!");
-  //     window.location.reload();
-  //   } catch (refreshError) {
-  //     console.error("Erro ao enviar informações para o backend:", refreshError);
-  //     alert("Erro");
-  //   }
-  // };
 
   const handleConfirmPatch: SubmitHandler<Product> = async (data) => {
     const priceAsFloat = data.price !== undefined ? parseFloat(String(data.price)) : undefined;
@@ -158,18 +144,45 @@ export default function ProductPage() {
   }, []);
 
   useEffect(() => {
-    if (session && session.user) {
-      const getInfo = async () => {
-        const info = await axiosAuth.get("/api/product");
-        if (info.data) {
-          setProductData(info.data.data);
-        }
-      };
-      getInfo();
+    if (session) {
+        const getInfo = async () => {
+            try {
+                // Obtenção dos produtos gerais
+                console.log('Fetching general products...');
+                const generalProductResponse = await axiosAuth.get("/api/product");
+                const generalProducts = generalProductResponse.data.data;
+                console.log('General products:', generalProducts);
+  
+                // Obtenção dos detalhes dos produtos
+                console.log('Fetching product details...');
+                const detailedProducts = await Promise.all(generalProducts.map(async (product: { id: any; }) => {
+                    const productDetailResponse = await axiosAuth.get(`/api/product/${product.id}`);
+                    console.log(`Product details for ID ${product.id}:`, productDetailResponse.data);
+                    const productDetails = productDetailResponse.data;
+                    
+                    // Extrair a primeira URL da mídia do produto
+                    const imageUrl = productDetails.productMedia?.[productDetails.productMedia.length - 1]?.media?.url;
+                    
+                    return {
+                        ...productDetails,
+                        imageUrl,
+                    };
+                }));
+  
+                setProductData(generalProducts);
+                setProductList(detailedProducts);
+  
+                console.log('Detailed products:', detailedProducts);
+                console.log('General products:', generalProducts);
+  
+            } catch (error) {
+                console.error("Error fetching product information:", error);
+            }
+        };
+  
+        getInfo();
     }
-  }, [axiosAuth, session]);
-
-  //const categories = ["Tênis", "Botas", "Rasteiras"];
+  }, [session]);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -226,7 +239,8 @@ export default function ProductPage() {
                   className="w-full border rounded p-2 mb-4"
                   defaultValue={selectedProduct?.categoryId} //implementar defaultvalue barra de rolagem
                 > 
-                <option value="" disabled selected>{selectedProduct.category}</option>
+                <option value="" disabled>{selectedProduct.categoryId ? categories.find(category => String(category.id) === selectedProduct.categoryId)?.name : 'Selecione uma categoria'}</option>
+
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.name}
@@ -325,7 +339,7 @@ export default function ProductPage() {
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-4">Todos os Produtos</h2>
           <div className="flex space-x-4 overflow-x-auto">
-            {productData.map((product) => (
+            {productList.map((product) => (
               <div
                 key={product.id}
                 className="border p-4 rounded-lg"
