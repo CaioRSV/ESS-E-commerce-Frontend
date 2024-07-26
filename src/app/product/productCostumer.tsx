@@ -145,40 +145,43 @@ useEffect(() => {
   }
 
   const renderProducts = (products: Product[]) => {
-    console.log(products);
-    return products.map((product) => (
-      <div
-        key={product.id}
-        className="border p-4 rounded-lg flex flex-col items-center relative group"
-      >
-        <img
-          src={product.imageUrl}
-          alt={product.name}
-          className="w-32 h-32 object-cover mb-4"
-        />
-        <h3 className="text-lg font-bold text-center">{product.name}</h3>
-        {product.stock === 0 ? (
-          <p className="text-red-500">Produto Indisponível</p>
-        ) : product.salePrice ? (
-          <p className="text-center">
-            <span className="line-through text-gray-500">
-              R${product.price?.toFixed(2)}
-            </span>{" "}
-            <span className="text-red-500">R${product.salePrice.toFixed(2)}</span>
-          </p>
-        ) : (
-          <p className="text-center">R${product.price?.toFixed(2)}</p>
-        )}
-        {product.stock !== 0 && (
+    return (
+      <div className="flex flex-wrap gap-4">
+        {products.map((product) => (
+          <div
+            key={product.id}
+            className="relative border p-3 rounded-lg flex flex-col items-center justify-between w-64 h-60 group"
+          >
+            <img
+              src={product.imageUrl}
+              alt={product.name}
+              className="w-32 h-32 object-cover mb-4"
+            />
+            <h3 className="text-lg font-bold text-center">{product.name}</h3>
+            {product.stock === 0 ? (
+              <p className="text-red-500">Produto Indisponível</p>
+            ) : product.salePrice ? (
+              <p className="text-center">
+                <span className="line-through text-gray-500">
+                  R${product.price?.toFixed(2)}
+                </span>{" "}
+                <span className="text-red-500">R${product.salePrice.toFixed(2)}</span>
+              </p>
+            ) : (
+              <p className="text-center">R${product.price?.toFixed(2)}</p>
+            )}
+             {product.stock !== 0 && (
           <button
-            className="absolute bottom-4 px-6 py-3 bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute bottom-4 px-6 py-4 bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
             onClick={() => addToCart(product)}
           >
             Adicionar ao Carrinho
           </button>
         )}
+          </div>
+        ))}
       </div>
-    ));
+    );
   };
 
   const addToCart = (product: Product) => {
@@ -196,9 +199,7 @@ useEffect(() => {
 
       <section className="w-full max-w-7xl mb-12">
         <h2 className="text-3xl font-bold mb-2">Para você!</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {renderProducts(getRandomProducts(productList))}
-        </div>
       </section>
 
 <section className="w-full max-w-7xl mb-12">
@@ -213,9 +214,7 @@ useEffect(() => {
       return (
         <div key={category.id} className="mb-6">
           <h3 className="text-3xl font-bold mb-2">{category.name}</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {renderProducts(choosedProducts)}
-          </div>
         </div>
       );
     })}

@@ -254,7 +254,6 @@ export default function ProductPage() {
               </div>
               <div>
                 <label>Categoria</label>
-                {console.log("Selected Product:", selectedProduct)}
                 <select               
                   {...register("categoryId", { required: false })}
                   className="w-full border rounded p-2 mb-4"
@@ -356,33 +355,60 @@ export default function ProductPage() {
                 Salvar
               </button>
             </form>
-          )}
-        </div>
-
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">Todos os Produtos</h2>
-          <div className="flex space-x-4 overflow-x-auto">
-            {productList.map((product) => (
-              <div
-                key={product.id}
-                className="border p-4 rounded-lg flex flex-col items-center"
-                onClick={() => setSelectedProduct(product)}
-              >
-                <img
-                  src={product.imageUrl}
-                  alt={product.name}
-                  className="w-32 h-32 object-cover mb-4"
-                />
-                <p className="text-lg font-bold text-center"><strong>{product.name}</strong></p>
-                <p className="text-center">R${product.price}</p>
-                <p className="text-center">Estoque: {product.stock}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+           )}
+</div>
+<div className="mb-8">
+  <h2 className="text-xl font-bold mb-4">Todos os Produtos</h2>
+  <div className="flex flex-wrap gap-4">
+    {productList.map((product, index) => (
+      <div
+        key={product.id}
+        className={`relative border p-4 rounded-lg flex flex-col items-center group justify-between w-64 h-80 ${
+          selectedProduct?.id === product.id ? 'border-4 border-black' : 'border-gray-300'
+        }`}
+        onClick={() => setSelectedProduct(product)}
+      >
+        <img
+          src={product.imageUrl}
+          alt={product.name}
+          className="w-32 h-32 object-cover mb-4"
+        />
+        <p className="text-lg font-bold text-center"><strong>{product.name}</strong></p>
+        <p className="text-center">R${product.price}</p>
+        <p className="text-center">Estoque: {product.stock}</p>
+        <button
+          className="absolute bottom-4 px-4 py-2 bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
+          onClick={(e) => {
+            e.stopPropagation();
+            setSelectedProduct(product);
+          }}
+        >
+          Selecionar produto
+        </button>
       </div>
-    </main>
-  );
-}
-
-
+    ))}
+    <div
+      className="border p-4 rounded-lg flex flex-col items-center justify-between cursor-pointer group border-gray-300 w-64 h-80"
+      onClick={() => {
+        setSelectedProduct(null);
+      }}
+    >
+      <div className="w-32 h-32 flex items-center justify-center mb-4 bg-gray-200 rounded-full">
+        <span className="text-3xl text-gray-600">+</span>
+      </div>
+      <p className="text-lg font-bold text-center">Adicionar produto</p>
+      <button
+        className="px-4 py-2 bg-black text-white rounded mt-4"
+        onClick={() => {
+          setSelectedProduct(null);
+        }}
+      >
+        Clique aqui
+      </button>
+       </div>
+             
+           </div>
+         </div>
+       </div>
+     </main>
+   );} 
