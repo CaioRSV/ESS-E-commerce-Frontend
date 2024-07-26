@@ -188,13 +188,13 @@ export default function ProductPage() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="w-full max-w-5xl">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold">Adicionar Itens</h1>
+          <h1 className="text-2xl font-bold">Cadastro de Itens</h1>
         </div>
 
         <div className="bg-gray-100 p-4 rounded-lg mb-8 w-full">
           {selectedProduct ? (
             <div>
-              <h2 className="text-xl font-bold">{selectedProduct.name}</h2>
+              <h1 className="text-xl font-bold  mb-4">{selectedProduct.name}</h1>
               <form onSubmit={handleSubmit(handleConfirmPatch)}>
               <div>
                 <label>Nome da peça</label>
@@ -234,12 +234,13 @@ export default function ProductPage() {
               </div>
               <div>
                 <label>Categoria</label>
+                {console.log("Selected Product:", selectedProduct)}
                 <select               
                   {...register("categoryId", { required: false })}
                   className="w-full border rounded p-2 mb-4"
-                  defaultValue={selectedProduct?.categoryId} //implementar defaultvalue barra de rolagem
+                  defaultValue={String(selectedProduct?.categoryId) || ""} //implementar defaultvalue barra de rolagem
                 > 
-                <option value="" disabled>{selectedProduct.categoryId ? categories.find(category => String(category.id) === selectedProduct.categoryId)?.name : 'Selecione uma categoria'}</option>
+                <option value="" disabled>{String(selectedProduct?.categoryId) ? categories.find((category) => String(category.id) === String(selectedProduct.categoryId))?.name : 'Selecione uma categoria'}</option>
 
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>
@@ -313,7 +314,9 @@ export default function ProductPage() {
                 <select
                   {...register("categoryId", { required: true })}
                   className="w-full border rounded p-2 mb-4"
-                >
+                  defaultValue={""} //implementar defaultvalue barra de rolagem
+                > 
+                 <option value="" disabled>Selecione uma categoria</option>
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.name}
@@ -342,7 +345,7 @@ export default function ProductPage() {
             {productList.map((product) => (
               <div
                 key={product.id}
-                className="border p-4 rounded-lg"
+                className="border p-4 rounded-lg flex flex-col items-center"
                 onClick={() => setSelectedProduct(product)}
               >
                 <img
@@ -350,9 +353,9 @@ export default function ProductPage() {
                   alt={product.name}
                   className="w-32 h-32 object-cover mb-4"
                 />
-                <p><strong>{product.name}</strong></p>
-                <p>R${product.price}</p>
-                <p>Estoque: {product.stock}</p>
+                <p className="text-lg font-bold text-center"><strong>{product.name}</strong></p>
+                <p className="text-center">R${product.price}</p>
+                <p className="text-center">Estoque: {product.stock}</p>
               </div>
             ))}
           </div>

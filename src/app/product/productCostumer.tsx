@@ -147,22 +147,24 @@ useEffect(() => {
   const renderProducts = (products: Product[]) => {
     console.log(products);
     return products.map((product) => (
-      <div key={product.id} className="border p-4 rounded-lg">
+      <div key={product.id} className="border p-4 rounded-lg flex flex-col items-center">
         <img
           src={product.imageUrl}
           alt={product.name}
           className="w-32 h-32 object-cover mb-4"
         />
-        <h3 className="text-lg font-bold">{product.name}</h3>
-        {product.salePrice ? (
-          <p>
+        <h3 className="text-lg font-bold text-center">{product.name}</h3>
+        {product.stock === 5 ? (<p className="text-red-500">Produto Indisponível</p>) //corrigir pra estoque =0
+        : product.salePrice ?
+          (
+          <p className="text-center">
             <span className="line-through text-gray-500">
               R${product.price?.toFixed(2)}
             </span>{" "}
             <span className="text-red-500">R${product.salePrice.toFixed(2)}</span>
           </p>
         ) : (
-          <p>R${product.price?.toFixed(2)}</p>
+          <p className="text-center">R${product.price?.toFixed(2)}</p>
         )}
       </div>
     ));
@@ -177,28 +179,35 @@ useEffect(() => {
     <main className="flex flex-col items-center p-8">
 
       <section className="w-full max-w-7xl mb-12">
-        <h2 className="text-2xl font-bold mb-4">Para você!</h2>
+        <h2 className="text-3xl font-bold mb-2">Para você!</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {renderProducts(getRandomProducts(productList))}
         </div>
       </section>
 
-      <section className="w-full max-w-7xl mb-12">
-        <h2 className="text-2xl font-bold mb-4">Categorias</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {categories.map((category) => (
-            <div key={category.id}>
-              <h3 className="text-lg font-bold">{category.name}</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {renderProducts(productList.filter((product) => String(product.categoryId) == String(category.id)))}
-                <p onClick = {() => {{productList.forEach(item => {
-    console.log(`${item.categoryId}/${category.id}`)
-  })}}}> aaaa</p>
-              </div>
-            </div>
-          ))}
+<section className="w-full max-w-7xl mb-12">
+  <div className="grid grid-cols-1 gap-4">
+    {categories.map((category) => {
+      const choosedProducts = productList.filter((product) => String(product.categoryId) === String(category.id));
+
+      if (choosedProducts.length === 0) {
+        return null;
+      }
+
+      return (
+        <div key={category.id} className="mb-6">
+          <h3 className="text-3xl font-bold mb-2">{category.name}</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {renderProducts(choosedProducts)}
+          </div>
         </div>
-      </section>
+      );
+    })}
+  </div>
+</section>
+
+
+
 
 
       <footer className="w-full max-w-7xl mt-12 border-t pt-8">
