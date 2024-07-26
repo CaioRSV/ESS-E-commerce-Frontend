@@ -174,6 +174,7 @@ useEffect(() => {
           <button
             className="absolute bottom-4 px-6 py-4 bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
             onClick={() => addToCart(product)}
+            id="#addToCartButton"
           >
             Adicionar ao Carrinho
           </button>
