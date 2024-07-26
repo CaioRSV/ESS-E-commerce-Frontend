@@ -5,6 +5,9 @@ import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import axios from "@/lib/axios";
+import { useUserDataContext } from '@/app/contexts/UserData';
+import { useRouter } from "next/navigation";
+import { get } from "lodash";
 
 interface Product {
   id?: number;
@@ -44,6 +47,19 @@ export default function ProductPage() {
   const [error, setError] = useState<string | null>(null); 
   const [errorDialogVisible, setErrorDialogVisible] = useState<boolean>(false); 
   const { register, handleSubmit, formState: { errors } } = useForm<Product>();
+  const { userData } = useUserDataContext();
+  const router = useRouter();
+  const [userIsAdmin, setUserIsAdmin] = useState(userData.role === 'ADMIN');
+  const [isAuthenticated, setIsAuthenticated] = useState(session?.user.accessToken != null);
+
+  useEffect(() => {
+    setUserIsAdmin(userData.role === 'ADMIN');
+    setIsAuthenticated(session?.user.accessToken != null);
+    if (isAuthenticated && !userIsAdmin) {
+      router.push('/');
+    }
+  }, [userData, session]);
+  
 
   const handleConfirmYes: SubmitHandler<Product> = async (data) => {
     const priceAsFloat = parseFloat(String(data.price));
@@ -54,13 +70,14 @@ export default function ProductPage() {
       return;
     }
     const newData = { ...data, price: priceAsFloat, stock: stockAsFloat, categoryId: categoryIdAsNumber };
-    console.log(newData);
+    console.log( newData);
 
     try {
       const response = await axiosAuth.post("/api/product", newData);
       console.log(response);
       alert("Item cadastrado com sucesso!");
-      window.location.reload();
+      //window.location.reload();
+      getInfo();
     } catch (refreshError) {
       console.error("Erro ao enviar informações para o backend:", refreshError);
       alert(refreshError);
@@ -93,14 +110,16 @@ export default function ProductPage() {
     
     try {
       const response = await axiosAuth.patch(`/api/product/${selectedProduct?.id}`, newData);
-      console.log(response);
+      console.log(response)
       alert("Alterações salvas com sucesso!");
-      window.location.reload();
+      //window.location.reload();
+      getInfo();
     } catch (refreshError) {
       console.error("Erro ao enviar informações para o backend:", refreshError);
       alert("Erro");
     }
   };
+  
 
   const handleConfirmDelete = async () => {
     console.log(selectedProduct);
@@ -111,7 +130,8 @@ export default function ProductPage() {
     try {
       await axiosAuth.delete(`/api/product/${selectedProduct.id}`);
       alert("Produto deletado com sucesso!");
-      window.location.reload();
+      //window.location.reload();
+      getInfo();
     } catch (deleteError) {
       console.error("Erro ao deletar o produto:", deleteError);
       alert(deleteError);
@@ -142,44 +162,45 @@ export default function ProductPage() {
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    if (session) {
-      const getInfo = async () => {
-        try {
-          // Obtenção dos produtos gerais
-          console.log('Fetching general products...');
-          const generalProductResponse = await axiosAuth.get("/api/product");
-          const generalProducts = generalProductResponse.data.data;
-          console.log('General products:', generalProducts);
+  const getInfo = async () => {
+    try {
+        // Obtenção dos produtos gerais
+        console.log('Fetching general products...');
+        const generalProductResponse = await axiosAuth.get("/api/product");
+        const generalProducts = generalProductResponse.data.data;
+        console.log('General products:', generalProducts);
 
-          // Obtenção dos detalhes dos produtos
-          console.log('Fetching product details...');
-          const detailedProducts = await Promise.all(generalProducts.map(async (product: { id: any; }) => {
+        // Obtenção dos detalhes dos produtos
+        console.log('Fetching product details...');
+        const detailedProducts = await Promise.all(generalProducts.map(async (product: { id: any; }) => {
             const productDetailResponse = await axiosAuth.get(`/api/product/${product.id}`);
             console.log(`Product details for ID ${product.id}:`, productDetailResponse.data);
             const productDetails = productDetailResponse.data;
-
-            // Extrair a última URL da mídia do produto
-            const imageUrl = productDetails.productMedia?.[productDetails.productMedia.length - 1]?.media?.url || '';
-
+            
+            // Extrair a primeira URL da mídia do produto
+            const imageUrl = productDetails.productMedia?.[productDetails.productMedia.length - 1]?.media?.url;
+            
             return {
-              ...productDetails,
-              imageUrl,
+                ...productDetails,
+                imageUrl,
             };
-          }));
+        }));
 
-          setProductData(generalProducts);
-          setProductList(detailedProducts);
+        setProductData(generalProducts);
+        setProductList(detailedProducts);
 
-          console.log('Detailed products:', detailedProducts);
-          console.log('General products:', generalProducts);
+        console.log('Detailed products:', detailedProducts);
+        console.log('General products:', generalProducts);
 
-        } catch (error) {
-          console.error("Error fetching product information:", error);
-        }
-      };
+    } catch (error) {
+        console.error("Error fetching product information:", error);
+    }
+};
 
-      getInfo();
+  useEffect(() => {
+    if (isAuthenticated && userIsAdmin) {
+  
+        getInfo();
     }
   }, [session]);
 
@@ -187,75 +208,88 @@ export default function ProductPage() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="w-full max-w-5xl">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold">Adicionar Itens</h1>
+          <h1 className="text-2xl font-bold">Cadastro de Itens</h1>
         </div>
 
         <div className="bg-gray-100 p-4 rounded-lg mb-8 w-full">
           {selectedProduct ? (
             <div>
-              <h2 className="text-xl font-bold">{selectedProduct.name}</h2>
+              <h1 className="text-xl font-bold  mb-4">{selectedProduct.name}</h1>
               <form onSubmit={handleSubmit(handleConfirmPatch)}>
-                <div>
-                  <label>Nome da peça</label>
-                  <input
-                    {...register("name", { required: false })}
-                    type="text"
-                    className="w-full border rounded p-2 mb-4"
-                    placeholder={selectedProduct.name}
-                  />
-                </div>
-                <div>
-                  <label>Imagem da peça</label>
-                  <input
-                    {...register("imageUrl", { required: false })}
-                    type="text"
-                    className="w-full border rounded p-2 mb-4"
-                    placeholder={selectedProduct.imageUrl}
-                  />
-                </div>
-                <div>
-                  <label>Preço</label>
-                  <input
-                    {...register("price", { required: false })}
-                    type="text"
-                    className="w-full border rounded p-2 mb-4"
-                    placeholder={selectedProduct.price?.toFixed(2)}
-                  />
-                </div>
-                <div>
-                  <label>Estoque</label>
-                  <input
-                    {...register("stock", { required: false })}
-                    type="text"
-                    className="w-full border rounded p-2 mb-4"
-                    placeholder={String(selectedProduct.stock)}
-                  />
-                </div>
-                <div>
-                  <label>Categoria</label>
-                  <select               
-                    {...register("categoryId", { required: false })}
-                    className="w-full border rounded p-2 mb-4"
-                    defaultValue={selectedProduct?.categoryId}
-                  > 
-                    <option value="" disabled>{selectedProduct.categoryId}</option>
-                    {categories.map((category) => (
-                      <option key={category.id} value={category.id}>
-                        {category.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label>Descrição</label>
-                  <textarea
-                    {...register("description", { required: false })}
-                    className="w-full border rounded p-2 mb-4"
-                    placeholder={selectedProduct.description}
-                  />
-                </div>
-                <button className="bg-black text-white px-4 py-2 rounded" type="submit">Alterar Peça</button>
-              </form>
+              <div>
+                <label>Nome da peça</label>
+                <input
+                  {...register("name", { required: false })}
+                  type="text"
+                  className="w-full border rounded p-2 mb-4"
+                  placeholder={selectedProduct.name}
+                />
+              </div>
+              <div>
+                <label>Imagem da peça</label>
+                <input
+                  {...register("imageUrl", { required: false })}
+                  type="text"
+                  className="w-full border rounded p-2 mb-4"
+                  placeholder= {selectedProduct.imageUrl}
+                />
+              </div>
+              <div>
+                <label>Preço</label>
+                <input
+                  {...register("price", { required: false })}
+                  type="text"
+                  className="w-full border rounded p-2 mb-4"
+                  placeholder={selectedProduct.price?.toFixed(2)}
+                />
+              </div>
+              <div>
+                <label>Estoque</label>
+                <input
+                  {...register("stock", { required: false })}
+                  type="text"
+                  className="w-full border rounded p-2 mb-4"
+                  placeholder={String(selectedProduct.stock)}
+                />
+              </div>
+              <div>
+                <label>Categoria</label>
+                {console.log("Selected Product:", selectedProduct)}
+                <select               
+                  {...register("categoryId", { required: false })}
+                  className="w-full border rounded p-2 mb-4"
+                  defaultValue={String(selectedProduct?.categoryId) || ""} //implementar defaultvalue barra de rolagem
+                > 
+                <option value="" disabled>{String(selectedProduct?.categoryId) ? categories.find((category) => String(category.id) === String(selectedProduct.categoryId))?.name : 'Selecione uma categoria'}</option>
+
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label>Descrição</label>
+                <textarea
+                  {...register("description", { required: false })}
+                  className="w-full border rounded p-2 mb-4"
+                  placeholder={selectedProduct.description}
+                />
+              </div>
+              <button className="bg-black text-white px-4 py-2 rounded" type="submit">
+                  Salvar alterações
+                </button>
+            </form>
+              <div className="flex space-x-4">
+                <button
+                  className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
+                  onClick={() => {handleConfirmDelete();
+                  }}
+                >
+                  Deletar
+                </button>
+              </div>
             </div>
           ) : (
             <form onSubmit={handleSubmit(handleConfirmYes)}>
@@ -274,7 +308,7 @@ export default function ProductPage() {
                   {...register("imageUrl", { required: true })}
                   type="text"
                   className="w-full border rounded p-2 mb-4"
-                  placeholder="URL da imagem"
+                  placeholder="Imagem da peça"
                 />
               </div>
               <div>
@@ -297,11 +331,12 @@ export default function ProductPage() {
               </div>
               <div>
                 <label>Categoria</label>
-                <select               
+                <select
                   {...register("categoryId", { required: true })}
                   className="w-full border rounded p-2 mb-4"
-                >
-                  <option value="" disabled>Selecione uma categoria</option>
+                  defaultValue={""} //implementar defaultvalue barra de rolagem
+                > 
+                 <option value="" disabled>Selecione uma categoria</option>
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.name}
@@ -317,42 +352,37 @@ export default function ProductPage() {
                   placeholder="Descrição"
                 />
               </div>
-              <button className="bg-black text-white px-4 py-2 rounded" type="submit">Adicionar Peça</button>
+              <button className="bg-black text-white px-4 py-2 rounded" type="submit">
+                Salvar
+              </button>
             </form>
           )}
         </div>
 
-        <div>
-          <h2 className="text-xl font-bold mb-4">Produtos</h2>
-          <table className="w-full bg-white rounded-lg">
-            <thead>
-              <tr>
-                <th className="border p-2">Nome</th>
-                <th className="border p-2">Imagem</th>
-                <th className="border p-2">Preço</th>
-                <th className="border p-2">Estoque</th>
-                <th className="border p-2">Categoria</th>
-                <th className="border p-2">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {productList.map((product) => (
-                <tr key={product.id}>
-                  <td className="border p-2">{product.name}</td>
-                  <td className="border p-2"><img src={product.imageUrl} alt={product.name} className="w-16 h-16 object-cover" /></td>
-                  <td className="border p-2">{product.price?.toFixed(2)}</td>
-                  <td className="border p-2">{product.stock}</td>
-                  <td className="border p-2">{categories.find(cat => cat.id === product.categoryId)?.name}</td>
-                  <td className="border p-2">
-                    <button className="bg-blue-500 text-white px-2 py-1 rounded mr-2" onClick={() => setSelectedProduct(product)}>Editar</button>
-                    <button className="bg-red-500 text-white px-2 py-1 rounded" onClick={handleConfirmDelete}>Deletar</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4">Todos os Produtos</h2>
+          <div className="flex space-x-4 overflow-x-auto">
+            {productList.map((product) => (
+              <div
+                key={product.id}
+                className="border p-4 rounded-lg flex flex-col items-center"
+                onClick={() => setSelectedProduct(product)}
+              >
+                <img
+                  src={product.imageUrl}
+                  alt={product.name}
+                  className="w-32 h-32 object-cover mb-4"
+                />
+                <p className="text-lg font-bold text-center"><strong>{product.name}</strong></p>
+                <p className="text-center">R${product.price}</p>
+                <p className="text-center">Estoque: {product.stock}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </main>
   );
 }
+
+

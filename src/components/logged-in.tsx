@@ -22,6 +22,7 @@ const LoggedInCardComponent = ({ userData, handleSignOut }: TLoggedInCardCompone
   const handleUpdateProfileClose = () => setUpdateProfileOpen(false);
   const handleChangePasswordClose = () => setChangePasswordOpen(false);
   const redirectToUser = () => router.push('/admin/user');
+  const redirectToProduct = () => router.push('/admin/product');
   
   return (
     <Card>
@@ -50,6 +51,11 @@ const LoggedInCardComponent = ({ userData, handleSignOut }: TLoggedInCardCompone
           userData.role=='ADMIN'
             && 
             <Button onClick={() => redirectToUser()}>Usuários</Button>
+        }
+        {
+          userData.role=='ADMIN'
+            && 
+            <Button onClick={() => redirectToProduct()}>Produtos</Button>
         }
         {
           userData.role=='ADMIN'

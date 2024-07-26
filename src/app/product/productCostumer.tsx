@@ -147,16 +147,19 @@ useEffect(() => {
   const renderProducts = (products: Product[]) => {
     console.log(products);
     return products.map((product) => (
-      <div key={product.id} className="border p-4 rounded-lg flex flex-col items-center">
+      <div
+        key={product.id}
+        className="border p-4 rounded-lg flex flex-col items-center relative group"
+      >
         <img
           src={product.imageUrl}
           alt={product.name}
           className="w-32 h-32 object-cover mb-4"
         />
         <h3 className="text-lg font-bold text-center">{product.name}</h3>
-        {product.stock === 5 ? (<p className="text-red-500">Produto Indisponível</p>) //corrigir pra estoque =0
-        : product.salePrice ?
-          (
+        {product.stock === 0 ? (
+          <p className="text-red-500">Produto Indisponível</p>
+        ) : product.salePrice ? (
           <p className="text-center">
             <span className="line-through text-gray-500">
               R${product.price?.toFixed(2)}
@@ -166,9 +169,20 @@ useEffect(() => {
         ) : (
           <p className="text-center">R${product.price?.toFixed(2)}</p>
         )}
+        <button
+          className="absolute bottom-4 px-6 py-3 bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
+          onClick={() => addToCart(product)}
+        >
+          Adicionar ao Carrinho
+        </button>
       </div>
     ));
   };
+
+  const addToCart = (product: Product) => {
+    console.log(`Adicionar produto ao carrinho: ${product.name}`);
+  }
+
 
   const getRandomProducts = (products: Product[]) => {
     const shuffled = products.sort(() => 0.5 - Math.random());
@@ -205,10 +219,6 @@ useEffect(() => {
     })}
   </div>
 </section>
-
-
-
-
 
       <footer className="w-full max-w-7xl mt-12 border-t pt-8">
         <div className="flex justify-between">
