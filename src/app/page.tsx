@@ -167,12 +167,14 @@ export default function Home() {
         ) : (
           <p className="text-center">R${product.price?.toFixed(2)}</p>
         )}
-        <button
-          className="absolute bottom-4 px-6 py-3 bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
-          onClick={() => addToCart(product)}
-        >
-          Adicionar ao Carrinho
-        </button>
+        {product.stock !== 0 && (
+          <button
+            className="absolute bottom-4 px-6 py-3 bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={() => addToCart(product)}
+          >
+            Adicionar ao Carrinho
+          </button>
+        )}
       </div>
     ));
   };
