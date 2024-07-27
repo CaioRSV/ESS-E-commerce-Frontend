@@ -70,13 +70,10 @@ export default function ProductPage() {
       return;
     }
     const newData = { ...data, price: priceAsFloat, stock: stockAsFloat, categoryId: categoryIdAsNumber };
-    console.log( newData);
 
     try {
       const response = await axiosAuth.post("/api/product", newData);
-      console.log(response);
       alert("Item cadastrado com sucesso!");
-      //window.location.reload();
       getInfo();
     } catch (refreshError) {
       console.error("Erro ao enviar informações para o backend:", refreshError);
@@ -94,7 +91,6 @@ export default function ProductPage() {
   const updateProduct = async (productId, newData) => {
     try {
       const response = await axiosAuth.patch(`/api/product/${productId}`, newData);
-      console.log(response);
       alert("Alterações salvas com sucesso!");
       getInfo();
     } catch (error) {
@@ -109,7 +105,6 @@ export default function ProductPage() {
   };  
 
   const handleConfirmDelete = async () => {
-    console.log(selectedProduct);
     if (!selectedProduct) {
       return;
     }
@@ -151,20 +146,13 @@ export default function ProductPage() {
 
   const getInfo = async () => {
     try {
-        // Obtenção dos produtos gerais
-        console.log('Fetching general products...');
         const generalProductResponse = await axiosAuth.get("/api/product");
         const generalProducts = generalProductResponse.data.data;
-        console.log('General products:', generalProducts);
 
-        // Obtenção dos detalhes dos produtos
-        console.log('Fetching product details...');
         const detailedProducts = await Promise.all(generalProducts.map(async (product: { id: any; }) => {
             const productDetailResponse = await axiosAuth.get(`/api/product/${product.id}`);
-            console.log(`Product details for ID ${product.id}:`, productDetailResponse.data);
             const productDetails = productDetailResponse.data;
-            
-            // Extrair a primeira URL da mídia do produto
+
             const imageUrl = productDetails.productMedia?.[productDetails.productMedia.length - 1]?.media?.url;
             
             return {
@@ -175,9 +163,6 @@ export default function ProductPage() {
 
         setProductData(generalProducts);
         setProductList(detailedProducts);
-
-        console.log('Detailed products:', detailedProducts);
-        console.log('General products:', generalProducts);
 
     } catch (error) {
         console.error("Error fetching product information:", error);

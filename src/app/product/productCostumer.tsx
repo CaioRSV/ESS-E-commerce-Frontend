@@ -62,7 +62,6 @@ export default function HomePage() {
         setCategories(data);
         const categoryMap = data.reduce((map, category) => {
           map[category.name] = String(category.id);
-          console.log(categoryMap);
           return map;
         }, {} as { [key: string]: string });
         setCategoryMap(categoryMap);
@@ -82,8 +81,6 @@ export default function HomePage() {
   }, []);
 
 useEffect(() => {
-  let tempSearch = param.get("search");
-  let tempCategoria = param.get("categoria");
   if (searchParam && searchParam?.length > 0){
     setSearchFilter(searchParam);
   }
@@ -96,20 +93,13 @@ useEffect(() => {
   if (session) {
       const getInfo = async () => {
           try {
-              // Obtenção dos produtos gerais
-              console.log('Fetching general products...');
               const generalProductResponse = await axiosAuth.get("/api/product");
               const generalProducts = generalProductResponse.data.data;
-              console.log('General products:', generalProducts);
 
-              // Obtenção dos detalhes dos produtos
-              console.log('Fetching product details...');
               const detailedProducts = await Promise.all(generalProducts.map(async (product: { id: any; }) => {
                   const productDetailResponse = await axiosAuth.get(`/api/product/${product.id}`);
-                  console.log(`Product details for ID ${product.id}:`, productDetailResponse.data);
                   const productDetails = productDetailResponse.data;
                   
-                  // Extrair a primeira URL da mídia do produto
                   const imageUrl = productDetails.productMedia?.[productDetails.productMedia.length - 1]?.media?.url || '';
                   
                   return {
@@ -121,8 +111,6 @@ useEffect(() => {
               setProductData(generalProducts);
               setProductList(detailedProducts);
 
-              console.log('Detailed products:', detailedProducts);
-
           } catch (error) {
               console.error("Error fetching product information:", error);
           }
@@ -130,7 +118,12 @@ useEffect(() => {
 
       getInfo();
   }
-}, [session, searchSwitch]);
+}, [session]);
+
+useEffect(() => {
+  changeFilter(searchFilter || '');
+}, [searchFilter, categoriaFilter]);
+
 
   const changeFilter = async(searchP:string) => {
     const getInfo = async () => {
