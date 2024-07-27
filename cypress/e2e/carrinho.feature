@@ -21,8 +21,9 @@ Scenario: Remover produto do carrinho
     Then O produto deve ser removido da lista do carrinho
 
 Scenario: Adicionar produto ao carrinho
-    Given O usuário de email "teste@gmail.com" está logado1
-    And O usuário está na página Carrinho
-    And Existe um produto de ID "1" disponível na loja
-    When O usuário clica no botão "Adicionar ao Carrinho" do produto de ID "1"
-    Then O usuário deve ver uma mensagem de confirmação e o produto deve aparecer na lista do carrinho
+    Given O usuário de email "teste@gmail.com" está logado
+    And O usuário está na página Produtos
+    And Existe um produto de nome "Produto A" disponível na loja
+    When O usuário clica no botão "Adicionar ao Carrinho" do produto de nome "Produto A"
+    Then O usuário deve ver uma mensagem de confirmação
+    And O produto deve aparecer na lista do carrinho

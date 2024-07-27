@@ -21,7 +21,8 @@ Given('O usuário de email "teste@gmail.com" está logado', () => {
     cy.get("#loginButton")
         .click();
 
-    cy.intercept("GET", serverBaseUrl+"/api/auth/me").as("LoggedInRequest")
+    cy.intercept("GET", serverBaseUrl+"/api/auth/me").as("LoggedInRequest");
+    
 
     cy.wait("@LoggedInRequest", {timeout: 20000});
         
@@ -30,6 +31,7 @@ Given('O usuário de email "teste@gmail.com" está logado', () => {
 
     cy.wait(200);
 
+    // Fechando o Dialog
     cy.get('[xmlns="http://www.w3.org/2000/svg"]')
         .click();
 
@@ -63,17 +65,18 @@ Then('O usuário deve ver a lista de produtos em seu carrinho na tela', () => {
 })
 
 When('O usuário clica no botão "Remover" correspondente ao produto de ID "1" no carrinho', ()=>{
-    cy.get("#productContainer")
-        .should("contain", "Produto A");
+    cy.get("#productContainer #productName")
+        .contains("Produto A")
+        .should("exist");
     
-    cy.get("#productContainer")
+    cy.get("#productContainer #productName")
         .contains("Produto A")
         .parent()
         .find("#removeButton")
         .click();
 })
 Then('O produto deve ser removido da lista do carrinho', () => {
-    cy.get("#productContainer")
+    cy.get("#productContainer #productName")
         .should("not.contain", "Produto A");
 })
 
@@ -81,13 +84,13 @@ Then('O produto deve ser removido da lista do carrinho', () => {
 // -----------------
 
 Given('Existe um produto de ID "1" no carrinho do usuário', () => {
-    cy.get("#productContainer")
+    cy.get("#productContainer #productName")
         .contains("Produto A")
         .should('exist');
 })
 Given('O usuário possui "1" unidade do produto especificado em seu carrinho', () => {
 
-    cy.get("#productContainer")
+    cy.get("#productContainer #productName")
         .contains("Produto A")
         .parent()
         .find("#itemQuantity")
@@ -96,24 +99,82 @@ Given('O usuário possui "1" unidade do produto especificado em seu carrinho', (
 })
 
 When('O usuário clica no botão "+" ao lado do produto de ID "1" no carrinho', ()=>{
-    cy.get("#productContainer")
+    cy.get("#productContainer #productName")
         .contains("Produto A")
         .parent()
         .find("#plusOneQuantity")
         .click();
 })
 Then('A quantidade do produto deve ser atualizada para "2" unidades e o usuário deve ver a nova quantidade na tela', () => {
-    cy.get("#productContainer")
+    cy.get("#productContainer #productName")
         .contains("Produto A")
         .parent()
         .find("#itemQuantity")
         .should('contain.text', '2')
 
-    cy.get("#productContainer")
+    cy.get("#productContainer #productName")
         .contains("Produto A")
         .parent()
         .find("#minusOneQuantity")
         .click();
+})
+
+Given('O usuário está na página Produtos', () => {
+    cy.visit(baseUrl+"/product")
+})
+Given('Existe um produto de nome "Produto A" disponível na loja', () => {
+    const productName = "Produto A";
+
+    cy.get("div")
+        .contains(productName)
+        .should('exist');
+})
+
+When('O usuário clica no botão "Adicionar ao Carrinho" do produto de nome "Produto A"', () => {
+    const productName = "Produto A";
+    cy.intercept("POST", serverBaseUrl+"/api/cart/add").as("AddResponse");
+
+
+    cy.wait(1500);
+
+    cy.get("div")
+        .contains(productName)
+        .parent()
+        .find("#addToCartButton")
+        .click();
+
+    cy.wait('@AddResponse');
+
+    cy.wait(200);
+
+})
+
+Then('O usuário deve ver uma mensagem de confirmação', () => {
+    cy.get('#addMessage')
+        .should("contain", "sucesso");
+    
+    cy.wait(100);
+
+    cy.get('[xmlns="http://www.w3.org/2000/svg"]')
+        .last()
+        .click();
+})
+
+Then('O produto deve aparecer na lista do carrinho', () => {
+    const productName = "Produto A";
+    cy.intercept("GET", serverBaseUrl+"/api/cart").as("CartResponse");
+
+    cy.get("#navbarCartButton")
+        .click();
+
+
+    cy.wait('@CartResponse');
+
+    cy.wait(100);
+
+    cy.get("#sideCartContainer #productName")
+        .contains(productName)
+        .should('exist');
 })
 
 

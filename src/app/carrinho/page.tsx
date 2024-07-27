@@ -193,7 +193,7 @@ export default function Carrinho() {
                       cart && cart.products && cart.products.length>0
                         ?
                         
-                          cart?.products.map(item => (
+                          cart?.products.sort((a, b) => a.productId - b.productId).map(item => (
                             <div key={`${item.cartId}/${item.productId}`}>
                             <div className={`w-full h-[145px]  p-2 flex`}>
                               <img className={`rounded-md w-[145px] h-full bg-projGray`} src={`${
@@ -204,7 +204,7 @@ export default function Carrinho() {
                                 <div className={`rounded-full w-fit absolute right-0 cursor-pointer`} onClick={()=>{removeFromCart(item.productId)}} id="removeButton">
                                   <FaRegTrashAlt size={20} className={`text-projRed`}/>
                                 </div>
-                                <p className={`font-abeezee text-[18px] italic`}>{`${productData.find(product => product.id === item.productId)?.name}`}</p>
+                                <p className={`font-abeezee text-[18px] italic`} id="productName">{`${productData.find(product => product.id === item.productId)?.name}`}</p>
                                 
                                 <p className={`font-abeezee text-[12px]`}>{`Descrição:`} <span className={`opacity-75`}>{`${productData.find(product => product.id === item.productId)?.description}`}</span> </p>
                                 <p className={`font-abeezee text-[12px]`}>{`Tamanho:`} <span className={`opacity-75`}>{`${35}`}</span> </p>

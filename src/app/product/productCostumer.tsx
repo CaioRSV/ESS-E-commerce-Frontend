@@ -6,6 +6,15 @@ import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import axios from "@/lib/axios";
 
+import { FaRegSquareCheck } from "react-icons/fa6";
+import { LuSquareEqual } from "react-icons/lu";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
 interface Product {
   id?: number;
   name?: string;
@@ -33,7 +42,7 @@ interface Media {
   url: string;
 }
 
-export default function HomePage() {
+export default function Home() {
   const param = useSearchParams();
   const searchParam = param.get("search");
   const categoriaParam = param.get("categoria");
@@ -81,61 +90,59 @@ export default function HomePage() {
     fetchCategories();
   }, []);
 
-useEffect(() => {
-  let tempSearch = param.get("search");
-  let tempCategoria = param.get("categoria");
-  if (searchParam && searchParam?.length > 0){
-    setSearchFilter(searchParam);
-  }
-  if (categoriaParam && categoriaParam?.length > 0){
-    setCategoriaFilter(categoriaParam);
-  }
-  if (marcaParam && marcaParam?.length > 0){  
-    setSearchFilter(marcaParam);
-  }
-  if (session) {
-      const getInfo = async () => {
-          try {
-              // Obtenção dos produtos gerais
-              console.log('Fetching general products...');
-              const generalProductResponse = await axiosAuth.get("/api/product");
-              const generalProducts = generalProductResponse.data.data;
-              console.log('General products:', generalProducts);
+  useEffect(() => {
+    let tempSearch = param.get("search");
+    let tempCategoria = param.get("categoria");
+    if (searchParam && searchParam?.length > 0){
+      setSearchFilter(searchParam);
+    }
+    if (categoriaParam && categoriaParam?.length > 0){
+      setCategoriaFilter(categoriaParam);
+    }
+    if (marcaParam && marcaParam?.length > 0){  
+      setSearchFilter(marcaParam);
+    }
+    const getInfo = async () => {
+      try {
+        // Obtenção dos produtos gerais
+        console.log('Fetching general products...');
+        const generalProductResponse = await axiosAuth.get("/api/product");
+        const generalProducts = generalProductResponse.data.data;
+        console.log('General products:', generalProducts);
 
-              // Obtenção dos detalhes dos produtos
-              console.log('Fetching product details...');
-              const detailedProducts = await Promise.all(generalProducts.map(async (product: { id: any; }) => {
-                  const productDetailResponse = await axiosAuth.get(`/api/product/${product.id}`);
-                  console.log(`Product details for ID ${product.id}:`, productDetailResponse.data);
-                  const productDetails = productDetailResponse.data;
-                  
-                  // Extrair a primeira URL da mídia do produto
-                  const imageUrl = productDetails.productMedia?.[productDetails.productMedia.length - 1]?.media?.url || '';
-                  
-                  return {
-                      ...productDetails,
-                      imageUrl,
-                  };
-              }));
+        // Obtenção dos detalhes dos produtos
+        console.log('Fetching product details...');
+        const detailedProducts = await Promise.all(generalProducts.map(async (product: { id: any; }) => {
+          const productDetailResponse = await axiosAuth.get(`/api/product/${product.id}`);
+          console.log(`Product details for ID ${product.id}:`, productDetailResponse.data);
+          const productDetails = productDetailResponse.data;
+          
+          // Extrair a primeira URL da mídia do produto
+          const imageUrl = productDetails.productMedia?.[productDetails.productMedia.length - 1]?.media?.url || '';
+          
+          return {
+            ...productDetails,
+            imageUrl,
+          };
+        }));
 
-              setProductData(generalProducts);
-              setProductList(detailedProducts);
+        setProductData(generalProducts);
+        setProductList(detailedProducts);
 
-              console.log('Detailed products:', detailedProducts);
+        console.log('Detailed products:', detailedProducts);
 
-          } catch (error) {
-              console.error("Error fetching product information:", error);
-          }
-      };
+      } catch (error) {
+        console.error("Error fetching product information:", error);
+      }
+    };
 
-      getInfo();
-  }
-}, [session, searchSwitch]);
+    getInfo();
+  
+  }, [session, searchSwitch]);
 
   const changeFilter = async(searchP:string) => {
     const getInfo = async () => {
-      const info = await axiosAuth.get(`/api/product?${searchP?`search=${searchP}`:''}
-        `)
+      const info = await axiosAuth.get(`/api/product?${searchP?`search=${searchP}`:''}`)
       if (info.data){
         console.log(info.data);
       }
@@ -171,13 +178,25 @@ useEffect(() => {
               <p className="text-center">R${product.price?.toFixed(2)}</p>
             )}
              {product.stock !== 0 && (
-          <button
-            className="absolute bottom-4 px-6 py-4 bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
-            onClick={() => addToCart(product)}
-            id="#addToCartButton"
-          >
-            Adicionar ao Carrinho
-          </button>
+          <Dialog>
+            <DialogTrigger id="addToCartButton" onClick={() => addToCart(product)} className={`absolute bottom-4 px-6 py-4 bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity`}>
+              <button
+                className="w-full h-full">
+                Adicionar ao Carrinho
+              </button>
+            </DialogTrigger>
+            <DialogContent>
+              <p className={`w-full flex justify-center items-center`}>
+                {
+                  addMessage?.includes("sucesso")
+                    ?
+                    <FaRegSquareCheck size={26} className={`text-green-500`} />
+                    :
+                    <LuSquareEqual size={26} />
+                }</p>
+              <p className={`w-full flex justify-center items-center text-center`} id="addMessage">{addMessage}</p>
+            </DialogContent>
+          </Dialog>
         )}
           </div>
         ))}
@@ -185,10 +204,22 @@ useEffect(() => {
     );
   };
 
-  const addToCart = (product: Product) => {
-    console.log(`Adicionar produto ao carrinho: ${product.name}`);
-  }
+  const [addMessage, setAddMessage] = useState<string>("O produto já se encontra no seu carrinho");
 
+  const addToCart = async (product: Product) => {
+    const cartData = await axiosAuth.get("/api/cart")
+
+    if(cartData.data.products.some((item: { productId: number | undefined; }) => item.productId == product.id)){
+      setAddMessage(`O produto "${product.name}" já se encontra no seu carrinho.`);
+    }
+    else{
+      setAddMessage(`Produto "${product.name}" adicionado ao seu carrinho com sucesso!`);
+      const addData = await axiosAuth.post("api/cart/add", {
+        cartId: cartData.data.id,
+        productId: product.id
+      })
+    }
+  }
 
   const getRandomProducts = (products: Product[]) => {
     const shuffled = products.sort(() => 0.5 - Math.random());
@@ -197,30 +228,35 @@ useEffect(() => {
 
   return (
     <main className="flex flex-col items-center p-8">
-
       <section className="w-full max-w-7xl mb-12">
         <h2 className="text-3xl font-bold mb-2">Para você!</h2>
+        <div className="flex flex-wrap gap-4">
           {renderProducts(getRandomProducts(productList))}
+        </div>
       </section>
 
-<section className="w-full max-w-7xl mb-12">
-  <div className="grid grid-cols-1 gap-4">
-    {categories.map((category) => {
-      const choosedProducts = productList.filter((product) => String(product.categoryId) === String(category.id));
+      <section className="w-full max-w-7xl mb-12">
+        <div className="grid grid-cols-1 gap-4">
+          {categories.map((category) => {
+            const choosedProducts = productList.filter(
+              (product) => String(product.categoryId) === String(category.id)
+            );
 
-      if (choosedProducts.length === 0) {
-        return null;
-      }
+            if (choosedProducts.length === 0) {
+              return null;
+            }
 
-      return (
-        <div key={category.id} className="mb-6">
-          <h3 className="text-3xl font-bold mb-2">{category.name}</h3>
-            {renderProducts(choosedProducts)}
+            return (
+              <div key={category.id} className="mb-6">
+                <h3 className="text-3xl font-bold mb-2">{category.name}</h3>
+                <div className="flex flex-wrap gap-4">
+                  {renderProducts(choosedProducts)}
+                </div>
+              </div>
+            );
+          })}
         </div>
-      );
-    })}
-  </div>
-</section>
+      </section>
 
       <footer className="w-full max-w-7xl mt-12 border-t pt-8">
         <div className="flex justify-between">
@@ -238,3 +274,4 @@ useEffect(() => {
     </main>
   );
 }
+
