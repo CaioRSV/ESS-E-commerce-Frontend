@@ -84,42 +84,29 @@ export default function ProductPage() {
     }
   };
 
-  const handleConfirmPatch: SubmitHandler<Product> = async (data) => {
-    const priceAsFloat = data.price !== undefined ? parseFloat(String(data.price)) : undefined;
-    const stockAsFloat = data.stock !== undefined ? parseFloat(String(data.stock)) : undefined;
+  const convertProductData = (data) => {
+    const priceAsFloat = parseFloat(String(data.price));
+    const stockAsFloat = parseFloat(String(data.stock));
     const categoryIdAsNumber = Number(data.categoryId);
-
-    const newData: Partial<Product> = {};
-    
-    Object.keys(data).forEach(key => {
-      const value = (data as any)[key];
-      if (value !== undefined && value !== "") {
-        if (key === 'price' && priceAsFloat !== undefined) {
-          newData[key] = priceAsFloat;
-        } else if (key === 'stock' && stockAsFloat !== undefined) {
-          newData[key] = stockAsFloat;
-        } else if (key === 'categoryId') {
-          newData[key] = categoryIdAsNumber;
-        } else {
-          newData[key] = value;
-        }
-      }
-    });
-    console.log({productData, updatedData: newData});
-    console.log(newData);
-    
+    return { ...data, price: priceAsFloat, stock: stockAsFloat, categoryId: categoryIdAsNumber };
+  };
+  
+  const updateProduct = async (productId, newData) => {
     try {
-      const response = await axiosAuth.patch(`/api/product/${selectedProduct?.id}`, newData);
-      console.log(response)
+      const response = await axiosAuth.patch(`/api/product/${productId}`, newData);
+      console.log(response);
       alert("Alterações salvas com sucesso!");
-      //window.location.reload();
       getInfo();
-    } catch (refreshError) {
-      console.error("Erro ao enviar informações para o backend:", refreshError);
-      alert("Erro");
+    } catch (error) {
+      console.error("Erro ao atualizar o produto:", error);
+      alert("Erro ao atualizar o produto.");
     }
   };
   
+  const handleConfirmPatch: SubmitHandler<Product> = async (data) => {
+    const newData = convertProductData(data);
+    await updateProduct(selectedProduct?.id, newData);
+  };  
 
   const handleConfirmDelete = async () => {
     console.log(selectedProduct);
