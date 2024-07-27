@@ -262,10 +262,7 @@ export default function Carrinho() {
                                   <div className={`flex bg-projGray rounded-full w-40 pt-1 pb-1 justify-center items-center`}>
                                     <p className={`cursor-pointer font-abeezee text-3xl flex-1 flex justify-center items-center rounded-full`} onClick={()=>{changeQuantity(item.productId, item.quantity, -1)}}>-</p>
                                     <p className={`font-abeezee text-md flex-1 flex justify-center items-center rounded-full italic`}>{`${item.quantity}`}</p>
-                                    <p className={`cursor-pointer font-abeezee text-3xl flex-1 flex justify-center items-center rounded-full`} onClick={()=>{changeQuantity(item.productId, item.quantity, 1)}}>+</p>
-
-                                    <p className={`font-abeezee text-md flex-1 flex justify-center items-center rounded-full italic`}>{`${item.quantity}`}</p>
-                                    <p className={`cursor-pointer font-abeezee text-3xl flex-1 flex justify-center items-center rounded-full`} onClick={()=>{changeQuantity(item.productId, item.quantity, 1)}}>+</p>                                
+                                    <p className={`cursor-pointer font-abeezee text-3xl flex-1 flex justify-center items-center rounded-full`} onClick={()=>{changeQuantity(item.productId, item.quantity, 1)}}>+</p>                           
                                   </div>
       
                                 </div>
@@ -288,7 +285,7 @@ export default function Carrinho() {
                     </div>
                   </div>
 
-                  <div className="w-full h-full">
+                  <div className="h-full md:min-w-[350px] md:w-[45%]">
                     <div className="w-full h-full bg-white rounded-xl border border-projGray p-4 flex flex-col">
                       <div className="w-full flex relative">
                         <p className="opacity-80">Subtotal</p>
