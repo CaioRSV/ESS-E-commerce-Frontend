@@ -77,6 +77,10 @@ jobs:
       - name: Install NestJS CLI globally
         run: npm install -g @nestjs/cli
 
+      - name: Build backend
+        run: npm run build
+        working-directory: ./backend
+        
       - name: Start backend
         run: npm run start
         working-directory: ./backend
