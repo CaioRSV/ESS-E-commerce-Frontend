@@ -82,7 +82,7 @@ jobs:
         working-directory: ./backend
         
       - name: Start backend
-        run: npm run start:prod
+        run: npm run start:prod &
         working-directory: ./backend
 
       - name: Wait for backend to be ready
@@ -98,7 +98,7 @@ jobs:
           AUTH_SECRET: 21930129302
 
       - name: Start frontend
-        run: npm run start
+        run: npm run start &
 
       - name: Wait for frontend to be ready
         run: |
