@@ -375,7 +375,7 @@ const Navbar = () => {
                       {
                         cart?.products && cart.products.length > 0
                           ?
-                          <div className={`ml-2 mr-5`}>
+                          <div className={`ml-2 mr-5`} id="sideCartContainer">
                             {
                               cart.products.map(item => (
                                 <div className={`m-2 w-full h-[80px] rounded-md border border-slate-300 flex`} key={`${item.cartId}/${item.productId}`} >
@@ -383,8 +383,8 @@ const Navbar = () => {
                                     ?.productMedia?.slice(-1)[0]?.media?.url ?? 'no_image'
                                     }`}></img>
                                   <div className={`h-full p-2 flex-column justify-center`}>
-                                    <p className={`font-abeezee`}>{` ${productData.find(product => product.id === item.productId)?.name}`}</p>
-                                    <p className={`font-abeezee`}>{`${item.quantity} unidades`}</p>
+                                    <p className={`font-abeezee`} id="productName">{` ${productData.find(product => product.id === item.productId)?.name}`}</p>
+                                    <p className={`font-abeezee`}>{`${item.quantity} unidade${String(item.quantity)=='1'?'':'s'}`}</p>
                                   </div>
                                 </div>
 
@@ -446,7 +446,7 @@ const Navbar = () => {
                   <Button disabled={true}>Ir para o carrinho</Button>
               }
               <DrawerClose>
-                <p className={`w-full border rounded-md p-[6px] text-sm`}>Voltar</p>
+                <p className={`w-full border rounded-md p-[6px] text-sm`} id="closeCartButton">Voltar</p>
               </DrawerClose>
             </DrawerFooter>
           </DrawerContent>

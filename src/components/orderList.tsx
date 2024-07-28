@@ -95,7 +95,10 @@ const OrderList = () => {
 
 
     const cancelOrder = async (orderId:number) => {
-        const data = await axiosAuth.delete(`/api/orders/${orderId}`);
+        if(window.confirm(`Tem certeza que deseja cancelar o pedido de código "N#${orderId}" ?`)){
+            const data = await axiosAuth.delete(`/api/orders/${orderId}`);
+        }
+        else{}
     }
 
   return (
@@ -150,7 +153,7 @@ const OrderList = () => {
                                     item.status=='PROCESSING'
                                         ?
                                         <div className={`w-full flex justify-center mt-1 mb-1`}>
-                                            <p className={` bg-red-300 bg-opacity-25 p-2 rounded-md text-sm cursor-pointer`} onClick={()=>{cancelOrder(item.id)}} >Cancelar Pedido</p>
+                                            <p className={` bg-red-300 bg-opacity-25 p-2 rounded-md text-sm cursor-pointer transition-all hover:scale-105 hover:saturate-150`} onClick={()=>{cancelOrder(item.id)}} >Cancelar Pedido</p>
                                         </div>           
                                         :
                                         <></>

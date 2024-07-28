@@ -137,8 +137,10 @@ const OrderList = () => {
     const [userID, setUserID] = useState<number>(0);
 
     const cancelOrder = async (orderId:number) => {
-        const data = await axiosAuth.delete(`/api/orders/${orderId}`);
-        
+        if(window.confirm(`Tem certeza que deseja cancelar o pedido de código "N#${orderId}" ?`)){
+            const data = await axiosAuth.delete(`/api/orders/${orderId}`);
+        }
+        else{}
     }
 
   return (
@@ -169,12 +171,12 @@ const OrderList = () => {
                     id="historicoPedidosUsuarioInput">
                     </Input>
 
-                    <Button className={`rounded-full`} onClick={()=>{setSearchSwitch(!searchSwitch)}}>
+                    <Button className={`rounded-full`} onClick={()=>{setSearchSwitch(!searchSwitch)}} id="historicoPedidosSearchButton">
                         <FaMagnifyingGlass size={12} color={'white'}></FaMagnifyingGlass>
                     </Button>
                     </div>
 
-                    <div className={`w-full h-full overflow-y-scroll`}>
+                    <div className={`w-full h-full overflow-y-scroll`} id="historicoPedidosUserContainer">
                     {
                                 userList && userList.length>0
                                 ?

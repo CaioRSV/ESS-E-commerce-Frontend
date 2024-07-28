@@ -6,6 +6,15 @@ import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import axios from "@/lib/axios";
 
+import { FaRegSquareCheck } from "react-icons/fa6";
+import { LuSquareEqual } from "react-icons/lu";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
 interface Product {
   id?: number;
   name?: string;
@@ -159,12 +168,25 @@ export default function Home() {
               <p className="text-center">R${product.price?.toFixed(2)}</p>
             )}
              {product.stock !== 0 && (
-          <button
-            className="absolute bottom-4 px-6 py-4 bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
-            onClick={() => addToCart(product)}
-          >
-            Adicionar ao Carrinho
-          </button>
+          <Dialog >
+            <DialogTrigger id="#addToCartButton" onClick={() => addToCart(product)} className={`absolute bottom-4 px-6 py-4 bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity`}>
+              <button
+                className="w-full h-full">
+                Adicionar ao Carrinho
+              </button>
+            </DialogTrigger>
+            <DialogContent>
+              <p className={`w-full flex justify-center items-center`}>
+                {
+                  addMessage?.includes("sucesso")
+                    ?
+                    <FaRegSquareCheck size={26} className={`text-green-500`} />
+                    :
+                    <LuSquareEqual size={26} />
+                }</p>
+              <p className={`w-full flex justify-center items-center text-center`} id="addMessage">{addMessage}</p>
+            </DialogContent>
+          </Dialog>
         )}
           </div>
         ))}
@@ -172,8 +194,21 @@ export default function Home() {
     );
   };
 
-  const addToCart = (product: Product) => {
-    console.log(`Adicionar produto ao carrinho: ${product.name}`);
+  const [addMessage, setAddMessage] = useState<string>("O produto já se encontra no seu carrinho");
+
+  const addToCart = async (product: Product) => {
+    const cartData = await axiosAuth.get("/api/cart")
+
+    if(cartData.data.products.some((item: { productId: number | undefined; }) => item.productId == product.id)){
+      setAddMessage(`O produto "${product.name}" já se encontra no seu carrinho.`);
+    }
+    else{
+      setAddMessage(`Produto "${product.name}" adicionado ao seu carrinho com sucesso!`);
+      const addData = await axiosAuth.post("api/cart/add", {
+        cartId: cartData.data.id,
+        productId: product.id
+      })
+    }
   }
 
   const getRandomProducts = (products: Product[]) => {
