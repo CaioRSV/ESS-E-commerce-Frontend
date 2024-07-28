@@ -202,7 +202,7 @@ export default function Carrinho() {
                               }`} />
                               <div className={`ml-3 h-full w-full relative overflow-hidden`}>
                                 <div className={`rounded-full w-fit absolute right-0 cursor-pointer`} onClick={()=>{removeFromCart(item.productId)}} id="removeButton">
-                                  <FaRegTrashAlt size={20} className={`text-projRed`}/>
+                                  <FaRegTrashAlt size={20} className={`text-projRed transition-transform hover:rotate-12`}/>
                                 </div>
                                 <p className={`font-abeezee text-[18px] italic`} id="productName">{`${productData.find(product => product.id === item.productId)?.name}`}</p>
                                 

@@ -137,8 +137,10 @@ const OrderList = () => {
     const [userID, setUserID] = useState<number>(0);
 
     const cancelOrder = async (orderId:number) => {
-        const data = await axiosAuth.delete(`/api/orders/${orderId}`);
-        
+        if(window.confirm(`Tem certeza que deseja cancelar o pedido de código "N#${orderId}" ?`)){
+            const data = await axiosAuth.delete(`/api/orders/${orderId}`);
+        }
+        else{}
     }
 
   return (
