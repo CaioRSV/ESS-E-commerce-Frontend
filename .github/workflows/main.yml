@@ -37,6 +37,7 @@ jobs:
       JWT_ACCESS_LIFETIME: 1h
       JWT_REFRESH_LIFETIME: 7d
       ENV: TEST
+      APP_PORT: 3333
       SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
       EMAIL_OPTIONS_FROM: ${{ secrets.EMAIL_OPTIONS_FROM }}
       NEXTAUTH_URL: http://localhost:3000
@@ -78,23 +79,15 @@ jobs:
         working-directory: ./backend
 
       - name: Start backend
-        run: npm start &
+        run: npm start
         working-directory: ./backend
 
       - name: Wait for backend to be ready
         run: |
           until curl http://localhost:3333/api/health; do sleep 5; done
 
-      - name: Build frontend
-        run: npm run build
-        env:
-          NEXTAUTH_URL: http://localhost:3000
-          NEXTAUTH_SECRET: SADIASOD2931
-          NEXT_PUBLIC_SERVER_URL: http://localhost:3333
-          AUTH_SECRET: 21930129302
-
       - name: Start frontend
-        run: npm start &
+        run: npm run dev
         env:
           NEXTAUTH_URL: http://localhost:3000
           NEXTAUTH_SECRET: SADIASOD2931
