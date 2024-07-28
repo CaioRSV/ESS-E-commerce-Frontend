@@ -82,7 +82,7 @@ jobs:
         working-directory: ./backend
         
       - name: Start backend
-        run: npm run start
+        run: npm run start:prod
         working-directory: ./backend
 
       - name: Wait for backend to be ready
