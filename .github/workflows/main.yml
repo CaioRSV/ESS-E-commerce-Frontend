@@ -79,7 +79,7 @@ jobs:
         working-directory: ./backend
 
       - name: Start backend
-        run: npm start
+        run: npx nest start &
         working-directory: ./backend
 
       - name: Wait for backend to be ready
