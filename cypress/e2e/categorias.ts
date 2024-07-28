@@ -3,7 +3,7 @@ import { Admin } from '../fixtures/users.json';
 import { json } from 'stream/consumers';
 
 const baseUrl = "http://localhost:3000"
-const serverBaseUrl = "http://localhost:8080"
+const serverBaseUrl = "http://localhost:3333"
 
 let categoryId: number;
 

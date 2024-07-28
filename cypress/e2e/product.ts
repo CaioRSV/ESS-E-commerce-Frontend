@@ -1,8 +1,8 @@
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor';
 import { Admin } from '../fixtures/users.json';
 
-const baseUrl = "http://localhost:3000";
-const serverBaseUrl = "http://localhost:8080";
+const baseUrl = "http://localhost:3000"
+const serverBaseUrl = "http://localhost:3333"
 
 let itemId: number;
 
