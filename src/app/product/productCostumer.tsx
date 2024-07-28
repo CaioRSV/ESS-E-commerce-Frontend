@@ -71,7 +71,6 @@ export default function Home() {
         setCategories(data);
         const categoryMap = data.reduce((map, category) => {
           map[category.name] = String(category.id);
-          console.log(categoryMap);
           return map;
         }, {} as { [key: string]: string });
         setCategoryMap(categoryMap);
@@ -90,55 +89,49 @@ export default function Home() {
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    let tempSearch = param.get("search");
-    let tempCategoria = param.get("categoria");
-    if (searchParam && searchParam?.length > 0){
-      setSearchFilter(searchParam);
-    }
-    if (categoriaParam && categoriaParam?.length > 0){
-      setCategoriaFilter(categoriaParam);
-    }
-    if (marcaParam && marcaParam?.length > 0){  
-      setSearchFilter(marcaParam);
-    }
-    const getInfo = async () => {
-      try {
-        // Obtenção dos produtos gerais
-        console.log('Fetching general products...');
-        const generalProductResponse = await axiosAuth.get("/api/product");
-        const generalProducts = generalProductResponse.data.data;
-        console.log('General products:', generalProducts);
+useEffect(() => {
+  if (searchParam && searchParam?.length > 0){
+    setSearchFilter(searchParam);
+  }
+  if (categoriaParam && categoriaParam?.length > 0){
+    setCategoriaFilter(categoriaParam);
+  }
+  if (marcaParam && marcaParam?.length > 0){  
+    setSearchFilter(marcaParam);
+  }
+  if (session) {
+      const getInfo = async () => {
+          try {
+              const generalProductResponse = await axiosAuth.get("/api/product");
+              const generalProducts = generalProductResponse.data.data;
 
-        // Obtenção dos detalhes dos produtos
-        console.log('Fetching product details...');
-        const detailedProducts = await Promise.all(generalProducts.map(async (product: { id: any; }) => {
-          const productDetailResponse = await axiosAuth.get(`/api/product/${product.id}`);
-          console.log(`Product details for ID ${product.id}:`, productDetailResponse.data);
-          const productDetails = productDetailResponse.data;
-          
-          // Extrair a primeira URL da mídia do produto
-          const imageUrl = productDetails.productMedia?.[productDetails.productMedia.length - 1]?.media?.url || '';
-          
-          return {
-            ...productDetails,
-            imageUrl,
-          };
-        }));
+              const detailedProducts = await Promise.all(generalProducts.map(async (product: { id: any; }) => {
+                  const productDetailResponse = await axiosAuth.get(`/api/product/${product.id}`);
+                  const productDetails = productDetailResponse.data;
+                  
+                  const imageUrl = productDetails.productMedia?.[productDetails.productMedia.length - 1]?.media?.url || '';
+                  
+                  return {
+                      ...productDetails,
+                      imageUrl,
+                  };
+              }));
 
-        setProductData(generalProducts);
-        setProductList(detailedProducts);
+              setProductData(generalProducts);
+              setProductList(detailedProducts);
 
-        console.log('Detailed products:', detailedProducts);
+          } catch (error) {
+              console.error("Error fetching product information:", error);
+          }
+      };
 
-      } catch (error) {
-        console.error("Error fetching product information:", error);
-      }
-    };
+      getInfo();
+  }
+}, [session]);
 
-    getInfo();
-  
-  }, [session, searchSwitch]);
+useEffect(() => {
+  changeFilter(searchFilter || '');
+}, [searchFilter, categoriaFilter]);
 
   const changeFilter = async(searchP:string) => {
     const getInfo = async () => {
