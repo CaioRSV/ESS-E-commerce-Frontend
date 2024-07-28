@@ -28,12 +28,12 @@ const LoggedInCardComponent = ({ userData, handleSignOut }: TLoggedInCardCompone
     <Card>
       <CardHeader>
         <CardTitle id="loggedInMessage" >Bem-vindo, {userData?.name ? userData.name : 'Carregando...'}</CardTitle>
-        <CardDescription>{userData?.email ? userData.email : ''}</CardDescription>
+        <CardDescription id="loggedInEmail">{userData?.email ? userData.email : ''}</CardDescription>
       </CardHeader>
       <CardContent className="flex gap-3 flex-col">
         <Dialog open={isUpdateProfileOpen} onOpenChange={setUpdateProfileOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => setUpdateProfileOpen(true)}>Atualizar meus dados</Button>
+            <Button onClick={() => setUpdateProfileOpen(true)} id="updatePersonalDataButton">Atualizar meus dados</Button>
           </DialogTrigger>
           <DialogContent id="loggedInCloseButton">
             <UpdateProfileComponent onClose={handleUpdateProfileClose} />
@@ -64,7 +64,7 @@ const LoggedInCardComponent = ({ userData, handleSignOut }: TLoggedInCardCompone
             :
             <OrderList />
         }
-        <Button onClick={handleSignOut}>Deslogar</Button>
+        <Button onClick={handleSignOut} id="navbarLogoutButton">Deslogar</Button>
       </CardContent>
     </Card>
   );

@@ -242,9 +242,9 @@ const Navbar = () => {
 
               <Dialog>
                 <DialogTrigger>
-                  <Button className='flex-1'>Registrar-se</Button>
+                  <Button className='flex-1' id="createAccountButton">Registrar-se</Button>
                 </DialogTrigger>
-                <DialogContent className={`p-0 bg-transparent`}>
+                <DialogContent className={`p-0 bg-transparent`} id="dialogRegisterComponent">
                   <RegisterComponent />
                 </DialogContent>
               </Dialog>

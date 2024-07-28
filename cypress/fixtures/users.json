@@ -7,6 +7,11 @@
         "email": "teste@gmail.com",
         "senha": "@Teste123"
     },
+    "NewRegisterUser": {
+        "name": "new registered",
+        "email": "ateste@gmail.com",
+        "senha": "@Teste123"
+    },
     "Tênis": {
         "nome": "Tênis",
         "imagemUrl": "https://cdn-icons-png.flaticon.com/512/500/500225.png"
