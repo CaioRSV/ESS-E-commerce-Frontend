@@ -329,7 +329,7 @@ const Navbar = () => {
             <div className={`p-4 flex justify-center items-center flex-1`}>
               <div className={`font-abeezee text-[14px] rounded-full bg-projGray flex-1 flex`}>
                 <div className={`min-h-full min-w-[50px] flex items-center justify-center`}>
-                  <Link href={`${searchString.length>0 ? `/produtos?searchString=${searchString}` : `/` }`}>
+                  <Link href={`${searchString.length>0 ? `/product?searchString=${searchString}` : `/` }`}>
                     <FaMagnifyingGlass size={20} className={`text-black transition-opacity opacity-40 hover:opacity-60 cursor-pointer`}/>
                   </Link>
                 </div>

@@ -33,7 +33,7 @@ interface Media {
   url: string;
 }
 
-export default function Home() {
+export default function HomePage() {
   const param = useSearchParams();
   const searchParam = param.get("search");
   const categoriaParam = param.get("categoria");
@@ -80,50 +80,55 @@ export default function Home() {
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    let tempSearch = param.get("search");
-    let tempCategoria = param.get("categoria");
-    if (searchParam && searchParam?.length > 0){
-      setSearchFilter(searchParam);
-    }
-    if (categoriaParam && categoriaParam?.length > 0){
-      setCategoriaFilter(categoriaParam);
-    }
-    if (marcaParam && marcaParam?.length > 0){  
-      setSearchFilter(marcaParam);
-    }
-    const getInfo = async () => {
-      try {
-        const generalProductResponse = await axiosAuth.get("/api/product");
-        const generalProducts = generalProductResponse.data.data;
+useEffect(() => {
+  if (searchParam && searchParam?.length > 0){
+    setSearchFilter(searchParam);
+  }
+  if (categoriaParam && categoriaParam?.length > 0){
+    setCategoriaFilter(categoriaParam);
+  }
+  if (marcaParam && marcaParam?.length > 0){  
+    setSearchFilter(marcaParam);
+  }
+  if (session) {
+      const getInfo = async () => {
+          try {
+              const generalProductResponse = await axiosAuth.get("/api/product");
+              const generalProducts = generalProductResponse.data.data;
 
-        const detailedProducts = await Promise.all(generalProducts.map(async (product: { id: any; }) => {
-          const productDetailResponse = await axiosAuth.get(`/api/product/${product.id}`);
-          const productDetails = productDetailResponse.data;
-          
-          const imageUrl = productDetails.productMedia?.[productDetails.productMedia.length - 1]?.media?.url || '';
-          
-          return {
-            ...productDetails,
-            imageUrl,
-          };
-        }));
+              const detailedProducts = await Promise.all(generalProducts.map(async (product: { id: any; }) => {
+                  const productDetailResponse = await axiosAuth.get(`/api/product/${product.id}`);
+                  const productDetails = productDetailResponse.data;
+                  
+                  const imageUrl = productDetails.productMedia?.[productDetails.productMedia.length - 1]?.media?.url || '';
+                  
+                  return {
+                      ...productDetails,
+                      imageUrl,
+                  };
+              }));
 
-        setProductData(generalProducts);
-        setProductList(detailedProducts);
+              setProductData(generalProducts);
+              setProductList(detailedProducts);
 
-      } catch (error) {
-        console.error("Error fetching product information:", error);
-      }
-    };
+          } catch (error) {
+              console.error("Error fetching product information:", error);
+          }
+      };
 
-    getInfo();
-  
-  }, [session, searchSwitch]);
+      getInfo();
+  }
+}, [session]);
+
+useEffect(() => {
+  changeFilter(searchFilter || '');
+}, [searchFilter, categoriaFilter]);
+
 
   const changeFilter = async(searchP:string) => {
     const getInfo = async () => {
-      const info = await axiosAuth.get(`/api/product?${searchP?`search=${searchP}`:''}`)
+      const info = await axiosAuth.get(`/api/product?${searchP?`search=${searchP}`:''}
+        `)
       if (info.data){
         console.log(info.data);
       }
@@ -176,6 +181,7 @@ export default function Home() {
     console.log(`Adicionar produto ao carrinho: ${product.name}`);
   }
 
+
   const getRandomProducts = (products: Product[]) => {
     const shuffled = products.sort(() => 0.5 - Math.random());
     return shuffled.slice(0, Math.ceil(products.length / 3));
@@ -183,35 +189,30 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center p-8">
+
       <section className="w-full max-w-7xl mb-12">
         <h2 className="text-3xl font-bold mb-2">Para você!</h2>
-        <div className="flex flex-wrap gap-4">
           {renderProducts(getRandomProducts(productList))}
-        </div>
       </section>
 
-      <section className="w-full max-w-7xl mb-12">
-        <div className="grid grid-cols-1 gap-4">
-          {categories.map((category) => {
-            const choosedProducts = productList.filter(
-              (product) => String(product.categoryId) === String(category.id)
-            );
+<section className="w-full max-w-7xl mb-12">
+  <div className="grid grid-cols-1 gap-4">
+    {categories.map((category) => {
+      const choosedProducts = productList.filter((product) => String(product.categoryId) === String(category.id));
 
-            if (choosedProducts.length === 0) {
-              return null;
-            }
+      if (choosedProducts.length === 0) {
+        return null;
+      }
 
-            return (
-              <div key={category.id} className="mb-6">
-                <h3 className="text-3xl font-bold mb-2">{category.name}</h3>
-                <div className="flex flex-wrap gap-4">
-                  {renderProducts(choosedProducts)}
-                </div>
-              </div>
-            );
-          })}
+      return (
+        <div key={category.id} className="mb-6">
+          <h3 className="text-3xl font-bold mb-2">{category.name}</h3>
+            {renderProducts(choosedProducts)}
         </div>
-      </section>
+      );
+    })}
+  </div>
+</section>
 
       <footer className="w-full max-w-7xl mt-12 border-t pt-8">
         <div className="flex justify-between">
@@ -229,4 +230,3 @@ export default function Home() {
     </main>
   );
 }
-
