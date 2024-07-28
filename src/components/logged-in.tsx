@@ -41,7 +41,7 @@ const LoggedInCardComponent = ({ userData, handleSignOut }: TLoggedInCardCompone
         </Dialog>
         <Dialog open={isChangePasswordOpen} onOpenChange={setChangePasswordOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => setChangePasswordOpen(true)}>Mudar minha senha</Button>
+            <Button id="updatePersonalPasswordButton" onClick={() => setChangePasswordOpen(true)}>Mudar minha senha</Button>
           </DialogTrigger>
           <DialogContent>
             <ChangePasswordComponent onClose={handleChangePasswordClose} />
