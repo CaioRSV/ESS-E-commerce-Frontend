@@ -26,7 +26,7 @@ When('the user click in the recovery password button', () => {
 })
 
 When('the user insert his email', () => {
-  cy.get("#emailForget").type(NewRegisterUser.email)
+  cy.get("#emailForget").type('-@gmail.com')
 })
 
 When('the user clicks the send button', () => {

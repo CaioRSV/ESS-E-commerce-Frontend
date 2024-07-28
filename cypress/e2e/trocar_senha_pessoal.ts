@@ -67,8 +67,8 @@ Then('the user must can log in the system using the new password', () => {
   cy.get("#navbarLoginButton").click()
   cy.get("#emailInput").type(random + NewRegisterUser.email)
   cy.get("#senhaInput").type(random + NewRegisterUser.senha)
-  cy.get("#loginButton").click()
   cy.intercept("GET", serverBaseUrl + "/api/auth/me").as("LoggedInRequest")
+  cy.get("#loginButton").click()
   cy.wait("@LoggedInRequest")
 
   cy.get("#loggedInMessage").should("exist")

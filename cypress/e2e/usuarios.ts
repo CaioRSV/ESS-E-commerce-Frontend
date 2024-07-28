@@ -21,8 +21,8 @@ Given('the admin is authenticated in the system', () => {
 
   cy.get("#emailInput").type(Admin.email)
   cy.get("#senhaInput").type(Admin.senha)
-  cy.get("#loginButton").click()
   cy.intercept("GET", serverBaseUrl + "/api/auth/me").as("LoggedInRequest")
+  cy.get("#loginButton").click()
   cy.wait("@LoggedInRequest").then((interception) => {
     expect(interception?.response?.statusCode).to.be.eq(200)
   })

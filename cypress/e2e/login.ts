@@ -28,8 +28,8 @@ When('the user enters their password', () => {
 })
 
 When('the user clicks the login button', () => {
-  cy.get("#loginButton").click()
   cy.intercept("GET", serverBaseUrl + "/api/auth/me").as("LoggedInRequest")
+  cy.get("#loginButton").click()
   cy.wait("@LoggedInRequest")
 })
 

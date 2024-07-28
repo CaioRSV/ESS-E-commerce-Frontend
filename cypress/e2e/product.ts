@@ -87,7 +87,7 @@ Then('o produto é atualizado', () => {
   cy.get(`#item-${itemId}`).should('exist');
 });
 
-And('é exibido na listagem de produtos o produto com o novo preço', () => {
+Then('é exibido na listagem de produtos o produto com o novo preço', () => {
   cy.get(`#item-${itemId} .item-price`).should('contain', '0');
 });
 
@@ -102,6 +102,6 @@ Then('o produto é deletado', () => {
   cy.get(`#item-${itemId}`).should('not.exist');
 });
 
-And('não é exibido na listagem de produtos', () => {
+Then('não é exibido na listagem de produtos', () => {
   cy.get(`#item-${itemId}`).should('not.exist');
 });
