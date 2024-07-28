@@ -74,8 +74,11 @@ jobs:
         run: npm run prisma:migrate
         working-directory: ./backend
 
+      - name: Install NestJS CLI globally
+        run: npm install -g @nestjs/cli
+
       - name: Start backend
-        run: npm run start
+        run: npx nest start &
         working-directory: ./backend
 
       - name: Wait for backend to be ready
