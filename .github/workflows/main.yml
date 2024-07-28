@@ -98,7 +98,7 @@ jobs:
           AUTH_SECRET: 21930129302
 
       - name: Start frontend
-        run: npm run start &
+        run: npm run dev &
 
       - name: Wait for frontend to be ready
         run: |
