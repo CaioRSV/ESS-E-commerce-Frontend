@@ -52,7 +52,7 @@ When('the user clicks the update button', () => {
   cy.wait("@UpdatePersonalPasswordRequest")
 })
 
-When('the user must can log in the system using the new password', () => {
+Then('the user must can log in the system using the new password', () => {
   // Login with new password
   cy.get("#navbarLogoutButton").click()
   cy.get("#navbarLoginButton").click()

@@ -50,7 +50,7 @@ const LoggedInCardComponent = ({ userData, handleSignOut }: TLoggedInCardCompone
         {
           userData.role=='ADMIN'
             && 
-            <Button onClick={() => redirectToUser()}>Usuários</Button>
+            <Button onClick={() => redirectToUser()} id="usersButton">Usuários</Button>
         }
         {
           userData.role=='ADMIN'
