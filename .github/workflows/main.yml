@@ -78,7 +78,7 @@ jobs:
         run: npm install -g @nestjs/cli
 
       - name: Start backend
-        run: npx nest start &
+        run: npm run start
         working-directory: ./backend
 
       - name: Wait for backend to be ready
