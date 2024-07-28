@@ -67,8 +67,8 @@ const ForgotPasswordComponent = ({ onClose }: TForgotPasswordComponentProps) => 
     <Card>
       <CardHeader>
         <CardTitle>Esqueci Minha Senha</CardTitle>
-        {messageError && <CardDescription className="text-red-600">{messageError}</CardDescription>}
-        {messageSuccess && <CardDescription className="text-green-600">{messageSuccess}</CardDescription>}
+        {messageError && <CardDescription className="text-red-600" id="recoveryPasswordMessageError">{messageError}</CardDescription>}
+        {messageSuccess && <CardDescription className="text-green-600" id="recoveryPasswordMessageSuccess">{messageSuccess}</CardDescription>}
       </CardHeader>
       <CardContent className="flex gap-3 flex-col">
         <form onSubmit={formik.handleSubmit}>
@@ -77,6 +77,7 @@ const ForgotPasswordComponent = ({ onClose }: TForgotPasswordComponentProps) => 
               name="email"
               placeholder="E-mail"
               type="email"
+              id="emailForget"
               value={formik.values.email}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -86,7 +87,7 @@ const ForgotPasswordComponent = ({ onClose }: TForgotPasswordComponentProps) => 
               <div className="text-projRed">{formik.errors.email}</div>
             )}
           </div>
-          <Button type="submit" disabled={!formik.isValid || !formik.dirty || inRequest}>
+          <Button type="submit" disabled={!formik.isValid || !formik.dirty || inRequest} id="forgetPasswordSendButton">
             Enviar
           </Button>
         </form>

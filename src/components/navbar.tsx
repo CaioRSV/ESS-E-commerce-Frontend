@@ -232,7 +232,7 @@ const Navbar = () => {
 
                 <Dialog>
                   <DialogTrigger>
-                    <Button className='w-full'>Esqueci minha senha</Button>
+                    <Button className='w-full' id="forgetPasswordButton">Esqueci minha senha</Button>
                   </DialogTrigger>
                   <DialogContent className={`p-0 bg-transparent`}>
                     <ForgotPasswordComponent />
