@@ -1,10 +1,6 @@
 name: Run Cypress Tests
 
 on:
-  push:
-    branches:
-      - main
-      - develop
   pull_request:
     branches:
       - main
@@ -79,7 +75,7 @@ jobs:
         working-directory: ./backend
 
       - name: Start backend
-        run: npx nest start &
+        run: npm run start
         working-directory: ./backend
 
       - name: Wait for backend to be ready
