@@ -1,0 +1,111 @@
+name: Run Cypress Tests
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/database_test
+      AT_SECRET: AT_sECRET
+      RT_SECRET: RT_sECRET
+      TK_EMAIL_SECRET: EMAIL_sECRET
+      TK_EMAIL_LIFETIME: 1d
+      JWT_ACCESS_LIFETIME: 1h
+      JWT_REFRESH_LIFETIME: 7d
+      ENV: TEST
+      SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+      EMAIL_OPTIONS_FROM: ${{ secrets.EMAIL_OPTIONS_FROM }}
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: SADIASOD2931
+      NEXT_PUBLIC_SERVER_URL: http://localhost:3333
+      AUTH_SECRET: 21930129302
+
+    steps:
+      - name: Checkout frontend repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20.11.0
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Checkout backend repository
+        uses: actions/checkout@v2
+        with:
+          repository: BrenoCinUfpe/ESS-E-commerce-Backend
+          path: backend
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Setup backend Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20.11.0
+          working-directory: ./backend
+
+      - name: Install backend dependencies
+        run: npm install
+        working-directory: ./backend
+
+      - name: Apply database migrations
+        run: npm run prisma:migrate
+        working-directory: ./backend
+
+      - name: Start backend
+        run: npm start &
+        working-directory: ./backend
+
+      - name: Wait for backend to be ready
+        run: |
+          until curl http://localhost:3333/api/health; do sleep 5; done
+
+      - name: Build frontend
+        run: npm run build
+        env:
+          NEXTAUTH_URL: http://localhost:3000
+          NEXTAUTH_SECRET: SADIASOD2931
+          NEXT_PUBLIC_SERVER_URL: http://localhost:3333
+          AUTH_SECRET: 21930129302
+
+      - name: Start frontend
+        run: npm start &
+        env:
+          NEXTAUTH_URL: http://localhost:3000
+          NEXTAUTH_SECRET: SADIASOD2931
+          NEXT_PUBLIC_SERVER_URL: http://localhost:3333
+          AUTH_SECRET: 21930129302
+
+      - name: Wait for frontend to be ready
+        run: |
+          until curl http://localhost:3000; do sleep 5; done
+
+      - name: Run Cypress tests
+        run: npx cypress run --browser chrome
+        env:
+          CI: true
