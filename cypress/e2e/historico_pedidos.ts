@@ -88,16 +88,20 @@ Then('Deve ser exibida na listagem a opção de visualizar o histórico de pedid
         .contains('Teste')
         .should('exist');
 
-    cy.get('#pedidosContainerAdmin')
+    cy.get('#historicoPedidosUserContainer')
         .contains('Teste')
+        .parent()
+        .parent()
         .parent()
         .find('#openHistoricoButton')
         .should('exist');
 })
 
 When('O administrador clicar na opção de visualizar histórico de pedidos de "Teste"', () => {
-    cy.get('#pedidosContainerAdmin')
+    cy.get('#historicoPedidosUserContainer')
         .contains('Teste')
+        .parent()
+        .parent()
         .parent()
         .find('#openHistoricoButton')
         .click();
