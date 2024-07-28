@@ -9,14 +9,25 @@ let random = Math.random().toString(36).substring(3)
 Given('the admin is authenticated in the system', () => {
   cy.visit(baseUrl)
   cy.get("#navbarLoginButton").click()
+
+  // Already logged in
+  cy.get('body').then(($body) => {
+    if ($body.find("#loggedInMessage").length > 0 && $body.find("#loggedInMessage").is(':visible')) {
+      // Usuário está logado, então faz logout
+      cy.get("#navbarLogoutButton").click()
+      cy.get("#navbarLoginButton").click()
+    }
+  })
+
   cy.get("#emailInput").type(Admin.email)
   cy.get("#senhaInput").type(Admin.senha)
   cy.get("#loginButton").click()
   cy.intercept("GET", serverBaseUrl + "/api/auth/me").as("LoggedInRequest")
-  cy.wait("@LoggedInRequest", { timeout: 20000 }).then((interception) => {
+  cy.wait("@LoggedInRequest").then((interception) => {
     expect(interception?.response?.statusCode).to.be.eq(200)
   })
   cy.get("#loggedInMessage").should("exist")
+
 })
 
 When('the admin click on the "Usuários"', () => {
@@ -25,8 +36,8 @@ When('the admin click on the "Usuários"', () => {
 })
 
 Then('the admin must see the registered users in system', () => {
-  if(cy.get("#closeModal") != null) {
+  cy.get("#usersTable").should("exist")
+  if (cy.get("#closeModal") != null) {
     cy.get("#closeModal").click()
   }
-  cy.get("#usersTable").should("exist")
 })

@@ -1,4 +1,4 @@
-Feature: Login functionality
+Feature: Change password functionality
 
   Scenario: Change personal password
     Given the user authenticated in the system

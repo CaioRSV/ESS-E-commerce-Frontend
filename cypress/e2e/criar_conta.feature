@@ -1,4 +1,4 @@
-Feature: Login functionality
+Feature: Create account functionality
 
   Scenario: Create account
     Given the user is on the authenticated modal

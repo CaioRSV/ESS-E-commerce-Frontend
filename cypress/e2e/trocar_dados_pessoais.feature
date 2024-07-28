@@ -1,4 +1,4 @@
-Feature: Login functionality
+Feature: Change personal data functionality
 
   Scenario: Change personal data
     Given the user authenticated in the system

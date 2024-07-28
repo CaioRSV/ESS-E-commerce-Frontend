@@ -1,5 +1,5 @@
 import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor'
-import { Admin } from '../fixtures/users.json'
+import { NewRegisterUser } from '../fixtures/users.json'
 
 const baseUrl = "http://localhost:3000"
 const serverBaseUrl = "http://localhost:3333"
@@ -10,6 +10,15 @@ Given('the user is on the login page', () => {
 
 When('the user open the authentication page', () => {
   cy.get("#navbarLoginButton").click()
+
+  // Already logged in
+  cy.get('body').then(($body) => {
+    if ($body.find("#loggedInMessage").length > 0 && $body.find("#loggedInMessage").is(':visible')) {
+      // Usuário está logado, então faz logout
+      cy.get("#navbarLogoutButton").click()
+      cy.get("#navbarLoginButton").click()
+    }
+  })
 })
 
 When('the user click in the recovery password button', () => {
@@ -17,7 +26,7 @@ When('the user click in the recovery password button', () => {
 })
 
 When('the user insert his email', () => {
-  cy.get("#emailForget").type(Admin.email)
+  cy.get("#emailForget").type(NewRegisterUser.email)
 })
 
 When('the user clicks the send button', () => {

@@ -1,4 +1,4 @@
-Feature: Login functionality
+Feature: Recovery password functionality
 
   Scenario: User recovery password
     Given the user is on the login page
