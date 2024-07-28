@@ -11,15 +11,6 @@ Given('the user is on the login page', () => {
 When('the user enters their email', () => {
   cy.get("#navbarLoginButton").click()
 
-  // Already logged in
-  cy.get('body').then(($body) => {
-    if ($body.find("#loggedInMessage").length > 0 && $body.find("#loggedInMessage").is(':visible')) {
-      // Usuário está logado, então faz logout
-      cy.get("#navbarLogoutButton").click()
-      cy.get("#navbarLoginButton").click()
-    }
-  })
-
   cy.get("#emailInput").type(Admin.email)
 })
 

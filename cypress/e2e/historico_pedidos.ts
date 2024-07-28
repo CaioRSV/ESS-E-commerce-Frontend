@@ -17,11 +17,11 @@ Given('O usuário comum de email "teste@gmail.com" está logado', () => {
         .type(Customer.senha);
 
     cy.wait(200);
-
+    
+    cy.intercept("GET", serverBaseUrl+"/api/auth/me").as("LoggedInRequest")
+    
     cy.get("#loginButton")
         .click();
-
-    cy.intercept("GET", serverBaseUrl+"/api/auth/me").as("LoggedInRequest")
 
     cy.wait("@LoggedInRequest", {timeout: 20000});
         
@@ -55,10 +55,10 @@ Given('O usuário administrador de email "admin@gmail.com" está logado', () => 
 
     cy.wait(200);
 
+    cy.intercept("GET", serverBaseUrl+"/api/auth/me").as("LoggedInRequest")
+
     cy.get("#loginButton")
         .click();
-
-    cy.intercept("GET", serverBaseUrl+"/api/auth/me").as("LoggedInRequest")
 
     cy.wait("@LoggedInRequest", {timeout: 20000});
         

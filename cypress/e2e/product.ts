@@ -12,8 +12,8 @@ Given('O usuário está logado como admin', () => {
   cy.get("#navbarLoginButton").click();
   cy.get("#emailInput").type(Admin.email);
   cy.get("#senhaInput").type(Admin.senha);
-  cy.get("#loginButton").click();
   cy.intercept("GET", `${serverBaseUrl}/api/auth/me`).as("LoggedInRequest");
+  cy.get("#loginButton").click();
   cy.wait("@LoggedInRequest");
   cy.get("#loggedInMessage").should("exist");
 });

@@ -18,11 +18,10 @@ Given('O usuário de email "teste@gmail.com" está logado', () => {
 
     cy.wait(200);
 
-    cy.get("#loginButton")
-        .click();
-
     cy.intercept("GET", serverBaseUrl+"/api/auth/me").as("LoggedInRequest");
-    
+
+    cy.get("#loginButton")
+    .click();
 
     cy.wait("@LoggedInRequest", {timeout: 20000});
         
