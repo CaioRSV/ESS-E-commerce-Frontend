@@ -85,13 +85,16 @@ jobs:
         run: |
           until curl http://localhost:3333/api/health; do sleep 5; done
 
-      - name: Start frontend
-        run: npm run dev
+      - name: Build frontend
+        run: npm run build
         env:
           NEXTAUTH_URL: http://localhost:3000
           NEXTAUTH_SECRET: SADIASOD2931
           NEXT_PUBLIC_SERVER_URL: http://localhost:3333
           AUTH_SECRET: 21930129302
+
+      - name: Start frontend
+        run: npm run start
 
       - name: Wait for frontend to be ready
         run: |
