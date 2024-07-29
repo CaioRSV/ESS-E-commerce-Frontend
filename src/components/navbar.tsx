@@ -45,7 +45,20 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuIndicator,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  NavigationMenuViewport,
+} from "@/components/ui/navigation-menu"
+
 //
+import OrderList from './orderList';
+import CategoriesComponent from './categories'
 
 import { useProductDataContext } from '@/app/contexts/ProductData';
 import RegisterComponent from './register';
@@ -60,8 +73,24 @@ const Navbar = () => {
 
   let { data: session } = useSession();
   const axiosAuth = useAxiosAuth();
-  const route = useRouter();
-  const { userData, setUserData } = useUserDataContext();
+  const route = useRouter();  
+  const {userData, setUserData} = useUserDataContext();
+
+  // SearchBar
+  const [searchString, setSearchString] = useState<string>("");
+
+  // Categorias e Marcas
+  interface Categoria {
+    id: string
+    nome: string
+  };
+
+  interface Marcas {
+    
+  };
+
+  const [categorias, setCategorias] = useState<Categoria[]>();
+  const marcas = ["Marca1", "Marca2"]
 
   // Carrinho fetch
 
@@ -104,8 +133,7 @@ const Navbar = () => {
 
       getInfo();
     }
-  }
-
+  } 
 
   //
 
@@ -123,6 +151,12 @@ const Navbar = () => {
 
         const cart = await axiosAuth.get("/api/cart")
         setCart(cart.data);
+
+        const categories = await axiosAuth.get("/api/categories")
+        setCategorias(
+          categories.data.map((item: { id: any; name: any; }) => ({ id: item.id, nome: item.name }))
+        );
+
       }
 
       getInfo();
@@ -189,16 +223,16 @@ const Navbar = () => {
             <CardContent className={`flex gap-3 flex-col`}>
               <Input placeholder={`E-mail`} onChange={(event) => setEmail(event.target.value)
 
-              } />
+              } id="emailInput" />
               <Input placeholder={`Senha`} type='password' onChange={(event) => setPassword(event.target.value)}
-              />
+               id="senhaInput" />
               <div className='gap-3 flex'>
-                <Button className='flex-1' onClick={() => { handleSignIn() }}>Entrar</Button>
+                <Button className='flex-1' onClick={() => { handleSignIn() }} id="loginButton" >Entrar</Button>
 
 
                 <Dialog>
                   <DialogTrigger>
-                    <Button className='w-full'>Esqueci minha senha</Button>
+                    <Button className='w-full' id="forgetPasswordButton">Esqueci minha senha</Button>
                   </DialogTrigger>
                   <DialogContent className={`p-0 bg-transparent`}>
                     <ForgotPasswordComponent />
@@ -208,9 +242,9 @@ const Navbar = () => {
 
               <Dialog>
                 <DialogTrigger>
-                  <Button className='flex-1'>Registrar-se</Button>
+                  <Button className='flex-1' id="createAccountButton">Registrar-se</Button>
                 </DialogTrigger>
-                <DialogContent className={`p-0 bg-transparent`}>
+                <DialogContent className={`p-0 bg-transparent`} id="dialogRegisterComponent">
                   <RegisterComponent />
                 </DialogContent>
               </Dialog>
@@ -250,43 +284,67 @@ const Navbar = () => {
         <div className={`p-4 flex justify-center items-center`}>
           <a className={`font-abel text-[25px] hover:cursor-pointer`} onClick={handleLogoClick}>SAPATOS.COM</a>
         </div>
+            <NavigationMenu className={`transition-all`}>
+              <NavigationMenuList>
+                
+              <div className={`p-4 flex justify-center items-center cursor-pointer`}>
+                <div className={`font-abeezee text-[14px]`}><CategoriesComponent/></div>
+              </div>
 
-        <div className={`p-4 flex justify-center items-center cursor-pointer`}>
-          <div className={`font-abeezee text-[14px]`}>CATEGORIAS</div>
-        </div>
+                <NavigationMenuItem>
+                  <div className={`p-4 flex justify-center items-center cursor-pointer hover:bg-accent/80 transition-all hover:text-accent-foreground h-10 rounded-md`}>
+                    <div className={`font-abeezee text-[14px] text-projRed`}>OFERTAS</div>
+                  </div>
+                  <NavigationMenuContent>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
 
-        <div className={`p-4 flex justify-center items-center cursor-pointer`}>
-          <div className={`font-abeezee text-[14px] text-projRed`}>OFERTAS</div>
-        </div>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>
+                  <div className={`p-4 flex justify-center items-center cursor-pointer`}>
+                    <div className={`font-abeezee text-[14px]`}>MARCAS</div>
+                  </div>
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                  <div className={`w-[390px] h-fit mb-2`}>
+                    <div className={`w-full h-full p-4`}>
+                            <p className={`w-full font-abel font-semibold text-lg pb-2`}>Marcas</p>
+                            {
+                              marcas.map(marca => (
+                                <div key={marca} className={`w-fit hover:text-projRed transition-colors`}>
+                                  <Link href={`/produtos?marca=${marca}`}>
+                                    <p className={`font-abeezee`}>{marca}</p>
+                                  </Link>
+                                </div>
+                              ))
+                            }
+                          </div>
+                  </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
 
-        <div className={`p-4 flex justify-center items-center cursor-pointer`}>
-          <div className={`font-abeezee text-[14px]`}>MARCAS</div>
-        </div>
+              </NavigationMenuList>
+            </NavigationMenu>
 
-        {userIsAdmin && (
-            <div className={`p-4 flex justify-center items-center cursor-pointer`} onClick={handleAdminUserRoute}>
-              <div className={`font-abeezee text-[14px]`}>[ADMIN] USUARIOS</div>
+            <div className={`p-4 flex justify-center items-center flex-1`}>
+              <div className={`font-abeezee text-[14px] rounded-full bg-projGray flex-1 flex`}>
+                <div className={`min-h-full min-w-[50px] flex items-center justify-center`}>
+                  <Link href={`${searchString.length>0 ? `/product?searchString=${searchString}` : `/` }`}>
+                    <FaMagnifyingGlass size={20} className={`text-black transition-opacity opacity-40 hover:opacity-60 cursor-pointer`}/>
+                  </Link>
+                </div>
+                <Input onChange={(e)=>{setSearchString(e.target.value)}} placeholder="Pesquise" className={`font-abeezee bg-transparent border-transparent focus-visible:ring-0 focus-visible:ring-offset-0`}/>
+              </div>
             </div>
-        )}
 
-        <div className={`p-4 flex justify-center items-center flex-1`}>
-          <div className={`font-abeezee text-[14px] rounded-full bg-projGray flex-1 flex`}>
-            <div className={`min-h-full min-w-[50px] flex items-center justify-center`}>
-              <FaMagnifyingGlass size={20} className={`text-black opacity-40`} />
-            </div>
-            <Input placeholder="Pesquise" className={`font-abeezee bg-transparent border-transparent focus-visible:ring-0 focus-visible:ring-offset-0`} />
-          </div>
-        </div>
-        
-
-
-        <Dialog onOpenChange={() => { setMessageLogin("") }} >
-          <DialogTrigger>
-            <div className={`p-4 flex justify-center items-center cursor-pointer`}>
-              <FaRegUserCircle size={20} />
-            </div>
-          </DialogTrigger>
-          <DialogContent className={`p-0 bg-transparent`}>
+            
+            <Dialog onOpenChange={()=>{setMessageLogin("")}} >
+              <DialogTrigger>
+                <div className={`p-4 flex justify-center items-center cursor-pointer`} id="navbarLoginButton" >
+                  <FaRegUserCircle size={20}/>
+                </div>
+              </DialogTrigger>
+              <DialogContent className={`p-0 bg-transparent`}>
 
             {LogInComponent}
 
@@ -297,7 +355,7 @@ const Navbar = () => {
 
           <DrawerTrigger onClick={() => { getCarrinho() }}>
             <div className={`p-4 flex justify-center items-center cursor-pointer`}>
-              <FiShoppingCart size={20} />
+              <FiShoppingCart size={20} id="navbarCartButton" />
             </div>
           </DrawerTrigger>
 
@@ -317,7 +375,7 @@ const Navbar = () => {
                       {
                         cart?.products && cart.products.length > 0
                           ?
-                          <div className={`ml-2 mr-5`}>
+                          <div className={`ml-2 mr-5`} id="sideCartContainer">
                             {
                               cart.products.map(item => (
                                 <div className={`m-2 w-full h-[80px] rounded-md border border-slate-300 flex`} key={`${item.cartId}/${item.productId}`} >
@@ -325,8 +383,8 @@ const Navbar = () => {
                                     ?.productMedia?.slice(-1)[0]?.media?.url ?? 'no_image'
                                     }`}></img>
                                   <div className={`h-full p-2 flex-column justify-center`}>
-                                    <p className={`font-abeezee`}>{` ${productData.find(product => product.id === item.productId)?.name}`}</p>
-                                    <p className={`font-abeezee`}>{`${item.quantity} unidades`}</p>
+                                    <p className={`font-abeezee`} id="productName">{` ${productData.find(product => product.id === item.productId)?.name}`}</p>
+                                    <p className={`font-abeezee`}>{`${item.quantity} unidade${String(item.quantity)=='1'?'':'s'}`}</p>
                                   </div>
                                 </div>
 
@@ -382,13 +440,13 @@ const Navbar = () => {
                 userData.email
                   ?
                   <Link href="/carrinho" className={`w-full`}>
-                    <Button className={`w-full`}>Ir para o carrinho</Button>
+                    <Button className={`w-full`} id="goToCartButton" >Ir para o carrinho</Button>
                   </Link>
                   :
                   <Button disabled={true}>Ir para o carrinho</Button>
               }
               <DrawerClose>
-                <p className={`w-full border rounded-md p-[6px] text-sm`}>Voltar</p>
+                <p className={`w-full border rounded-md p-[6px] text-sm`} id="closeCartButton">Voltar</p>
               </DrawerClose>
             </DrawerFooter>
           </DrawerContent>

@@ -41,7 +41,7 @@ const Table = ({
         />
       </div>
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
+        <table className="min-w-full divide-y divide-gray-200" id="usersTable">
           <thead className="bg-gray-50">
             <tr>
               {columns.map((column) => (

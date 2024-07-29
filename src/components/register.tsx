@@ -103,6 +103,7 @@ const RegisterComponent = () => {
             <Input
               name="email"
               placeholder="E-mail"
+              id="emailRegister"
               value={formik.values.email}
               onChange={formik.handleChange}
               onBlur={(e) => {
@@ -123,6 +124,7 @@ const RegisterComponent = () => {
             <Input
               name="name"
               placeholder="Nome"
+              id="nameRegister"
               value={formik.values.name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -138,6 +140,7 @@ const RegisterComponent = () => {
               name="password"
               placeholder="Senha"
               type="password"
+              id="passwordRegister"
               value={formik.values.password}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -147,7 +150,7 @@ const RegisterComponent = () => {
               <div className="text-projRed">{formik.errors.password}</div>
             )}
           </div>
-          <Button type="submit" disabled={inRequest || !formik.isValid || !formik.dirty || messageErrorEmail != null}>
+          <Button type="submit" id="registerButton" disabled={inRequest || !formik.isValid || !formik.dirty || messageErrorEmail != null}>
             Registrar-se
           </Button>
         </form>

@@ -89,46 +89,49 @@ export default function Home() {
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    let tempSearch = param.get("search");
-    let tempCategoria = param.get("categoria");
-    if (searchParam && searchParam?.length > 0){
-      setSearchFilter(searchParam);
-    }
-    if (categoriaParam && categoriaParam?.length > 0){
-      setCategoriaFilter(categoriaParam);
-    }
-    if (marcaParam && marcaParam?.length > 0){  
-      setSearchFilter(marcaParam);
-    }
-    const getInfo = async () => {
-      try {
-        const generalProductResponse = await axiosAuth.get("/api/product");
-        const generalProducts = generalProductResponse.data.data;
+useEffect(() => {
+  if (searchParam && searchParam?.length > 0){
+    setSearchFilter(searchParam);
+  }
+  if (categoriaParam && categoriaParam?.length > 0){
+    setCategoriaFilter(categoriaParam);
+  }
+  if (marcaParam && marcaParam?.length > 0){  
+    setSearchFilter(marcaParam);
+  }
+  if (session) {
+      const getInfo = async () => {
+          try {
+              const generalProductResponse = await axiosAuth.get("/api/product");
+              const generalProducts = generalProductResponse.data.data;
 
-        const detailedProducts = await Promise.all(generalProducts.map(async (product: { id: any; }) => {
-          const productDetailResponse = await axiosAuth.get(`/api/product/${product.id}`);
-          const productDetails = productDetailResponse.data;
-          
-          const imageUrl = productDetails.productMedia?.[productDetails.productMedia.length - 1]?.media?.url || '';
-          
-          return {
-            ...productDetails,
-            imageUrl,
-          };
-        }));
+              const detailedProducts = await Promise.all(generalProducts.map(async (product: { id: any; }) => {
+                  const productDetailResponse = await axiosAuth.get(`/api/product/${product.id}`);
+                  const productDetails = productDetailResponse.data;
+                  
+                  const imageUrl = productDetails.productMedia?.[productDetails.productMedia.length - 1]?.media?.url || '';
+                  
+                  return {
+                      ...productDetails,
+                      imageUrl,
+                  };
+              }));
 
-        setProductData(generalProducts);
-        setProductList(detailedProducts);
+              setProductData(generalProducts);
+              setProductList(detailedProducts);
 
-      } catch (error) {
-        console.error("Error fetching product information:", error);
-      }
-    };
+          } catch (error) {
+              console.error("Error fetching product information:", error);
+          }
+      };
 
-    getInfo();
-  
-  }, [session, searchSwitch]);
+      getInfo();
+  }
+}, [session]);
+
+useEffect(() => {
+  changeFilter(searchFilter || '');
+}, [searchFilter, categoriaFilter]);
 
   const changeFilter = async(searchP:string) => {
     const getInfo = async () => {
@@ -168,8 +171,8 @@ export default function Home() {
               <p className="text-center">R${product.price?.toFixed(2)}</p>
             )}
              {product.stock !== 0 && (
-          <Dialog >
-            <DialogTrigger id="#addToCartButton" onClick={() => addToCart(product)} className={`absolute bottom-4 px-6 py-4 bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity`}>
+          <Dialog>
+            <DialogTrigger id="addToCartButton" onClick={() => addToCart(product)} className={`absolute bottom-4 px-6 py-4 bg-black text-white rounded opacity-0 group-hover:opacity-100 transition-opacity`}>
               <button
                 className="w-full h-full">
                 Adicionar ao Carrinho

@@ -82,6 +82,7 @@ const ChangePasswordComponent = ({ onClose }: TChangePasswordComponentProps) => 
               name="actualPassword"
               placeholder="Senha Atual"
               type="password"
+              id="currentUpdatePersonalPassword"
               value={formik.values.actualPassword}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -96,6 +97,7 @@ const ChangePasswordComponent = ({ onClose }: TChangePasswordComponentProps) => 
               name="newPassword"
               placeholder="Nova Senha"
               type="password"
+              id="newUpdatePersonalPassword"
               value={formik.values.newPassword}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -105,7 +107,8 @@ const ChangePasswordComponent = ({ onClose }: TChangePasswordComponentProps) => 
               <div className="text-projRed">{formik.errors.newPassword}</div>
             )}
           </div>
-          <Button type="submit"  disabled={!formik.isValid || !formik.dirty || inRequest}>Mudar Senha</Button>
+          <Button type="submit" id="sendUpdatePersonalPasswordButton"
+            disabled={!formik.isValid || !formik.dirty || inRequest}>Mudar Senha</Button>
         </form>
       </CardContent>
     </Card>

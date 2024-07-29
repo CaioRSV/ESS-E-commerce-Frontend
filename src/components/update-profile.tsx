@@ -84,6 +84,7 @@ const UpdateProfileComponent = ({ onClose }: TUpdateProfileComponentProps) => {
             <Input
               name="name"
               placeholder="Nome"
+              id="nameUpdatePersonalData"
               value={formik.values.name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -97,6 +98,7 @@ const UpdateProfileComponent = ({ onClose }: TUpdateProfileComponentProps) => {
             <Input
               name="email"
               placeholder="Email"
+              id="emailUpdatePersonalData"
               value={formik.values.email}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
@@ -106,7 +108,7 @@ const UpdateProfileComponent = ({ onClose }: TUpdateProfileComponentProps) => {
               <div className="text-projRed">{formik.errors.email}</div>
             )}
           </div>
-          <Button type="submit" disabled={!formik.isValid || !formik.dirty || inRequest}
+          <Button type="submit" disabled={!formik.isValid || !formik.dirty || inRequest} id="sendUpdatePersonalDataButton"
           >Atualizar</Button>
         </form>
       </CardContent>

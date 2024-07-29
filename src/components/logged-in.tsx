@@ -6,6 +6,8 @@ import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog';
 import UpdateProfileComponent from './update-profile';
 import ChangePasswordComponent from './change-password';
 import { AuthMe, useUserDataContext } from '@/app/contexts/UserData';
+import OrderListAdmin from './orderListAdmin';
+import { useRouter } from 'next/navigation';
 
 export type TLoggedInCardComponentProps = {
   userData: AuthMe;
@@ -13,37 +15,56 @@ export type TLoggedInCardComponentProps = {
 };
 
 const LoggedInCardComponent = ({ userData, handleSignOut }: TLoggedInCardComponentProps) => {
+  const router = useRouter();
   const [isUpdateProfileOpen, setUpdateProfileOpen] = useState(false);
   const [isChangePasswordOpen, setChangePasswordOpen] = useState(false);
 
   const handleUpdateProfileClose = () => setUpdateProfileOpen(false);
   const handleChangePasswordClose = () => setChangePasswordOpen(false);
-
+  const redirectToUser = () => router.push('/admin/user');
+  const redirectToProduct = () => router.push('/admin/product');
+  
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Bem-vindo, {userData?.name ? userData.name : 'Carregando...'}</CardTitle>
-        <CardDescription>{userData?.email ? userData.email : ''}</CardDescription>
+        <CardTitle id="loggedInMessage" >Bem-vindo, {userData?.name ? userData.name : 'Carregando...'}</CardTitle>
+        <CardDescription id="loggedInEmail">{userData?.email ? userData.email : ''}</CardDescription>
       </CardHeader>
       <CardContent className="flex gap-3 flex-col">
         <Dialog open={isUpdateProfileOpen} onOpenChange={setUpdateProfileOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => setUpdateProfileOpen(true)}>Atualizar meus dados</Button>
+            <Button onClick={() => setUpdateProfileOpen(true)} id="updatePersonalDataButton">Atualizar meus dados</Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent id="loggedInCloseButton">
             <UpdateProfileComponent onClose={handleUpdateProfileClose} />
           </DialogContent>
         </Dialog>
         <Dialog open={isChangePasswordOpen} onOpenChange={setChangePasswordOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => setChangePasswordOpen(true)}>Mudar minha senha</Button>
+            <Button id="updatePersonalPasswordButton" onClick={() => setChangePasswordOpen(true)}>Mudar minha senha</Button>
           </DialogTrigger>
           <DialogContent>
             <ChangePasswordComponent onClose={handleChangePasswordClose} />
           </DialogContent>
         </Dialog>
-        <OrderList />
-        <Button onClick={handleSignOut}>Deslogar</Button>
+        {
+          userData.role=='ADMIN'
+            && 
+            <Button onClick={() => redirectToUser()} id="usersButton">Usuários</Button>
+        }
+        {
+          userData.role=='ADMIN'
+            && 
+            <Button onClick={() => redirectToProduct()}>Produtos</Button>
+        }
+        {
+          userData.role=='ADMIN'
+            ?
+            <OrderListAdmin />
+            :
+            <OrderList />
+        }
+        <Button onClick={handleSignOut} id="navbarLogoutButton">Deslogar</Button>
       </CardContent>
     </Card>
   );
