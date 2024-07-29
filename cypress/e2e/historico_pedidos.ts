@@ -23,7 +23,7 @@ Given('O usuário comum de email "teste@gmail.com" está logado', () => {
     cy.get("#loginButton")
         .click();
 
-    cy.wait("@LoggedInRequest", {timeout: 20000});
+    cy.wait("@LoggedInRequest");
         
     cy.get("#loggedInMessage")
         .should("exist") 
@@ -60,7 +60,7 @@ Given('O usuário administrador de email "admin@gmail.com" está logado', () => 
     cy.get("#loginButton")
         .click();
 
-    cy.wait("@LoggedInRequest", {timeout: 20000});
+    cy.wait("@LoggedInRequest");
         
     cy.get("#loggedInMessage")
         .should("exist")     

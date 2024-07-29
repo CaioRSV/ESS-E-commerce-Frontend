@@ -18,7 +18,7 @@ Given('the user authenticated in the system', () => {
 
   cy.intercept("POST", `${serverBaseUrl}/api/auth/email/availability`).as("CheckEmailRequest")
   cy.get("#emailRegister").blur()
-  cy.wait("@CheckEmailRequest", { timeout: 20000 }).then((interception) => {
+  cy.wait("@CheckEmailRequest").then((interception) => {
     expect(interception?.response?.body).to.have.property("available", true)
   })
   cy.get("#nameRegister").type(NewRegisterUser.name)

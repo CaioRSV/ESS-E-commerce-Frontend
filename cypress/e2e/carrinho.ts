@@ -23,7 +23,7 @@ Given('O usuário de email "teste@gmail.com" está logado', () => {
     cy.get("#loginButton")
     .click();
 
-    cy.wait("@LoggedInRequest", {timeout: 20000});
+    cy.wait("@LoggedInRequest");
         
     cy.get("#loggedInMessage")
         .should("exist") 
@@ -46,14 +46,14 @@ When('O usuário está na página Carrinho', () => {
 
     cy.wait(500);
 
-    cy.url({timeout: 15000}).should('include', '/carrinho');
+    cy.url().should('include', '/carrinho');
 
     cy.get("#closeCartButton")
         .click();
 })
 Then('O usuário deve ver a lista de produtos em seu carrinho na tela', () => {
 
-    cy.url({timeout: 15000}).should('include', '/carrinho');
+    cy.url().should('include', '/carrinho');
 
     cy.get("#productContainer")
         .children()
