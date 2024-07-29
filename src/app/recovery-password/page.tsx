@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -22,7 +22,7 @@ const validationSchema = Yup.object({
   recoveryToken: Yup.string().required('O token de recuperação é obrigatório'),
 });
 
-const ChangePassword = () => {
+function ChangePasswordContent() {
   const router = useRouter();
   const { status } = useSession();
   const query = useSearchParams();
@@ -106,6 +106,12 @@ const ChangePassword = () => {
       </CardContent>
     </Card>
   );
-};
+}
 
-export default ChangePassword;
+export default function ChangePassword() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ChangePasswordContent />
+    </Suspense>
+  );
+}
