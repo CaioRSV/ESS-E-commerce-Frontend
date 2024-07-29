@@ -81,16 +81,16 @@ export default function ProductPage() {
     }
   };
 
-  const convertProductData = (data) => {
+  const convertProductData = (data: Product) => {
     const priceAsFloat = parseFloat(String(data.price));
     const stockAsFloat = parseFloat(String(data.stock));
     const categoryIdAsNumber = Number(data.categoryId);
     return { ...data, price: priceAsFloat, stock: stockAsFloat, categoryId: categoryIdAsNumber };
   };
   
-  const updateProduct = async (productId, newData) => {
+  const updateProduct = async (productId: number | undefined, newData: any) => {
     try {
-      const response = await axiosAuth.patch(`/api/product/${productId}`, newData);
+      await axiosAuth.patch(`/api/product/${productId}`, newData);
       alert("Alterações salvas com sucesso!");
       getInfo();
     } catch (error) {
