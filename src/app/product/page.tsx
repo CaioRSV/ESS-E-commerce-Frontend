@@ -1,23 +1,24 @@
 "use client";
 
-import React from 'react'
-import ProductPage from '@/app/admin/product/page'
-import HomePage from '@/app/product/productCostumer'
-import { useUserDataContext } from '../contexts/UserData'
+import React, { Suspense } from 'react';
+import ProductPage from '@/app/admin/product/page';
+import HomePage from '@/app/product/productCostumer';
+import { useUserDataContext } from '../contexts/UserData';
 
 const Page = () => {
-  const { userData, setUserData } = useUserDataContext()
-    console.log(userData?.role);  
-return (
+  const { userData } = useUserDataContext();
+
+  return (
     <div>
-            {userData?.role === 'ADMIN' ? (
-                <ProductPage />
-            ) : (
-                <HomePage />
-            ) }
-        </div>
-    )
+      <Suspense fallback={<div>Loading...</div>}>
+        {userData?.role === 'ADMIN' ? (
+          <ProductPage />
+        ) : (
+          <HomePage />
+        )}
+      </Suspense>
+    </div>
+  );
+};
 
-}
-export default Page
-
+export default Page;

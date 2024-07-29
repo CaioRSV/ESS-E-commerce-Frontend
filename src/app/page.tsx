@@ -3,7 +3,7 @@
 import useAxiosAuth from "@/lib/hooks/useAxiosAuth";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import axios from "@/lib/axios";
 
 import { FaRegSquareCheck } from "react-icons/fa6";
@@ -42,7 +42,7 @@ interface Media {
   url: string;
 }
 
-export default function Home() {
+function HomeContent() {
   const param = useSearchParams();
   const searchParam = param.get("search");
   const categoriaParam = param.get("categoria");
@@ -265,3 +265,10 @@ export default function Home() {
   );
 }
 
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeContent />
+    </Suspense>
+  );
+}
