@@ -90,7 +90,7 @@ const Navbar = () => {
   };
 
   const [categorias, setCategorias] = useState<Categoria[]>();
-  const marcas = ["Marca1", "Marca2"]
+  const marcas = ["Adidas", "Nike"]
 
   // Carrinho fetch
 
@@ -308,11 +308,10 @@ const Navbar = () => {
                   <NavigationMenuContent>
                   <div className={`w-[390px] h-fit mb-2`}>
                     <div className={`w-full h-full p-4`}>
-                            <p className={`w-full font-abel font-semibold text-lg pb-2`}>Marcas</p>
                             {
                               marcas.map(marca => (
                                 <div key={marca} className={`w-fit hover:text-projRed transition-colors`}>
-                                  <Link href={`/produtos?marca=${marca}`}>
+                                  <Link href={`/product?search=${marca}`}>
                                     <p className={`font-abeezee`}>{marca}</p>
                                   </Link>
                                 </div>
