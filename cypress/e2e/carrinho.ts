@@ -47,6 +47,17 @@ When('O usuário está na página Carrinho', () => {
 
     cy.url({timeout:20000}).should('include', '/carrinho');
 
+    cy.wait(200);
+
+    cy.get("#navbarCartButton")
+        .click();
+
+    cy.get("#goToCartButton")
+        .click();
+
+
+    cy.url({timeout:20000}).should('include', '/carrinho');
+
     cy.get("#closeCartButton")
         .click();
 })
