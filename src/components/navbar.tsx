@@ -293,7 +293,9 @@ const Navbar = () => {
 
                 <NavigationMenuItem>
                   <div className={`p-4 flex justify-center items-center cursor-pointer hover:bg-accent/80 transition-all hover:text-accent-foreground h-10 rounded-md`}>
-                    <div className={`font-abeezee text-[14px] text-projRed`}>OFERTAS</div>
+                    <Link href="/product">
+                      <div className={`font-abeezee text-[14px] text-projRed`}>OFERTAS</div>
+                    </Link>
                   </div>
                   <NavigationMenuContent>
                   </NavigationMenuContent>
