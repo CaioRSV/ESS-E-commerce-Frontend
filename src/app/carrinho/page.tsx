@@ -78,7 +78,7 @@ export default function Carrinho() {
     frete: 0,
     total: 0
   });
-  const [tempoEntrega, setTempoEntrega] = useState<string>();
+  const [tempoEntrega, setTempoEntrega] = useState<number>();
   const [cep, setCep] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [showPopup, setShowPopup] = useState<boolean>(false);
@@ -93,10 +93,10 @@ export default function Carrinho() {
 
     if(newSubTotal>0){
       let desconto = newSubTotal/10;
-      let frete = 25.0;
+      let frete = 5.5*dadosPedido.frete;
   
       setDadosPedido(prev => ({
-        ...prev, subtotal: newSubTotal, total: newSubTotal - desconto + frete, desconto: desconto, frete: frete
+        ...prev, subtotal: newSubTotal, total: newSubTotal - desconto + frete, desconto: desconto
       }))
   
       console.log(newSubTotal);
@@ -106,6 +106,14 @@ export default function Carrinho() {
         ...prev, subtotal: 0, total: 0, desconto: 0, frete: 0
       }))
     }
+  }
+
+  const updateFrete = (dias:number) => {
+    let frete = 5.5*dias;
+
+    setDadosPedido(prev => ({
+      ...prev, frete: frete
+    }))
   }
 
   const fetchCart = async () => {
@@ -177,16 +185,19 @@ export default function Carrinho() {
     }
 
     const handleCalculateDeliveryTime = async () => {
-      const formattedCep = formatCep(cep);
-      if (!validateCep(formattedCep)) {
-        setError('CEP inválido. Por favor, insira um CEP válido.');
-        setTempoEntrega('');
-        return;
-      }
+      if(!tempoEntrega){
+        const formattedCep = formatCep(cep);
+        if (!validateCep(formattedCep)) {
+          setError('CEP inválido. Por favor, insira um CEP válido.');
+          setTempoEntrega(0);
+          return;
+        }
 
-      const deliveryTime = (Math.floor(Math.random() * 6) + 3).toString();
-      setTempoEntrega(deliveryTime);
-      setError('');
+        const deliveryTime = (Math.floor(Math.random() * 6) + 3);
+        setTempoEntrega(deliveryTime);
+        updateFrete(deliveryTime);
+        setError('');
+      }
     }
 
     const handleCheckout = () => {
@@ -314,7 +325,7 @@ export default function Carrinho() {
                             onChange={handleCepChange}
                           />
                           <div
-                            className="font-abeezee italic text-sm h-[40px] cursor-pointer rounded-full bg-black text-white flex justify-center items-center pl-6 pr-6"
+                            className={`font-abeezee italic text-sm h-[40px] cursor-pointer rounded-full bg-black text-white flex justify-center items-center pl-6 pr-6 ${tempoEntrega? `opacity-50` : ``}`}
                             onClick={handleCalculateDeliveryTime}
                           >
                             Calcular
