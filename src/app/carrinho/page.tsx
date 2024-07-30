@@ -84,7 +84,7 @@ export default function Carrinho() {
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [popupMessage, setPopupMessage] = useState<string>("");
 
-  const updateDadosPedido = (cartData_temp:Cart) => {
+  const updateDadosPedido = (cartData_temp:Cart, dias:number) => {
     let newSubTotal = 0;
 
     cartData_temp.products.forEach(item => {
@@ -93,27 +93,23 @@ export default function Carrinho() {
 
     if(newSubTotal>0){
       let desconto = newSubTotal/10;
-      let frete = 5.5*dadosPedido.frete;
+      let frete = 5.5*dias;
+      // console.log('---')
+      // console.log('newSubTotal: '+newSubTotal);
+      // console.log('frete: '+frete);
+      // console.log('desconto: '+desconto);
+      // console.log('total: '+(newSubTotal - desconto + frete));
+
   
       setDadosPedido(prev => ({
-        ...prev, subtotal: newSubTotal, total: newSubTotal - desconto + frete, desconto: desconto
+        ...prev, subtotal: newSubTotal, total: newSubTotal - desconto + frete, desconto: desconto, frete: frete
       }))
-  
-      console.log(newSubTotal);
     }
     else{
       setDadosPedido(prev => ({
         ...prev, subtotal: 0, total: 0, desconto: 0, frete: 0
       }))
     }
-  }
-
-  const updateFrete = (dias:number) => {
-    let frete = 5.5*dias;
-
-    setDadosPedido(prev => ({
-      ...prev, frete: frete
-    }))
   }
 
   const fetchCart = async () => {
@@ -128,13 +124,13 @@ export default function Carrinho() {
     }
 
     setCart(cart.data);
-    updateDadosPedido(cart.data);
+    updateDadosPedido(cart.data, (tempoEntrega?tempoEntrega:0));
     setLoading(false);
   }
 
   const fetchCartNoLoading = async () => {
     const cart = await axiosAuth.get("/api/cart")
-    updateDadosPedido(cart.data);
+    updateDadosPedido(cart.data, (tempoEntrega?tempoEntrega:0));
     setCart(cart.data);
   }
 
@@ -195,7 +191,10 @@ export default function Carrinho() {
 
         const deliveryTime = (Math.floor(Math.random() * 6) + 3);
         setTempoEntrega(deliveryTime);
-        updateFrete(deliveryTime);
+
+        const cart = await axiosAuth.get("/api/cart")
+        updateDadosPedido(cart.data, deliveryTime);
+
         setError('');
       }
     }
